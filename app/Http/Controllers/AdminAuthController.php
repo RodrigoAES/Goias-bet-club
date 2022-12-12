@@ -8,23 +8,15 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminAuthController extends Controller
 {
-    public function __construct() {
-        if(! Auth::user()->active) {
-            return response()->json([
-                'status' => 'error',
-                'error' => 'Contas desativadas não tem permissão para acessar o sistema como administrador.',
-            ]);
-        }
-    }
 
     public function login(Request $request) {
         $response = ['status' => null];
 
         $validator = Validator::make($request->all(), [
-            'email' => 'string|email',
+            'user' => 'required|string',
             'password' => 'string|min:4'
         ], [
-            'email' => 'O email deve ter um endereço válido',
+            'user.required' => 'É necessario celular ou endereço de email para fazer login',
             'password.min' => 'A senha deve conter no mínimo 4 caracteres'
         ]);
         if($validator->fails()) {
@@ -33,8 +25,36 @@ class AdminAuthController extends Controller
 
             return response()->json($response, 422);
         }
+        $data = $validator->validated();
 
-        $response['token'] = Auth::attempt($validator->validated());
+        if(is_numeric($data['user'])) {
+            if(strlen($data['user']) === 11) {
+                $response['token'] = Auth::attempt([
+                    'phone' => $validator->validated()['user'],
+                    'password' => $validator->validated()['password'],
+                ]);
+
+            } else {
+                $response['status'] = 'error';
+                $response['error'] = ['user' => ['Número de telefone inválido.']];
+
+                return response()->json($response, 422);
+            }
+
+        } elseif(! is_numeric($data['user'])) {
+            if(filter_var($data['user'], FILTER_VALIDATE_EMAIL)) {
+                $response['token'] = Auth::attempt([
+                    'email' => $validator->validated()['user'],
+                    'password' => $validator->validated()['password'],
+                ]);
+
+            } else {
+                $response['status'] = 'error';
+                $response['error'] = ['user' => ['Endereço de email inválido.']];
+
+                return response()->json($response, 422);
+            }
+        }
 
         if($response['token']) {
             $response['user'] = Auth::user();
@@ -44,7 +64,7 @@ class AdminAuthController extends Controller
 
         } else {
             $response['status'] = 'error';
-            $response['error'] = 'Email e/ou senha incorretos.';
+            $response['error'] = 'Telefone/Email e/ou senha incorretos.';
 
             return response()->json($response, 401);
         }
@@ -63,5 +83,10 @@ class AdminAuthController extends Controller
     public function validateToken() {
         $response = ['status' => 'success', 'authenticated' => true, 'user' => Auth::user()];
         return response()->json($response, 200);
+    }
+
+    public function username()
+    {
+        return 'phone';
     }
 }

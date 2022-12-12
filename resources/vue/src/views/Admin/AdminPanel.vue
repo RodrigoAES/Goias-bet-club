@@ -1,5 +1,5 @@
 <script>
-    import AdminSidebar from '../components/AdminSidebar.vue';
+    import AdminSidebar from '../../components/Admin/AdminSidebar.vue'
 
     export default {
         data() {

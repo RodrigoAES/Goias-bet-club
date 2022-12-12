@@ -6,6 +6,8 @@ import { RouterLink, RouterView } from 'vue-router';
           return {
             loggedUser:null,
             userCardCode:null,
+            asset:import.meta.env.VITE_ASSET,
+            base:import.meta.env.VITE_BASE_URL,
           }
         },
         methods: {
@@ -43,8 +45,8 @@ import { RouterLink, RouterView } from 'vue-router';
 
 <template>
   <header>
-        <router-link to="/">
-            <img :src="`/assets/images/icon.png`" alt="incone bandeira do brasil" />
+        <router-link to="/bolao">
+            <img :src="`${asset}/assets/images/icon.png`" alt="incone bandeira do brasil" />
         </router-link> 
         
         <div class="title">Bolão da copa <span>2022</span></div>
@@ -64,6 +66,8 @@ import { RouterLink, RouterView } from 'vue-router';
                     || this.$route.name === 'user-bets' 
                     || this.$route.name === 'ranking' 
                     || this.$route.name === 'account'
+                    || this.$route.name === 'custom'
+                    || this.$route.name === 'login'
                 "
                 @click="this.$router.push({name:'home'})"
                 class="home-button"
@@ -77,11 +81,12 @@ import { RouterLink, RouterView } from 'vue-router';
                     || this.$route.name === 'user-bets' 
                     || this.$route.name === 'ranking' 
                     || this.$route.name === 'account'
+                    || this.$route.name === 'custom'
                 "
                 @click="logout"
                 class="logout"
             >
-                <img :src="`/assets/images/logout.png`" alt="logout">
+                <img :src="`${asset}assets/images/logout.png`" alt="logout">
             </button>
         </div>
   </header>

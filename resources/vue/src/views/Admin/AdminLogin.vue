@@ -3,10 +3,11 @@
         data() {
             return {
                 name:'',
-                email:'',
+                user:'',
                 password:'',
                 errors: {
                     email:null,
+                    phone:null,
                     password:null,
                     auth:null,
                 }
@@ -15,13 +16,13 @@
         methods:{
             login: async function() {
                 this.errors = {
-                    email:null,
+                    user:null,
                     password:null,
                     auth:null,
                 }
 
                 let body = new FormData();
-                body.append('email', this.email);
+                body.append('user', this.user);
                 body.append('password', this.password);
 
                 let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/auth/login`, {
@@ -37,8 +38,8 @@
                     this.$router.push({name:'AdminPanel'});
 
                 } else if(response.status === 'error') {
-                    if(response.error.email) {
-                        this.errors.email = response.error.email;
+                    if(response.error.user) {
+                        this.errors.user = response.error.user;
                     }
                     if(response.error.password) {
                         this.errors.password
@@ -62,12 +63,12 @@
             <div v-if="errors.auth" class="danger">{{errors.auth}}</div>
 
             <label >
-                Email
-                <div v-if="(errors.email)" v-for="error in errors.email" class="danger">{{error}}</div>
+                Celular ou Email
+                <div v-if="(errors.user)" v-for="error in errors.user" class="danger">{{error}}</div>
                 <input 
-                    v-model="email" 
-                    :style="errors.email ? 'border-color:rgb(221, 37, 37)' : null"
-                    type="email" 
+                    v-model="user" 
+                    :style="errors.user ? 'border-color:rgb(221, 37, 37)' : null"
+                    type="text" 
                 />
             </label>
             

@@ -1,65 +1,26 @@
 <script>
     export default {
-        props:['code'],
-        data() {
-            return {
-                userCardCode:this.$route.params.code ? this.$route.params.code : null,
-                userCard:null,
-                cardCreatedAt:null,
-            }
-        },
-        methods: {
-            consultCard:async function() {
-                let request = await fetch(`${import.meta.env.VITE_BASE_URL}card/${this.userCardCode}`, {
-                    method:'GET',
-                });
-                let json = await request.json();
-
-                if(json.status === 'success') {
-                    this.userCard = json.user_card;
-                    this.cardCreatedAt = json.user_card.created_at;
-                    console.log(this.userCard);
-                }
-            },
-            mask: function(e) {
-                if(e.target.value.length === 7 && e.inputType != 'deleteContentBackward'){
-                    e.target.value = `${e.target.value.substring(0,6)}`;
-                    this.userCardCode = e.target.value;
-                }
-            }
-        },
+        props:['userCard'],
         computed: {
-            date: function () {
-                let d = new Date(this.cardCreatedAt);
-                return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+            date:function() {
+                let date = new Date(this.userCard.created_at);
+                return  `${date.getDate() < 10 ? '0'+date.getDate() : date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
             }
         }
     }
 </script>
 
 <template>
-    <div id="consult-area">
-        <router-link to="/"><span>←</span> Voltar Para a pagina inical</router-link>
-        <div class="form user-card">
-            <div class="description">Consulte sua cartela através do código que te passamos durante o cadastro.</div>
-            
-            <div class="card-code">
-                <label for="card-code">Código da cartela:</label>
-                <input v-model="userCardCode" @input="mask" type="text" name="card-code">
-            </div>
-            
-            <div class="buttons-succes card-code">
-                <button @click="consultCard">Consultar</button>
-            </div>
-
-        </div>
+    <div class="modal-area admin-card-viewer">
         <div v-if="userCard" class="card">
+            <div class="close"><span @click="this.$parent.closeCard()">✖</span></div>
             <div class="bet-card"><span>Cartela: {{userCard.card.name}}</span></div>
             <div class="name"><span>Nome: {{userCard.name}}</span></div>
             <div class="user-card phone"><span>Celular: {{userCard.phone}}</span></div>
             <div class="user-card created-at"><span>Data: {{date}}</span></div>
-            <div class="validated user-card"><span>Validado: {{userCard.validated ? 'Sim' : 'Não'}}</span></div>
-            <div class="home-away"><span>Casa</span><span>Fora</span></div>
+            <div class="validated"><span>Validado: {{userCard.validated ? 'Sim' : 'Não'}}</span></div>
+            <div class="viewer-price"><span>Preço: R$ {{userCard.card.price}}</span></div>
+            <div class="home-away"><span>Casa</span><span>Visitante</span></div>
 
             <div v-for="(bet, index) in userCard.bets" class="match bet">
                 <div class="info">
@@ -74,7 +35,7 @@
 
                             <img 
                                 v-else-if="userCard.card.championship === 'brasileirao'" 
-                                :src="`http://localhost:8000/api/brasileirao/flag/${bet.match.home_flag}`" 
+                                :src="`${this.$root.base}brasileirao/flag/${bet.match.home_flag}`" 
                                 :alt="bet.match.home_name" 
                                 class="brasileirao"
                             />
@@ -99,10 +60,10 @@
                                 :src="bet.match.away_flag" 
                                 :alt="`${bet.match.away_name} flag`" 
                             />
-                        
+
                             <img 
                                 v-else-if="userCard.card.championship === 'brasileirao'" 
-                                :src="`http://localhost:8000/api/brasileirao/flag/${bet.match.away_flag}`" 
+                                :src="`${this.$root.base}brasileirao/flag/${bet.match.away_flag}`" 
                                 :alt="bet.match.home_name" 
                                 class="brasileirao"
                             />
@@ -117,11 +78,10 @@
                         <div class="team-name">{{bet.match.away_name}}</div>
                     </div>
                 </div>
-                
                 <div v-if="userCard.card.type === 'common'" class="bet-buttons">
                     <button
                         :class="bet.bet === 'victory' ? 'active' : null"
-                    >Vitória</button>
+                    >Casa</button>
 
                     <button
                     :class="bet.bet === 'draw' ? 'active' : null"
@@ -129,10 +89,10 @@
 
                     <button
                     :class="bet.bet === 'loss' ? 'active' : null"
-                    >Derrota</button>
+                    >Visitante</button>
                 </div>
                 <div v-if="userCard.card.type === 'detailed'" class="user-bet">
-                    <span>Voce apostou:</span>
+                    <span>Apostado:</span>
                     <span>
                         <img 
                             v-if="userCard.card.championship === 'world-cup'" 
@@ -142,7 +102,7 @@
 
                         <img 
                             v-else-if="userCard.card.championship === 'brasileirao'" 
-                            :src="`http://localhost:8000/api/brasileirao/flag/${bet.match.home_flag}`" 
+                            :src="`${this.$root.base}brasileirao/flag/${bet.match.home_flag}`" 
                             :alt="bet.match.home_name" 
                             class="brasileirao"
                         />
@@ -153,7 +113,9 @@
                             :alt="bet.match.home_name"
                             class="custom" 
                         />
+
                         {{bet.home_score}} X {{bet.away_score}}
+                        
                         <img 
                             v-if="userCard.card.championship === 'world-cup'" 
                             :src="bet.match.away_flag" 
@@ -162,7 +124,7 @@
                     
                         <img 
                             v-else-if="userCard.card.championship === 'brasileirao'" 
-                            :src="`http://localhost:8000/api/brasileirao/flag/${bet.match.away_flag}`" 
+                            :src="`${this.$root.base}brasileirao/flag/${bet.match.away_flag}`" 
                             :alt="bet.match.home_name" 
                             class="brasileirao"
                         />
@@ -175,111 +137,84 @@
                         />
                     </span>
                 </div>
-
                 <div class="date-group-info">
                     <div class="group">Grupo <span>{{bet.match.group}}</span></div>
                     <div class="finished">Terminada: <span>{{bet.match.finished === 'FALSE' ? 'NÂO' : 'SIM'}}</span></div>
                     <div class="datetime">Data: <span>{{bet.match.datetime}}</span></div>
                 </div>  
             </div>
+            <div v-if="(! userCard.validated)" class="actions">
+                <button 
+                    @click="this.$parent.validateCard(userCard.id); this.$parent.userCardViewerOpened = false"
+                    class="validate"
+                >Validar</button>
+            </div>
         </div>
     </div>
 </template>
 
 <style>
-    #consult-area {
-        padding: 30px;
-    }
-    #consult-area a {
-        padding: 10px 20px;
-        margin-right: 15px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
-        border:none;
-        border-radius: 5px;
-        margin: auto;
-        text-decoration: none;
-    }
-    #consult-area a span{
-        font-size: 22px;
-        font-weight: 700;
-    }
-    .user-card {
-        height:auto
-    }
-    .card-code {
-        width: 100%;
+    .modal-area.admin-card-viewer {
+        top:0;
+        left:0;
+        margin-top: 0;
+        margin-left: 0;
+        overflow-y: scroll;
         display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
+        flex: column;
+        justify-content: center;
+        align-items: flex-start;
     }
-    .card-code button:hover {
-        transform: none;
+    .modal-area.admin-card-viewer .card {
+        background-color: #fff;
+        position: relative;
+        
+        margin-bottom: 50px;
+        border: 5px solid #069446;
+        box-shadow: 0px 0px 20px #069446;
+        position: relative;
     }
-    .user-card label {
+    .modal-area.admin-card-viewer .card .close {
+        top:1%;
+    }
+    .modal-area.admin-card-viewer .actions {
         width:100%;
         display: flex;
-        justify-content: flex-start;
-        margin-bottom: 5px;
-        margin-top: 20px;
+        justify-content: center;
     }
-    .user-card input {
+    .modal-area.admin-card-viewer .actions .validate {
+        margin-right: 10px;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #006ed4;
+        color:#fff;
+        font-size: 16px;
         font-weight: 600;
-        border: 1px solid #888;
-        color:#555;
-        width:25%;
+    }
+    .modal-area.admin-card-viewer .actions .validate:hover {
+        background-color: #1c7fdb;
+        transform: scale(1.1);
+    }
+    .modal-area.admin-card-viewer .validated,
+    .modal-area.admin-card-viewer .viewer-price {
+        font-weight: 600;
+        margin-left: 14px;
+        
+        margin-bottom: 15px;
+    }  
+    .modal-area.admin-card-viewer .validated{
+        margin-top: -13px;
+    }
 
-    }
-    .phone.user-card {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 15px;
-        margin-left: 15px;
-    }
-    .created-at.user-card{
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 15px;
-        margin-left: 15px;
-    }
-    .validated.user-card {
-        font-weight: 600;
-        margin-left: 15px;
-        margin-bottom: 25px;
-    }
-    .bet-card {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 25px;
-        margin-left: 15px;
-        font-size: 18px;
-    }
-    .user-bet {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    .user-bet span {
-        font-weight: 700;
-    }
-    .user-bet span:last-child {
-        font-weight: 700;
-        font-size: 22px;
-        display: flex;
-        align-items: center;
-    }
-    .user-bet span:last-child img {
-        max-width:30px;
-        max-height: 30px;
-    }
     @media (max-width:420px) {
-        .user-card input {
-            width:60%;
+        .modal-area.admin-card-viewer .card {
+            width:100vw;
+            margin-left: -0px;
+        }
+        .modal-area.admin-card-viewer .card .close{
+            left:90%;
         }
     }
 </style>

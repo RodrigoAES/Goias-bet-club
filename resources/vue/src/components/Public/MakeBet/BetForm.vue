@@ -81,6 +81,7 @@
             phoneMask: function(e) {
                 if(! Number.isInteger(parseInt(e.data))) {
                     e.target.value = e.target.value.replace(e.data, '');
+                    this.phone = e.target.value;
                 }    
                 if(e.target.value.length === 2 && e.inputType != 'deleteContentBackward') {
                     e.target.value = `(${e.target.value.charAt(0)}${e.target.value.charAt(1)}) `;
@@ -141,7 +142,7 @@
         <div id="bet-form">
             <div class="card">
                 <div class="name"><span>Nome: {{card.name}}</span></div>
-                <div class="home-away"><span>Casa</span><span>Fora</span></div>
+                <div class="home-away"><span>Casa</span><span>Visitante</span></div>
                 <input type="hidden" :value="card.id" />
 
                 <div v-for="(match, index) in card.matchs" class="match bet">
@@ -157,7 +158,7 @@
 
                                 <img 
                                     v-else-if="card.championship === 'brasileirao'" 
-                                    :src="`http://localhost:8000/api/brasileirao/flag/${match.home_flag}`" 
+                                    :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
                                     :alt="match.home_name" 
                                     class="brasileirao"
                                 />
@@ -205,7 +206,7 @@
 
                                 <img 
                                     v-else-if="card.championship === 'brasileirao'" 
-                                    :src="`http://localhost:8000/api/brasileirao/flag/${match.away_flag}`" 
+                                    :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
                                     :alt="match.home_name" 
                                     class="brasileirao"
                                 />

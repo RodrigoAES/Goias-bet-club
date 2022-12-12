@@ -13,15 +13,33 @@ use App\Helpers\GazetaBrasileiraoScrapHelper;
 
 
 class RankingController extends Controller
-{
+{   
+    public function publicRankingCards() {
+        $response = ['status' => null];
+
+        $public_rankings = PublicRanking::all();
+
+        $public_ranking_cards_id = [];
+
+        foreach($public_rankings as $ranking) {
+            $public_ranking_cards_id[] = $ranking->card_id;
+        }
+
+        $public_ranking_cards = Card::select('*')->whereIn('id', $public_ranking_cards_id);
+
+        dd($public_ranking_cards);
+
+
+    }
+
     public function getRanking($id, Request $request) {
         $response = ['status'=> null];
 
-        $ranking = PublicRanking::where('card_id', $id);
+        $ranking = PublicRanking::where('card_id', $id)->first();
         if($ranking) {
             $page = $request->page ? $request->page : 1;
 
-            $_card = Card::find($id);
+            $_card = Card::find($ranking->card_id);
             if($_card) {
                 if($_card->championship === 'world-cup') {
                     $matchs = RequestAPIHelper::requestAllMatchs();
@@ -201,8 +219,8 @@ class RankingController extends Controller
                 return response()->json($response, 422);
             }
         } else {
-            $response['status'] = 'error.';
-            $response['error'] = 'Ranking não existente ou não autorizado para vizualização';
+            $response['status'] = 'message';
+            $response['message'] = 'Ainda não foi disponibilizado o ranking para está cartela.';
 
             return  response()->json($response, 422);
          } 

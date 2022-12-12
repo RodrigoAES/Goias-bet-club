@@ -56,6 +56,7 @@ Route::post('bet', [PublicBetController::class, 'createBet']);
 Route::get('card/{code}', [UserCardController::class, 'getCard']);
 
 // Public consult Ranking
+Route::get('ranking/cards', [RankingController::class, 'publicRankingCards']);
 Route::get('ranking/{id}', [RankingController::class, 'getRanking']);
 
 Route::middleware(['auth:api'])->group(function () {

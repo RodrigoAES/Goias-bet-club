@@ -1,5 +1,5 @@
 <script>
-    import Confirm from '../components/CardsConfirm.vue';
+    import Confirm from './CardsConfirm.vue';
 
     export default {
         data() {
@@ -96,7 +96,7 @@
 
                             <img 
                                 v-else-if="card.championship === 'brasileirao'" 
-                                :src="`http://localhost:8000/api/brasileirao/flag/${match.home_flag}`" 
+                                :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
                                 :alt="match.home_name" 
                                 class="brasileirao"
                             />
@@ -125,7 +125,7 @@
 
                             <img 
                                 v-else-if="card.championship === 'brasileirao'" 
-                                :src="`http://localhost:8000/api/brasileirao/flag/${match.away_flag}`" 
+                                :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
                                 :alt="match.home_name" 
                                 class="brasileirao"
                             />

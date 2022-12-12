@@ -1,5 +1,5 @@
 <script>
-    import UserCardViewer from './UserCardViewer.vue';
+    import UserCardViewer from '../../Public/UserCardViewer.vue';
     import UserCardEditor from './UserCardEditor.vue';
     import UserCardEditorSuccess from './UserCardEditorSuccess.vue';
     import UserBetsValidateConfirm from './UserBetsValidateConfirm.vue';

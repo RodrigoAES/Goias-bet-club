@@ -1,30 +1,30 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import AdminLogin from '../views/AdminLogin.vue';
-import AdminPanel from '../views/AdminPanel.vue';
-import CardCreate from '../components/CardCreate.vue';
-import Cards from '../components/Cards.vue';
-import UserBets from '../components/UserBets.vue';
-import UserRanking from '../components/UserRanking.vue';
-import Account from '../components/Account.vue';
-import Custom from '../components/Custom.vue';
+import AdminLogin from '../views/Admin/AdminLogin.vue';
+import AdminPanel from '../views/Admin/AdminPanel.vue';
+import CardCreate from '../components/Admin/Cards/Create/CardCreate.vue';
+import Cards from '../components/Admin/Cards/Cards.vue';
+import UserBets from '../components/Admin/UserBets/UserBets.vue';
+import UserRanking from '../components/Admin/UserRanking/UserRanking.vue';
+import Account from '../components/Admin/Account/Account.vue';
+import Custom from '../components/Admin/Custom/Custom.vue';
 
-import Home from '../views/Home.vue';
-import UserCard from '../views/UserCard.vue';
-import PublicUserRanking from '../views/PublicUserRanking.vue';
+import Home from '../views/Public/Home.vue';
+import UserCard from '../views/Public/UserCard.vue';
+import PublicUserRanking from '../views/Public/PublicUserRanking.vue';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
        
         {
-            path:'/admin/login',
+            path:'/bolao/admin/login',
             name:'login',
             component: AdminLogin
         },
         {
-            path:'/admin',
-            redirect:'/admin/cards',
+            path:'/bolao/admin',
+            redirect:'/bolao/admin/cards',
             name:'AdminPanel',
             component: AdminPanel,
             children: [
@@ -62,17 +62,17 @@ const router = createRouter({
         },
         
         {
-            path: '/',
+            path: '/bolao',
             name: 'home',
             component: Home,
         },
         {
-            path: '/user-card/:code?',
+            path: '/bolao/user-card/:code?',
             name: 'user-card',
             component: UserCard,
         },
         {
-            path:'/ranking',
+            path:'/bolao/ranking',
             name:'publicRanking',
             component: PublicUserRanking,
         }

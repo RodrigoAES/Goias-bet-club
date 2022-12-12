@@ -5,6 +5,7 @@
             return {
                 name:this.method === 'edit' ? this.user.name : null,
                 email:this.method === 'edit' ? this.user.email : null,
+                phone:this.method === 'edit' ? this.user.phone : null,
                 password:'',
                 password_confirmation:'',
                 current_password:'',
@@ -12,12 +13,24 @@
                     auth:null,
                     name:null,
                     email:null,
+                    phone:null,
                     password:null,
                     current_password:null,
                 },
             }
         },
         methods:{
+            phoneMask:function(e) {
+                console.log(e);
+                if(! Number.isInteger(parseInt(e.data))) {
+                    e.target.value = e.target.value.replace(e.data, '');
+                    this.phone = e.target.value;
+                }
+                if(e.target.value.length > 11) {
+                    e.target.value = e.target.value.substring(0, 11);
+                    this.phone = e.target.value;
+                }
+            },
             createUser: async function(){
                 let body = new FormData();
                 
@@ -57,6 +70,9 @@
                     if(json.error.email) {
                         this.errors.email = json.error.email;
                     }
+                    if(json.error.phone) {
+                        this.errors.phone = json.error.phone;
+                    }
                     if(json.error.password) {
                         this.errors.password = json.error.password
                     }
@@ -74,6 +90,9 @@
                 }
                 if(this.email) {
                     body.append('email', this.email);
+                }
+                if(this.phone) {
+                    body.append('phone', this.phone);
                 }
                 if(this.password) {
                     body.append('password', this.password);
@@ -153,7 +172,18 @@
                 type="text" 
                 name="name" 
             />
-    
+            
+            <label for="phone">phone:</label>
+            <div v-if="errors.phone" v-for="error in errors.phone" class="danger">{{error}}</div>
+            <input 
+                v-model="phone" 
+                @input="phoneMask"
+                :style="errors.phone ? 'border-color:rgb(221, 37, 37)' : null"
+                type="tel" 
+                name="phone"
+
+            />
+
             <label for="email">Email:</label>
             <div v-if="errors.email" v-for="error in errors.email" class="danger">{{error}}</div>
             <input 
@@ -215,7 +245,8 @@
         background-color: rgba(0,0,0,0.4);
         display:flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
+        overflow-y: scroll;
     }
     .form-account {
         display: flex;
@@ -226,6 +257,7 @@
         padding: 30px 40px;
         width:400px;
         background-color: #fff;
+        margin: 30px 0px;
     }
     .form-account .close {
         position: relative;

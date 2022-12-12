@@ -1,5 +1,6 @@
 <script>
-    import UserCardViewer from '../components/UserCardViewer.vue';
+    import UserCardViewer from '../../Public/UserCardViewer.vue';
+    import UserRankingPublicateSuccess from './UserRankingPublicateSuccess.vue';
     export default {
         data() {
             return {
@@ -10,11 +11,12 @@
                 activeCard:null,
                 UserCardViewerOpened:false,
                 UserCardViewerData:null,
+                publicRankingConfirmOpened:false,
             }
         },
         methods:{
             requestRanking: async function(id) {
-                let request = await fetch(`${import.meta.env.VITE_BASE_URL}ranking/${id}`,{
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/card-ranking/${id}`,{
                     method:'GET',
                     headers:{
                         'Authorization': `Bearer ${localStorage.getItem('auth')}`
@@ -45,18 +47,33 @@
                     this.pages = json.pages;
                 }
             },
-            openViewer: function(UserCard) {
-                this.UserCardViewerData = UserCard;
+            publicateRanking:async function(id) {
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/card-ranking/${id}/publicate` ,{
+                    method:'POST',
+                    headers:{
+                        'Authorization': `Bearer ${localStorage.getItem('auth')}`
+                    }
+                });
+
+                let json = await  request.json();
+                
+                if(json.status === 'success') {
+                    this.publicRankingConfirmOpened = true;
+                }
+            },
+            openViewer:function(userCard) {
+                this.UserCardViewerData = userCard;
                 this.UserCardViewerOpened = true;
             },
             closeCard:function() {
                 this.UserCardViewerData = null;
                 this.UserCardViewerOpened = false;
             }
-        },  
-        components: {
-            UserCardViewer,
         },
+        components:{
+            UserRankingPublicateSuccess,
+            UserCardViewer,
+        },  
         async mounted() {
             let request = await fetch(`${import.meta.env.VITE_BASE_URL}cards`, {
                 method:'GET',
@@ -72,10 +89,10 @@
 </script>
 
 <template>
-    <div class="ranking public">
+    <div class="ranking">
         <UserCardViewer v-if="UserCardViewerOpened" :userCard="UserCardViewerData"/>
+        <UserRankingPublicateSuccess v-if="publicRankingConfirmOpened"/>
         <div class="ranking-cards">
-            <router-link to="/"><span>←</span> Voltar Para a pagina inical</router-link>
             <div 
                 v-if="(cards != null)" 
                 v-for="card in cards"
@@ -92,13 +109,14 @@
 
         <div class="ranking-users">
             <div class="title">Ranking</div>
-            <div v-if="cardRanking" class="users">
+            <div v-if="(cardRanking && cardRanking.length > 0)" class="users">
                 <table>
                     <thead>
                         <tr>
                             <th>Posição</th>
                             <th>Nome</th>
                             <th>Código</th>
+                            <th>Celular</th>
                             <th>pontos</th>
                         </tr>
                     </thead>
@@ -107,6 +125,7 @@
                             <td class="ranking-pos">{{(index+1)}}º</td>
                             <td class="ranking-name">{{card.name}}</td>
                             <td class="ranking-code"><span class="mobile-title">Código</span>{{card.code}}</td>
+                            <td class="ranking-phone">{{card.phone}}</td>
                             <td class="ranking-points"><span class="mobile-title">Pontos</span>{{card.points}}</td>
                         </tr>
                     </tbody>
@@ -134,31 +153,45 @@
                     >Próxima</div>
                 </div>
 
-                <div class="winners">
-                    <div class="title">Vencedores</div>
-                    <div v-if="(winners && winners.length > 0)" class="users">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Código</th>
-                                    <th>pontos</th>
-                                    <th>Premio</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(card, index) in winners" @click="openViewer(card)">
-                                    <td class="ranking-name">{{card.name}}</td>
-                                    <td class="ranking-code"><span class="mobile-title">Código</span>{{card.code}}</td>
-                                    <td class="ranking-points"><span class="mobile-title">Pontos</span>{{card.points}}</td>
-                                    <td class="ranking-award"><span class="mobile-title">Preimio:</span>R${{card.award.toFixed(2)}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="actions">
+                    <button @click="publicateRanking(activeCard)">Publicar</button>
+                </div>
+            </div>
+            <div 
+                v-else-if="(cardRanking != null && cardRanking.length === 0)" 
+                class="nothing"
+            >
+                Ainda não há nenhuma aposta de usuario validada para está cartela.
+            </div>
+
+            <div class="winners">
+                <div class="title">Vencedores</div>
+                <div v-if="(winners && winners.length > 0)" class="users">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Código</th>
+                                <th>Celular</th>
+                                <th>pontos</th>
+                                <th>Premio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(card, index) in winners" @click="openViewer(card)">
+                                <td class="ranking-name winner">{{card.name}}</td>
+                                <td class="ranking-code"><span class="mobile-title">Código</span>{{card.code}}</td>
+                                <td class="ranking-phone">{{card.phone}}</td>
+                                <td class="ranking-points"><span class="mobile-title">Pontos</span>{{card.points}}</td>
+                                <td class="ranking-award"><span class="mobile-title">Preimio:</span>R${{card.award.toFixed(2)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+
+        
         
     </div>
 </template>
@@ -167,28 +200,6 @@
     .ranking {
         width: 100%;
         display: flex;
-    }
-    .ranking.public {
-        margin-left: 30px;
-        margin-top: 30px;
-    }
-    .ranking a {
-        padding: 10px 20px;
-        font-size: 10px 14px;
-        font-weight: 600;
-        cursor: pointer;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
-        border:none;
-        border-radius: 5px;
-        margin-bottom:20px;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-    }
-    .ranking a span{
-        font-size: 22px;
-        font-weight: 700;
     }
     .ranking-cards {
         display: flex;
@@ -234,6 +245,12 @@
         color:rgb(255, 238, 0);
         font-weight: 700;
     }
+    .ranking table tbody tr {
+        cursor: pointer;
+    }
+    .ranking table tbody tr:hover {
+        background-color: #eee;
+    }
     .ranking table tr {
         border-bottom: 1px solid #ccc;
     }
@@ -258,9 +275,11 @@
     .ranking-name,
     .ranking-code,
     .ranking-phone,
-    .ranking-points{
+    .ranking-points,
+    .ranking-award{
         font-weight: 600;
     }
+    
     .ranking-pos {
         font-size: 30px;
         color:#069446;
@@ -292,14 +311,30 @@
         color:rgb(255, 238, 0);
         border: 1px solid rgb(255, 238, 0);
     }
+    .users .actions {
+        width:100%;
+        display:flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .users .actions button {
+        background-color: #006ed4;
+        color:#fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .users .actions button:hover {
+        background-color: #1c7fdb;
+        transform: scale(1.1);
+    }
 
     @media(max-width: 420px) {
         .ranking {
             flex-direction: column;
-        }
-        .ranking.public {
-            margin-left: 8px;
-            margin-top: 10px;
         }
         .ranking-users {
             margin-left: -10px;
@@ -328,6 +363,13 @@
             justify-content: center;
         }
         .ranking table td.ranking-pos {
+            background-color: rgb(255, 238, 0);
+            border:2px solid #069446;
+        }
+        .winners {
+            margin-top: 40px;
+        }
+        .ranking-name.winner {
             background-color: rgb(255, 238, 0);
             border:2px solid #069446;
         }

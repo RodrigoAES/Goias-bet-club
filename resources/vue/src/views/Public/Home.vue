@@ -1,11 +1,12 @@
 <script>
-    import BetForm from '../components/BetForm.vue';
-    import BetSuccess from '../components/BetSuccess.vue';
+    import BetForm from '../../components/Public/MakeBet/BetForm.vue';
+    import BetSuccess from '../../components/Public/MakeBet/BetSuccess.vue';
 
     export default {
         data() {
             return {
                 asset:import.meta.env.VITE_ASSET,
+                base:import.meta.env.VITE_BASE_URL,
                 cards:[],
                 betFormOpened:false,
                 betFormCard:null,
@@ -30,7 +31,7 @@
                 this.betSuccessOpened = false;
             },
             toUserCard: function(code) {
-                this.$router.push({path:`user-card/${code}`});
+                this.$router.push({path:`bolao/user-card/${code}`});
             }
 
         },  
@@ -83,13 +84,13 @@
     <BetForm v-if="betFormOpened" :card="this.betFormCard"/>
     <BetSuccess v-if="betSuccessOpened" :response="betResponse" />
 
-    <div class="home-page" :style="`background-image: url('${asset}assets/images/stadiumY.jpg')`">
+    <div class="home-page" :style="`background-image: url('${this.$root.asset}assets/images/stadiumY.jpg')`">
         <div class="content">
             <div class="consult">
-                <router-link to="user-card">Consultar minhas cartelas</router-link>
+                <router-link to="/bolao/user-card">Consultar minhas cartelas</router-link>
             </div>
             <div style="margin-top:20px" class="consult">
-                <router-link to="ranking">Consultar Ranking</router-link>
+                <router-link to="/bolao/ranking">Consultar Ranking</router-link>
             </div>
             <div class="anoucement">
                 É fácil participar, decida quem ganha ou se empata, foi o que mais acertou? <span>GANHOU!</span> 
@@ -131,7 +132,7 @@
 
                                     <img 
                                         v-else-if="card.championship === 'brasileirao'" 
-                                        :src="`http://localhost:8000/api/brasileirao/flag/${match.home_flag}`" 
+                                        :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
                                         :alt="match.home_name" 
                                         class="brasileirao"
                                     />
@@ -160,7 +161,7 @@
 
                                     <img 
                                         v-else-if="card.championship === 'brasileirao'" 
-                                        :src="`http://localhost:8000/api/brasileirao/flag/${match.away_flag}`" 
+                                        :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
                                         :alt="match.home_name" 
                                         class="brasileirao"
                                     />

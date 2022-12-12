@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\DevController;
 /*
@@ -16,3 +17,7 @@ use App\Http\Controllers\DevController;
 
 // Dev refresh World-Cup API token
 Route::post('dev/refresh', [DevController::class, 'refreshDependenceApiToken']);
+
+Route::get('team/flag/{file}', function($file) {
+    return Storage::download("public/$file");
+});

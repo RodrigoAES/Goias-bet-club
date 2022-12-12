@@ -156,13 +156,13 @@
         <div class="match-form" @click.self="closeTeamsSelect">
             <div class="close"><span @click="(this.$parent.matchFormOpened = false)">✖</span></div>
             <div class="match" @click.self="closeTeamsSelect">
-                <div class="home-away"><span>Casa</span><span>Fora</span></div>
+                <div class="home-away"><span>Casa</span><span>Visitante</span></div>
                 <div class="info" >
                     <div class="team home" @click.self="closeTeamsSelect">
                         <div class="team-name" @click="selectHomeTeamOpened = true">{{homeTeam ? homeTeam.name : ''}}</div>
 
                         <div v-if="! homeTeam" class="select">
-                            <div v-if="selectHomeTeam" @click="selectHomeTeamOpened = true">Selecionar <img src="/assets/icons/down-arrow.png"></div>
+                            <div v-if="selectHomeTeam" @click="selectHomeTeamOpened = true">Selecionar <img :src="`${this.$root.asset}assets/icons/down-arrow.png`"></div>
                         </div>
 
                         <div v-if="selectHomeTeamOpened" class="select-team">
@@ -207,7 +207,7 @@
                         </div>
 
                         <div v-if="! awayTeam" class="select">
-                            <div v-if="selectAwayTeam" @click="selectAwayTeamOpened = true">Selecionar <img src="/assets/icons/down-arrow.png"></div>
+                            <div v-if="selectAwayTeam" @click="selectAwayTeamOpened = true">Selecionar <img :src="`${this.$root.asset}assets/icons/down-arrow.png`"></div>
                         </div>
                         <div v-if="selectAwayTeamOpened" class="select-team">
                             <div 

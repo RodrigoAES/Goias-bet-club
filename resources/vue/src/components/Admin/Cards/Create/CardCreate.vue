@@ -1,5 +1,5 @@
 <script>
-    import CardCreateForm from '../components/CardCreateForm.vue'; 
+    import CardCreateForm from './CardCreateForm.vue'; 
     import CardCreateRound from './CardCreateRound.vue';
 
     export default {
@@ -205,7 +205,7 @@
                                 
                                 <img 
                                     v-else-if="championship === 'brasileirao'" 
-                                    :src="`http://localhost:8000/api/brasileirao/flag/${match.home_flag}`" 
+                                    :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
                                     :alt="match.home_name" 
                                     class="brasileirao"
                                 />
@@ -234,7 +234,7 @@
 
                                 <img 
                                     v-else-if="championship === 'brasileirao'" 
-                                    :src="`http://localhost:8000/api/brasileirao/flag/${match.away_flag}`" 
+                                    :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
                                     :alt="match.home_name" 
                                     class="brasileirao"
                                 />
@@ -272,9 +272,9 @@
 
         <div id="card">
             <div class="matches">
-                <div class="title">Cartela</div>
+                <div class="title">Bolão</div>
                 <div class="card">
-                    <div class="home-away"><span>Casa</span><span>Fora</span></div>
+                    <div class="home-away"><span>Casa</span><span>Visitante</span></div>
                     <div v-for="match in cardMatches" class="match">
                         <div class="info">
                             <div class="team home">
@@ -288,7 +288,7 @@
 
                                     <img 
                                         v-else-if="championship === 'brasileirao'" 
-                                        :src="`http://localhost:8000/api/brasileirao/flag/${match.home_flag}`" 
+                                        :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
                                         :alt="match.home_name" 
                                         class="brasileirao"
                                     />
@@ -317,7 +317,7 @@
 
                                     <img 
                                         v-else-if="championship === 'brasileirao'" 
-                                        :src="`http://localhost:8000/api/brasileirao/flag/${match.away_flag}`" 
+                                        :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
                                         :alt="match.home_name" 
                                         class="brasileirao"
                                     />
@@ -350,7 +350,7 @@
                     </div>
 
                     <div class="buttons">
-                        <button @click="openForm" v-if="cardMatches.length > 0">Criar cartela</button>
+                        <button @click="openForm" v-if="cardMatches.length > 0">Criar Bolão</button>
                     </div>
                 </div>
                 

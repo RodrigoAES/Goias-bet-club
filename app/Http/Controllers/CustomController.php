@@ -134,7 +134,8 @@ class CustomController extends Controller
 
         if($championship) {
             $flag = Storage::disk('local')->put('public', $validator->validated()['flag']);
-            $flag = url(str_replace('public', 'storage', $flag));
+            $flag = explode('/', $flag)[1];
+            $flag = url("team/flag/$flag");
             
             $response['team'] = Team::create([
                 'name' => $validator->validated()['name'],

@@ -79,7 +79,7 @@
             <div class="card">
                 <div class="close"><span @click="this.$parent.closeCard()">✖</span></div>
                 <div class="name"><span>Cartela: {{userCard.card.name}}</span></div>
-                <div class="home-away"><span>Casa</span><span>Fora</span></div>
+                <div class="home-away"><span>Casa</span><span>Visitante</span></div>
 
                 <div v-for="(bet, index) in userCard.bets" class="match bet">
                     <div class="info">
@@ -94,7 +94,7 @@
 
                                 <img 
                                     v-else-if="userCard.card.championship === 'brasileirao'" 
-                                    :src="`http://localhost:8000/api/brasileirao/flag/${bet.match.home_flag}`" 
+                                    :src="`${this.$root.base}brasileirao/flag/${bet.match.home_flag}`" 
                                     :alt="bet.match.home_name" 
                                     class="brasileirao"
                                 />
@@ -144,7 +144,7 @@
 
                                 <img 
                                     v-else-if="userCard.card.championship === 'brasileirao'" 
-                                    :src="`http://localhost:8000/api/brasileirao/flag/${bet.match.away_flag}`" 
+                                    :src="`${this.$root.base}brasileirao/flag/${bet.match.away_flag}`" 
                                     :alt="bet.match.home_name" 
                                     class="brasileirao"
                                 />
@@ -163,7 +163,7 @@
                         <button
                             @click="switchBet(index, 'victory')"
                             :class="bet.bet === 'victory' ? 'active' : null"
-                        >Vitória</button>
+                        >Casa</button>
 
                         <button
                             @click="switchBet(index, 'draw')"
@@ -173,7 +173,7 @@
                         <button
                             @click="switchBet(index, 'loss')"
                             :class="bet.bet === 'loss' ? 'active' : null"
-                        >Derrota</button>
+                        >Visitante</button>
                     </div>
                     <div class="date-group-info">
                         <div class="group">Grupo <span>{{bet.match.group}}</span></div>
@@ -201,7 +201,7 @@
 
 <style>
     #bet-form.editor {
-        margin-top: 400px;
+        margin-top: 40px;
     }
 
     @media (max-width:420px) {

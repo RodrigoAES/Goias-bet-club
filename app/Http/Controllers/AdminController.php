@@ -519,7 +519,7 @@ class AdminController extends Controller
                             break;
                         }
                     }
-
+                    
                     foreach($winners as $winner) {
                         $winner->award = $award / count($winners);
                     }

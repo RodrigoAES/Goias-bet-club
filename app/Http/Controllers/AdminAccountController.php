@@ -91,11 +91,14 @@ class AdminAccountController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'string|min:2',
             'email' => 'string|email',
+            'phone' => 'string|numeric|max_digits:11',
             'password' => 'string|min:4|confirmed',
             'current_password' => 'required|string',
         ], [
             'name.min' => 'O nome precisa ter no mínimo 2 caracteres.',
             'email.email' => 'O email precisa ser um endereço de email válido.',
+            'phone.numeric' => 'Número de  telefone inválido',
+            'phone.max_digits' => 'Número de telefone inválido. (11 digitos sem espaços ou caracteres especiais)',
             'password.min' => 'A senha necessita de no mínimo 4 caracteres.',
             'password.confirmed' => 'Senhas não coincidem.',
             'current_password.required' => 'É necessario a senha atual para trocar as informações da conta.'
@@ -116,6 +119,9 @@ class AdminAccountController extends Controller
             }
             if(isset($data['email']) && $data['email'] != '') {
                 $user->email = $data['email'];
+            }
+            if(isset($data['phone']) && $data['phone'] != '') {
+                $user->phone = $data['phone'];
             }
             if(isset($data['password']) && $data['password'] != '') {
                 $user->password = Hash::make($data['password']);

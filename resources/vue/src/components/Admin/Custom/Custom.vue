@@ -1,13 +1,14 @@
 <script>
-    import ChampionshipForm from './ChampionshipForm.vue';
+    import ChampionshipForm from './Championship/ChampionshipForm.vue';
+    import ChampionshipConfirm from './Championship/ChampionshipConfirm.vue';
 
-    import CustomTeamForm from './CustomTeamForm.vue';
-    import CustomTeamConfirm from './CustomTeamConfirm.vue';
+    import CustomTeamForm from './Teams/CustomTeamForm.vue';
+    import CustomTeamConfirm from './Teams/CustomTeamConfirm.vue';
 
-    import CustomMatchForm from './CustomMatchForm.vue';
-    import CustomMatchConfirm from './CustomMatchConfirm.vue';
+    import CustomMatchForm from './Matchs/CustomMatchForm.vue';
+    import CustomMatchConfirm from './Matchs/CustomMatchConfirm.vue';
 
-    import ChampionshipConfirm from './ChampionshipConfirm.vue';
+    
 
     export default {
         data() {

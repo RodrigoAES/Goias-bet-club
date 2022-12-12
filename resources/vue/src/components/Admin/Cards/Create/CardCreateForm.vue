@@ -112,7 +112,7 @@
                 />
             </div>
 
-            <button @click="this.$parent.createCard(endtime, price, name, type, hostPercentage)">Criar cartela</button>
+            <button @click="this.$parent.createCard(endtime, price, name, type, hostPercentage)">Criar bolão</button>
         </div>
     </div>
     
