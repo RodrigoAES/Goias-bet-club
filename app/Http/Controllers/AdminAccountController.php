@@ -51,7 +51,8 @@ class AdminAccountController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8|confirmed'
+            'password' => 'required|string|min:8|confirmed',
+            'phone' => 'required|string|digits:11'
         ], [
             'name.required' => 'É necessario o nome para cadastro.',
             'name.min' => 'O nome precisa ter no mínimo 2 caracteres.',
@@ -60,7 +61,9 @@ class AdminAccountController extends Controller
             'email.unique' => 'Email já está sendo utilizado por outra conta.',
             'password.required' => 'É necessario uma senha para cadastro.',
             'password.min' =>  'A senha necessita ter no mínimo 8 caracteres.',
-            'password.confirmed' => 'Senhas não coincidem.'
+            'password.confirmed' => 'Senhas não coincidem.',
+            'phone.required' => 'É necessario numero de celular para cadastrar a conta.',
+            'phone.digits' => 'O celular deve ter 11 digitos.'
         ]);
         if($validator->fails()) {
             $response['status'] = 'error';

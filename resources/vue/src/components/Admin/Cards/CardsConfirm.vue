@@ -42,7 +42,7 @@
         flex-direction: column;
         justify-content: center;
         background-color: #fff;
-        border:5px solid #069446;
+        border:5px solid var(--p-color);
         border-radius: 20px;
 
     }
@@ -64,7 +64,7 @@
         left:96%;
         font-size: 22px;
         font-weight: 600;
-        color:#069446;
+        color: var(--p-color);
         cursor: pointer;
     }
 
@@ -72,8 +72,8 @@
         border: none;
         border-radius: 6px;
         padding:10px 20px;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         font-size: 16px;
         font-weight: 600;
         margin-top: 25px;
@@ -81,7 +81,7 @@
         margin-right: 20px;
     }
     .confirm button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
         transform: scale(1.1);
     }
     .confirm button:last-child {

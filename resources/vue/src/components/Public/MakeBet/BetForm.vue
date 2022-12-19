@@ -9,7 +9,8 @@
                 nameError:null,
                 phone:null,
                 phoneError:null,
-                betsError:null
+                betsError:null,
+                error:null,
             }
         },
         methods:{
@@ -47,7 +48,6 @@
                             }
                         });
                     }
-                    console.log(this.bets)
                 }
             
                 if(team === 'away') {
@@ -70,7 +70,6 @@
                             }
                         });
                     }
-                    console.log(this.bets)
 
                 }
                 
@@ -131,6 +130,7 @@
                     this.nameError = response.error.name ? response.error.name : null;
                     this.phoneError = response.error.phone ? response.error.phone : null;
                     this.betsError = response.error.bets ? response.error.bets : null;
+                    this.error = typeof response.error === 'string' ? response.error : null;
                 }
             }
         },
@@ -247,6 +247,8 @@
             <div class="form bet">
                 <div class="title">Preencha seus dados</div>
 
+                <div v-if="error" class="danger">{{error}}</div>
+                
                 <div 
                     v-if="betsError" 
                     v-for="error in betsError"

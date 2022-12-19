@@ -1,11 +1,54 @@
 <script>
+    import Loading from '../../Loading.vue';
+
     export default {
         props:['card'],
+        data() {
+            return {
+                loading:false,
+            }
+        },
         computed:{
             date: function() {
                 let d = new Date(this.card.created_at);
                 return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`
             } 
+        },
+        methods:{
+            generateReceipt:async function() {
+                this.loading = true;
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/user-receipt/${this.card.id}`, {
+                    method:'GET',
+                    headers:{
+                        'Authorization': `Bearer ${localStorage.getItem('auth')}`
+                    }
+                });
+
+                let blob = await request.blob();
+                let blobURL = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                // Set link's href to point to the Blob URL
+                link.href = blobURL;
+                link.download = 'Comprovante.pdf';
+
+                // Append link to the body
+                document.body.appendChild(link);
+
+                link.dispatchEvent(
+                    new MouseEvent('click', { 
+                        bubbles: true, 
+                        cancelable: true, 
+                        view: window 
+                    })
+                );
+                document.body.removeChild(link);
+                this.loading = false;
+                
+            }
+        },
+        components: {
+            Loading
         }
     }
 </script>
@@ -23,6 +66,11 @@
                     <button 
                         @click="this.$parent.validateSuccessOpened = false"
                     >Confirmar</button>
+
+                    <button @click="generateReceipt">
+                        <span v-if="!loading">Gerar comprovante</span>
+                        <loading v-if="loading" :size="30" />
+                    </button>
                 </div>
             </div>
         </div>
@@ -34,20 +82,21 @@
         background-color: #fff;
         padding: 40px;
         border-radius: 20px;
-        border:4px solid #069446;
+        border:4px solid var(--p-color);
     }
     .success .title{
-        color:#069446;
+        color: var(--p-color);
         margin-bottom: 20px;
     }
     .success .buttons button{
         margin-top: 20px;
-        background-color: #069446;
-        color: rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         cursor: pointer;
+        margin-right: 20px;
     }
     .success .buttons button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color);
         transform: scale(1.1);
     }
     @media (max-width:420px) {

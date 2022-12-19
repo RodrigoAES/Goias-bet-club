@@ -170,8 +170,8 @@
         position: relative;
         
         margin-bottom: 50px;
-        border: 5px solid #069446;
-        box-shadow: 0px 0px 20px #069446;
+        border: 5px solid var(--p-color);
+        box-shadow: 0px 0px 20px var(--p-color);
         position: relative;
     }
     .modal-area.admin-card-viewer .card .close {

@@ -117,7 +117,7 @@
         flex-direction: column;
         align-items: center;
         padding: 30px;
-        border:4px solid #069446;
+        border:4px solid var(--p-color);
         border-radius: 8px;
     }
     #team-form .close {
@@ -165,8 +165,8 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         border:none;
         border-radius: 5px;
         margin-top:20px;

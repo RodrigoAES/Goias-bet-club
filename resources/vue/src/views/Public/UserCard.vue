@@ -39,7 +39,7 @@
 
 <template>
     <div id="consult-area">
-        <router-link to="/bolao"><span>←</span> Voltar Para a pagina inical</router-link>
+        <router-link to="/bolaodefutebol"><span>←</span> Voltar Para a pagina inical</router-link>
         <div class="form user-card">
             <div class="description">Consulte sua cartela através do código que te passamos durante o cadastro.</div>
             
@@ -196,8 +196,8 @@
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         border:none;
         border-radius: 5px;
         margin: auto;

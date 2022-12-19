@@ -208,15 +208,15 @@
     }
     .ranking-card{
         font-weight: 600;
-        color:#069446;
+        color: var(--p-color);
         margin-bottom: 20px;
         width:300px;
-        border: 2px solid #069446;
+        border: 2px solid var(--p-color);
         padding: 20px;
         cursor:pointer;
     }
     .ranking-card.active {
-        background-color: rgb(255, 238, 0);
+        background-color: var(--s-color);
 
     }
     .ranking-card .name {
@@ -241,8 +241,8 @@
         width:700px;
     }
     .ranking table thead{
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         font-weight: 700;
     }
     .ranking table tbody tr {
@@ -282,13 +282,13 @@
     
     .ranking-pos {
         font-size: 30px;
-        color:#069446;
+        color: var(--p-color);
     }
     .ranking-actions button {
         padding: 5px 6px;
         font-weight: 600;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color:var(--s-color);
         border: none;
         border-radius: 4px;
         cursor: pointer;
@@ -307,9 +307,9 @@
         margin-right: 5px;
     }
     .pagination .link.active {
-        background-color: #069446;
-        color:rgb(255, 238, 0);
-        border: 1px solid rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color:var(--s-color);
+        border: 1px solid var(--s-color);
     }
     .users .actions {
         width:100%;
@@ -363,15 +363,15 @@
             justify-content: center;
         }
         .ranking table td.ranking-pos {
-            background-color: rgb(255, 238, 0);
-            border:2px solid #069446;
+            background-color: var(--s-color);
+            border:2px solid var(--p-color);
         }
         .winners {
             margin-top: 40px;
         }
         .ranking-name.winner {
-            background-color: rgb(255, 238, 0);
-            border:2px solid #069446;
+            background-color: var(--s-color);
+            border:2px solid var(--p-color);
         }
     }
 </style>

@@ -31,7 +31,7 @@
         <div class="menu-title">Menu</div>
         
         <div class="links">
-            <router-link to="/bolao/admin/cards" @click="this.$parent.menuActive = 'cards'">
+            <router-link to="/bolaodefutebol/admin/cards" @click="this.$parent.menuActive = 'cards'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'cards' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -40,7 +40,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolao/admin/card-create" @click="this.$parent.menuActive = 'card-create'">
+            <router-link to="/bolaodefutebol/admin/card-create" @click="this.$parent.menuActive = 'card-create'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'cardCreate' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -49,7 +49,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolao/admin/custom" @click="this.$parent.menuActive = 'cuustom'">
+            <router-link to="/bolaodefutebol/admin/custom" @click="this.$parent.menuActive = 'cuustom'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'custom' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -58,7 +58,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolao/admin/user-bets" @click="this.$parent.menuActive = 'user-bets'">
+            <router-link to="/bolaodefutebol/admin/user-bets" @click="this.$parent.menuActive = 'user-bets'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'user-bets' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -67,7 +67,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolao/admin/user-ranking" @click="this.$parent.menuActive = 'user-rankinf'">
+            <router-link to="/bolaodefutebol/admin/user-ranking" @click="this.$parent.menuActive = 'user-rankinf'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'ranking' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -76,7 +76,16 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolao/admin/account" @click="this.$parent.menuActive = 'account'">
+            <router-link to="/bolaodefutebol/admin/config" @click="this.$parent.menuActive = 'config'">
+                <div 
+                  class="link" 
+                  :style="this.$route.name === 'config' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
+                >
+                    Configurações
+                </div>
+            </router-link>
+
+            <router-link to="/bolaodefutebol/admin/account" @click="this.$parent.menuActive = 'account'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'account' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -92,10 +101,10 @@
     nav {
         width:100%;
         height: 100%;
-        background-color: #069446;
+        background-color: var(--p-color);
     }
     nav .menu-title {
-        color:rgb(255, 238, 0);
+        color: var(--s-color);
         font-size: 20px;
         font-weight: 700;
         width:100%;
@@ -111,7 +120,7 @@
     nav .link {
         width: 100%;
         padding:10px 0px;
-        background-color: rgb(255, 238, 0);
+        background-color: var(--s-color);
         text-align: center;
         color:#000;   
     }
@@ -138,14 +147,14 @@
         width:30px;
         margin-bottom: 5px;
         height: 4px;
-        background-color: #069446;
+        background-color: var(--p-color);
         border-radius: 2px;
     }
     nav .close{
         position:absolute;
         top:10px;
         left:10px;
-        color:rgb(216, 202, 0);
+        color:var(--s-color);
         display:none;
 
     } 

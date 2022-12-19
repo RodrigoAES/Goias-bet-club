@@ -23,7 +23,7 @@
     .success-info {
         background-color: #fff;
         padding: 30px;
-        border: 4px solid #069446;
+        border: 4px solid var(--p-color);
         border-radius: 20px;
         position: relative;
     }
@@ -32,11 +32,11 @@
         font-weight: 700;
     }
     .info span {
-        color: #069446;
+        color: var(--p-color);
         margin-right: 10px;
     }
     .title-success {
-        color: #069446;
+        color: var(--p-color);
         font-size: 26px;
         font-weight: 700;
         width: 100%;    
@@ -64,14 +64,14 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         border:none;
         border-radius: 5px;
         margin: auto;
     }
     .buttons-success button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
         transform: scale(1.1);
     }
     .message {

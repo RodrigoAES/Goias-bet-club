@@ -36,6 +36,7 @@
                 
                 body.append('name', this.name);
                 body.append('email', this.email);
+                body.append('phone', this.phone);
                 body.append('password', this.password);
                 body.append('password_confirmation', this.password_confirmation);
 
@@ -253,7 +254,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        border:4px solid #069446;
+        border:4px solid var(--p-color);
         padding: 30px 40px;
         width:400px;
         background-color: #fff;
@@ -286,12 +287,12 @@
     }
     .form-account .buttons button {
         margin-top: 40px;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         cursor: pointer;
     }
     .form-account .buttons button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
         transform: scale(1.1);
     }
 

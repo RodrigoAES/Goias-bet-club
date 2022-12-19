@@ -31,7 +31,7 @@
                 this.betSuccessOpened = false;
             },
             toUserCard: function(code) {
-                this.$router.push({path:`bolao/user-card/${code}`});
+                this.$router.push({path:`bolaodefutebol/user-card/${code}`});
             }
 
         },  
@@ -84,13 +84,16 @@
     <BetForm v-if="betFormOpened" :card="this.betFormCard"/>
     <BetSuccess v-if="betSuccessOpened" :response="betResponse" />
 
-    <div class="home-page" :style="`background-image: url('${this.$root.asset}assets/images/stadiumY.jpg')`">
+    <div class="home-page" :style="`background-image: url(${this.$root.asset}core/public/home_bg)`">
         <div class="content">
+            <div class="logo">
+                <img :src="`${this.$root.asset}core/public/logo`" alt="logo">
+            </div>
             <div class="consult">
-                <router-link to="/bolao/user-card">Consultar minhas cartelas</router-link>
+                <router-link to="/bolaodefutebol/user-card">Consultar minhas cartelas</router-link>
             </div>
             <div style="margin-top:20px" class="consult">
-                <router-link to="/bolao/ranking">Consultar Ranking</router-link>
+                <router-link to="/bolaodefutebol/ranking">Consultar Ranking</router-link>
             </div>
             <div class="anoucement">
                 É fácil participar, decida quem ganha ou se empata, foi o que mais acertou? <span>GANHOU!</span> 
@@ -98,6 +101,18 @@
 
             <div class="instruction">
                 Para inserir uma ou mais cartelas, clique no botão <span>Fazer Aposta</span> localizado abaixo da cartela. 
+            </div>
+
+            <div class="rules-title">Regulamentação</div>
+            <div class="rules">
+                <div 
+                    v-if="this.$root.rules"
+                    v-for="(rule, index) in this.$root.rules"
+                    class="rule"
+                >
+                    <span>{{index+1}}-</span>
+                    {{rule}}
+                </div>
             </div>
 
             <div class="cards">
@@ -202,6 +217,12 @@
         display:flex;
         justify-content: center;
     }
+    .home-page .logo img{
+        margin-top: -110px;
+        left: calc(50% - 60px);
+        position: absolute;
+        width:130px;
+    }
     .content {
         width:calc(100vw - 400px);
         min-height: 100vh;
@@ -215,11 +236,9 @@
         width: 100%;
         display: flex;
         justify-content: center;
-        
-    }
-    .consult:hover {
-        transform: scale(1.1);
-        margin:0
+        margin-top: 10px;
+        height: 40px;
+        margin-top: 40px;
     }
     .consult a {
         padding: 15px 20px;
@@ -227,15 +246,16 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         border:none;
         border-radius: 5px;
         margin: auto;
         text-decoration: none;
     }
     .consult a:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
+        transform: scale(1.1);
         
     }
     .anoucement {
@@ -245,7 +265,7 @@
 
     }
     .anoucement span {
-        color:#069446;
+        color:var(--p-color);
         font-weight: 700;
     }
     .instruction {
@@ -256,7 +276,7 @@
     }
     .instruction span {
         font-weight: 700;
-        color: #069446;
+        color: var(--p-color);
         font-size: 18px;
     }
     .cards {
@@ -268,7 +288,7 @@
         justify-content: center;
         font-size: 22px;
         font-weight: 700;
-        color: #069446;
+        color: var(--p-color);
     }
     .buttons-card {
         width:100%;
@@ -280,13 +300,13 @@
         font-size: 20px;
         font-weight: 600;
         border:none;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         border-radius: 6px;
         cursor: pointer;
     }
     .buttons-card button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
         transform: scale(1.1);
     }
     .price {
@@ -305,6 +325,37 @@
         font-weight: 600;
         margin-left: 15px;
         margin-bottom: 20px;
+    }
+    .rules-title {
+        margin-top: 40px;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    .home-page .rules {
+        border: 2px solid #888;
+        padding: 20px;
+        width:400px;
+        max-height: 250px;
+        overflow-y: scroll;
+    }
+    .home-page .rules::-webkit-scrollbar {
+        -webkit-appearance: none;
+        width:5px
+    }
+    .home-page .rules::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 50px;
+    }
+    .home-page .rules::-webkit-scrollbar-thumb:hover {
+        background-color: #777;
+    }
+    .home-page .rules .rule {
+        margin-bottom: 30px;
+    }
+    .home-page .rules .rule span {
+        font-size: 18px;
+        font-weight: 700;
     }
 
     @media (max-width: 420px) {
@@ -329,6 +380,17 @@
         }
         .buttons-card{
             margin-bottom: 20px;
+        }
+         
+        .home-page .rules {
+            width:300px;
+        }
+        .home-page .logo img{
+            top:180px;
+            
+        }
+        .consult {
+            margin-top: 100px;
         }
     }
 </style>

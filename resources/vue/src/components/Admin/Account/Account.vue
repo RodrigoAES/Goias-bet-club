@@ -156,8 +156,8 @@
         border: none;
         border-radius: 6px;
         padding:10px 20px;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         font-size: 16px;
         font-weight: 600;
         margin-top: 25px;
@@ -179,8 +179,8 @@
         width:900px;
     }
     #users table thead{
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         font-weight: 700;
     }
     #users table tr {
@@ -235,13 +235,13 @@
         #users table tr {
             display:flex;
             flex-direction: column;
-            border:2px solid #069446;
+            border:2px solid var(--p-color);
             margin-bottom: 10px;
             font-weight: 600;
         }
         #users table tr .mobile-title {
             font-weight: 700;
-            color:#069446
+            color: var(--p-color)
         }
         #users table .actions {
             justify-content: center;

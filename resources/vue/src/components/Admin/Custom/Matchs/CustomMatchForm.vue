@@ -301,7 +301,7 @@
     .match-form {
         padding: 40px 40px 10px 40px;
         background-color: #fff;
-        border:4px solid #069446;
+        border:4px solid var(--p-color);
         border-radius: 12px;
         position: relative;
     }
@@ -415,13 +415,13 @@
         border-radius: 4px;
     }
     .match-form .buttons button {
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         cursor:pointer;
         margin-bottom:none;
     }
     .match-form .buttons button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
         transform: scale(1.1);
     }  
     .match-form .danger {

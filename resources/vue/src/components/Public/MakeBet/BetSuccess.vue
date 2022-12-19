@@ -22,7 +22,17 @@
             <div class="info phone"><span>Celular:</span>{{response.phone}}</div>
             <div class="info created_at"><span>Data:</span>{{date}}</div>
             <div class="buttons-success">
-            <button @click="this.$parent.toUserCard(response.code); this.$parent.betSuccessOpened = false">Ver Cartela</button>
+                <button @click="this.$parent.toUserCard(response.code); this.$parent.betSuccessOpened = false">Ver Cartela</button>
+                <a 
+                    :href="
+                        `http://api.whatsapp.com/send?1=pt_BR&phone=55${this.$root.phone}`+
+                        `&text=Olá meu nome é ${response.name} e o código da minha cartela é ${response.code}`
+                    "
+                    target="_blank"
+                >
+                    Efetuar pagamento
+                    <img :src="`${this.$root.asset}assets/icons/whatsapp.png`" alt="">
+                </a>
             </div>
         </div>
     </div>
@@ -79,11 +89,25 @@
         border-radius: 5px;
         margin: auto;
     }
-    .buttons-success button:hover {
-        background-color: #09a750;
-        transform: scale(1.1);
-    }
     .message {
         margin-bottom: 6px;
+    }
+    .buttons-success a {
+        display: flex;
+        align-items: center;
+        padding: 4px 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        background-color: #069446;
+        color:rgb(255, 238, 0);
+        border:none;
+        border-radius: 5px;
+        margin: auto;
+        text-decoration: none;
+    }
+    .buttons-success a img {
+        width:30px;
+        margin-left: 5px;
     }
 </style>

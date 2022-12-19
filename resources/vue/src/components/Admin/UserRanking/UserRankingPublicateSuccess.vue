@@ -20,7 +20,7 @@
     .confirm {
         background-color: #fff;
         padding: 40px;
-        border: 4px solid #069446;
+        border: 4px solid var(--p-color);
         border-radius: 20px;
     }
     .message {
@@ -32,8 +32,8 @@
         margin-top: 40px;
     }
     .confirm .buttons button.confirm {
-        background-color: #069446;
-        color: rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         cursor: pointer;
         margin-right: 30px;
     }

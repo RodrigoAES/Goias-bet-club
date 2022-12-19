@@ -525,14 +525,14 @@
         border: none;
         border-radius: 6px;
         padding:10px 20px;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
     }
     #card .buttons button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
         transform: scale(1.1);
     }
     .line {

@@ -13,9 +13,16 @@ use App\Http\Controllers\PublicBetController;
 use App\Http\Controllers\UserCardController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\RankingController;
+use App\Http\Controllers\AdminOptsController;
+use App\Http\Controllers\SiteConfigController;
+use App\Http\Controllers\APIFootballController;
 
 use App\Helpers\GazetaBrasileiraoScrapHelper;
 
+use App\Helpers\APIFootballHelper;
+
+
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,6 +33,10 @@ use App\Helpers\GazetaBrasileiraoScrapHelper;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('test', function() {
+    APIFootballHelper::requestMatch();
+});
 
 // Admin 401
 Route::get('401', function(){
@@ -59,6 +70,11 @@ Route::get('card/{code}', [UserCardController::class, 'getCard']);
 Route::get('ranking/cards', [RankingController::class, 'publicRankingCards']);
 Route::get('ranking/{id}', [RankingController::class, 'getRanking']);
 
+// Site config options
+Route::get('config', [SiteConfigController::class, 'getOpts']);
+
+Route::get('admin/validate-receipt/{id}', [AdminController::class, 'validateReceipt'])->name('receipt.validate');
+
 Route::middleware(['auth:api'])->group(function () {
     //Auth
     Route::post('admin/auth/logout', [AdminAuthController::class,'logout']);
@@ -85,6 +101,7 @@ Route::middleware(['auth:api'])->group(function () {
     // Admin Panel user bets
     Route::get('admin/user-bets', [AdminController::class, 'userBets']);
     Route::post('admin/validate', [AdminController::class, 'validateCard']);
+    Route::get('admin/user-receipt/{id}', [AdminController::class, 'generateReceipt']);
     Route::put('admin/user-card/{id}', [AdminController::class, 'updateUserCard']);
     Route::delete('admin/user-card/{id}', [AdminController::class, 'deleteUserCard']);
     Route::get('admin/search-user-card/{q}', [AdminController::class, 'searchUserCard']);
@@ -110,5 +127,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('admin/team/{id}', [CustomController::class, 'updateTeam']);
     Route::delete('admin/team/{id}', [CustomController::class, 'deleteTeam']);
 
+    // Admin options site-config
+    Route::post('admin/options', [AdminOptsController::class, 'updateOpts']);
+
+    // API-FOOTBALL
+    Route::get('admin/api-football/search', [APIFootballController::class, 'search']);
 });
 

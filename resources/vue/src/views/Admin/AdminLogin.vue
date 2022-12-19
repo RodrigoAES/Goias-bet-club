@@ -101,7 +101,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        border: 3px solid #069446;
+        border: 3px solid var(--p-color);
         border-radius: 6px;
         padding: 20px;
     }
@@ -135,13 +135,13 @@
         font-size: 16px;
         font-weight: 600;
         margin-top: 20px;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         border-radius: 6px;
         cursor: pointer;
     }
     .form button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
         transform: scale(1.1);
     }
 

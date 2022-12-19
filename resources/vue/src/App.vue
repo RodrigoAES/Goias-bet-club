@@ -1,13 +1,31 @@
 <script>
 import { RouterLink, RouterView } from 'vue-router';
 
+
     export default {
         data() {
           return {
             loggedUser:null,
+
             userCardCode:null,
+
             asset:import.meta.env.VITE_ASSET,
             base:import.meta.env.VITE_BASE_URL,
+
+            phone:null,
+            rules:[],
+
+            logo:'',
+            siteName:'',
+            siteNameSecondColor:'',
+            homeBackground:'',
+
+
+            primaryColor:'#069446',
+            primaryColorHover:'#09a750',
+            secundaryColor:'rgb(255, 238, 0)',
+            nameColor1:'rgb(36, 36, 241)',
+            nameColor2:'#035528',
           }
         },
         methods: {
@@ -28,16 +46,47 @@ import { RouterLink, RouterView } from 'vue-router';
             }
         },
         async mounted() {
-            let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/auth/validate`, {
+            // site config
+            let request = await fetch(`${import.meta.env.VITE_BASE_URL}config`, {
+              method:'GET',
+            });
+
+            let json = await request.json();
+
+            if(json.status === 'success') {
+              this.phone = json.phone;
+              this.rules = json.rules ? json.rules : [];
+
+              this.logo = json.logo;
+              this.siteName = json.name;
+              this.nameColor1 = json.name_color_1;
+              this.nameColor2 = json.name_color_2;
+              this.homeBackground = json.home_bg;
+
+              this.primaryColor = json.p_color;
+              this.secundaryColor = json.s_color;
+            }
+
+            this.root = document.documentElement;
+            this.root.style.setProperty("--p-color", this.primaryColor);
+            this.root.style.setProperty("--p-color-h", this.primaryColorHover);
+            this.root.style.setProperty("--s-color", this.secundaryColor);
+            this.root.style.setProperty("--name-color", this.nameColor1);
+            this.root.style.setProperty("--name-color-s", this.nameColor2);
+            this.root.style.setProperty("--titles-color", this.titlesColor);
+            this.root.style.setProperty("--subtitles-color", this.subtitlesColor);
+
+            // Admin validate user
+            request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/auth/validate`, {
             method:'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('auth')}`
             }
             });
-            let response = await request.json();
+            json = await request.json();
 
-            if(response.authenticated) {
-                this.loggedUser = response.user;
+            if(json.authenticated) {
+                this.loggedUser = json.user;
             }
         }
     }
@@ -45,11 +94,10 @@ import { RouterLink, RouterView } from 'vue-router';
 
 <template>
   <header>
-        <router-link to="/bolao">
-            <img :src="`${asset}/assets/images/icon.png`" alt="incone bandeira do brasil" />
+        <router-link to="/bolaodefutebol">
+            <img :src="`${asset}core/public/logo`" alt="logo" />
         </router-link> 
-        
-        <div class="title">Bolão da copa <span>2022</span></div>
+        <div class="title-main" v-html="siteName"></div>
 
         <div class="right" >
             <button 
@@ -86,7 +134,7 @@ import { RouterLink, RouterView } from 'vue-router';
                 @click="logout"
                 class="logout"
             >
-                <img :src="`${asset}assets/images/logout.png`" alt="logout">
+                <img :src="`${asset}assets/images/logout.png`" alt="logout">  
             </button>
         </div>
   </header>
@@ -94,29 +142,30 @@ import { RouterLink, RouterView } from 'vue-router';
   <div id="app-body">
     <RouterView />
   </div>
-  
 
 </template>
 
-<style scoped>
+<style >
     header{
       display: flex;
       align-items: center;
       height: 70px;
-      background-color: rgb(252, 252, 63);
+      background-color:var(--s-color);
+      position: relative;
     }
-    header img {
-      width:80px;
+    header a img {
+      width: 60px;
       margin-left: 30px;
     }
-    .title {
+    .title-main {
       margin-left: 20px;
       font-family: Rubik Distressed;
       font-size: 25px;
-      color: rgb(36, 36, 241);
+      color: var(--name-color);
+      font-weight: 500;
     }
-    .title span {
-      color:#035528;
+    .title-main span {
+      color:var(--name-color-s);
       margin-left: 5px;
     }
 
@@ -138,8 +187,8 @@ import { RouterLink, RouterView } from 'vue-router';
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         border:none;
         border-radius: 5px;
     }
@@ -149,8 +198,8 @@ import { RouterLink, RouterView } from 'vue-router';
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      background-color: #069446;
-      color:rgb(255, 238, 0);
+      background-color: var(--p-color);
+      color: var(--s-color);
       border:none;
       border-radius: 5px;
       margin-left: -40px;
@@ -186,7 +235,7 @@ import { RouterLink, RouterView } from 'vue-router';
       font-size: 15px;
     }
     .right {
-      left:14%
+      left:0%
     }
     #app-body{
       min-height:calc(100vh - 70px);

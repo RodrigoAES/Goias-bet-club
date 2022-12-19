@@ -243,8 +243,8 @@
         border-collapse: collapse;
     }
     .user-bets thead{
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
     }
     .user-bets tbody {
         font-weight: 600;
@@ -303,8 +303,8 @@
         cursor: pointer;
     }
     .user-bets table td.actions button.open {
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
     }
     .user-bets table td.actions button.validate {
         background-color: #006ed4;
@@ -332,8 +332,8 @@
         border-radius: 6px;
     }
     .search button {
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         cursor: pointer;
         padding: 8px 15px;
         border:none;
@@ -357,9 +357,9 @@
         background-color: #ddd;
     }
     .page.active {
-        background-color: #069446;
-        color:rgb(255, 238, 0);
-        border-color: rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
+        border-color: var(--p-color);
     }
     
     @media (max-width:420px) {

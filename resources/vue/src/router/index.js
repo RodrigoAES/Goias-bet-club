@@ -8,6 +8,7 @@ import UserBets from '../components/Admin/UserBets/UserBets.vue';
 import UserRanking from '../components/Admin/UserRanking/UserRanking.vue';
 import Account from '../components/Admin/Account/Account.vue';
 import Custom from '../components/Admin/Custom/Custom.vue';
+import Config from '../components/Admin/SiteConfig/Config.vue';
 
 import Home from '../views/Public/Home.vue';
 import UserCard from '../views/Public/UserCard.vue';
@@ -18,13 +19,13 @@ const router = createRouter({
     routes: [
        
         {
-            path:'/bolao/admin/login',
+            path:'/bolaodefutebol/admin/login',
             name:'login',
             component: AdminLogin
         },
         {
-            path:'/bolao/admin',
-            redirect:'/bolao/admin/cards',
+            path:'/bolaodefutebol/admin',
+            redirect:'/bolaodefutebol/admin/cards',
             name:'AdminPanel',
             component: AdminPanel,
             children: [
@@ -54,6 +55,11 @@ const router = createRouter({
                     component: UserRanking,
                 }, 
                 {
+                    path:'config',
+                    name:'config',
+                    component: Config,               
+                },
+                {
                     path:'account',
                     name:'account',
                     component:Account,
@@ -62,17 +68,17 @@ const router = createRouter({
         },
         
         {
-            path: '/bolao',
+            path: '/bolaodefutebol',
             name: 'home',
             component: Home,
         },
         {
-            path: '/bolao/user-card/:code?',
+            path: '/bolaodefutebol/user-card/:code?',
             name: 'user-card',
             component: UserCard,
         },
         {
-            path:'/bolao/ranking',
+            path:'/bolaodefutebol/ranking',
             name:'publicRanking',
             component: PublicUserRanking,
         }

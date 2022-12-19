@@ -69,7 +69,7 @@
         justify-content: center;
         align-items: center;
         padding: 20px;
-        border:2px solid #069446;
+        border:2px solid var(--p-color);
         border-radius: 10px;
     }
     #championship-form .close {
@@ -101,14 +101,14 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        background-color: #069446;
-        color:rgb(255, 238, 0);
+        background-color: var(--p-color);
+        color: var(--s-color);
         border:none;
         border-radius: 5px;
         margin: auto;
         text-decoration: none;
     }
     #championship-form button:hover {
-        background-color: #09a750;
+        background-color: var(--p-color-h);
     }
 </style>

@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Models\User;
 use App\Models\Card;
@@ -14,6 +17,9 @@ use App\Models\UserCard;
 use App\Models\Bet;
 use App\Models\PublicRanking;
 use App\Models\Championship;
+use App\Models\Game;
+use App\Models\AdminOpt;
+use App\Models\Receipt;
 
 use App\Helpers\RequestAPIHelper;
 use App\Helpers\GazetaBrasileiraoScrapHelper;
@@ -21,6 +27,7 @@ use App\Helpers\GazetaBrasileiraoScrapHelper;
 class AdminController extends Controller
 {   
     public function __construct() {
+        return response()->json(Auth::user());
         if(! Auth::user()->active) {
             return response()->json([
                 'status' => 'error',
@@ -348,6 +355,120 @@ class AdminController extends Controller
             $response['error'] = 'Cartela inexistente.';
 
             return response()->json($response, 422);
+        }
+    }
+
+    public function generateReceipt($id) {
+        $user_card = UserCard::where('id', $id)
+            ->where('validated', true)
+        ->first();
+
+        if($user_card) {
+            if($user_card->card->championship === 'world-cup') {
+                $matchs = RequestAPIHelper::requestAllMatchs();
+                $matchs = $matchs->data;
+
+            } elseif($user_card->card->championship === 'brasileirao') {
+                $matchs = GazetaBrasileiraoScrapHelper::scrapRound($user_card->card->round);
+                $matchs = json_decode(json_encode($matchs));
+
+            } elseif(is_numeric($user_card->card->championship)) {
+                $championship = Championship::find($user_card->card->championship);
+                $matchs = $championship->matchs;
+            }
+
+            foreach($user_card->bets as $bet) {
+                foreach($matchs as $match) {
+                    if($bet->match_id === $match->id) {
+                        $bet->match = $match;
+                    }
+                }
+            }
+
+            $data['date'] = date('d/m/Y H:i');
+            $data['user_card'] = $user_card;
+
+            $bets = json_encode($user_card->bets);
+
+            $receipt = Receipt::where('user_card_id', $user_card->id)
+                ->where('code', $user_card->code)
+            ->first();
+            if($receipt) {
+                $receipt->bets = $bets;
+
+            } else {
+                $receipt = Receipt::create([
+                    'user_card_id' => $user_card->id,
+                    'code' => $user_card->code,
+                    'bets' => $bets,
+                    'name' => $user_card->name,
+                    'phone' => $user_card->phone,
+                ]);
+            }
+
+            $data['signature']['duplicate'] = URL::temporarySignedRoute('receipt.validate', now()->addMonths(4) ,[
+                'id' => $receipt->id,
+            ]);
+
+            ini_set('max_execution_time', 300);
+            $pdf = PDF::loadView('CardReceipt', $data);
+            
+            return $pdf->download('comprovante.pdf');
+        }
+
+        
+    }
+
+    public function validateReceipt($id, Request $request) {
+        if($request->hasValidSignature()) {
+            $receipt = Receipt::find($id);
+
+            if($receipt) {
+                $receipt->bets = json_decode($receipt->bets);
+
+                $user_card = UserCard::where('id', $receipt->user_card_id)
+                    ->where('validated', true)
+                ->first();
+                if($user_card) {
+                    if($user_card->card->championship === 'world-cup') {
+                        $matchs = RequestAPIHelper::requestAllMatchs();
+                        $matchs = $matchs->data;
+        
+                    } elseif($user_card->card->championship === 'brasileirao') {
+                        $matchs = GazetaBrasileiraoScrapHelper::scrapRound($user_card->card->round);
+                        $matchs = json_decode(json_encode($matchs));
+        
+                    } elseif(is_numeric($user_card->card->championship)) {
+                        $championship = Championship::find($user_card->card->championship);
+                        $matchs = $championship->matchs;
+                    }
+
+                    foreach($receipt->bets as $bet) {
+                        foreach($matchs as $match) {
+                            if($bet->match_id === $match->id) {
+                                $bet->match = $match;
+                            }
+                        }
+                    }
+
+                    $user_card->bets = $receipt->bets;
+
+                    $data['date'] = date('d/m/Y H:i', strtotime($receipt->created_at));
+                    $data['user_card'] = $user_card;
+
+                    $data['signature'] = URL::temporarySignedRoute('receipt.validate', now()->addMonths(4) ,[
+                        'id' => $receipt->id,
+                    ]);
+                    
+                    ini_set('max_execution_time', 300);
+                    $pdf = PDF::loadView('CardReceipt', $data);
+                    
+                    return $pdf->download('comprovante.pdf');
+                }
+            }
+
+        } else {
+            return redirect()->route('401');
         }
     }
 
