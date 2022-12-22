@@ -2,6 +2,12 @@
     import CardCreateForm from './CardCreateForm.vue'; 
     import CardCreateRound from './CardCreateRound.vue';
 
+    import Loading from '../../../Loading.vue';
+
+    import Country from './API-Football-components/Country.vue';
+    import League from './API-Football-components/League.vue';
+    import Team from './API-Football-components/Team.vue';
+
     export default {
         data() {
             return {
@@ -20,6 +26,13 @@
                 championship:null,
                 championships:[],
                 roundOpened:false,
+
+                APIFootballSearchQuery:'',
+                APIFootballSearchLoading:false,
+                APIFootballSearchFilter:'current',
+                countries:null,
+                leagues:null,
+                teams:null,
             }
         },
         methods:{
@@ -40,7 +53,6 @@
                 if(endtime) {
                     endtime = endtime.split('T');
                     endtime = `${endtime[0]} ${endtime[1]}`;
-                    console.log(endtime);
                     body.append('endtime', endtime);
 
                 } else {
@@ -100,7 +112,8 @@
                 this.matches = json.matches;
             }, 
             requestCustomChampMatchs:async function() {
-                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/championship/${this.championship}`, {
+                let championship = this.championship.split('-')[1];
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/championship/${championship}`, {
                     method:'GET',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('auth')}`
@@ -111,6 +124,69 @@
 
                 if(json.status === 'success') {
                     this.matches = json.matchs;
+                }
+            },
+            APIFootballSearch:async function() {
+                if(this.APIFootballSearchQuery.trim() != '') {
+                    this.APIFootballSearchLoading = true;
+
+                    this.matches = null;
+                    this.countries = null;
+                    this.leagues = null;
+                    this.teams = null;
+
+                    let filter = this.APIFootballSearchFilter;
+                    let originalQuery = this.APIFootballSearchQuery;
+
+                    async function searchRequest(query) {
+                        let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/api-football/search${filter === 'all' ? '/false/' : ''}?q=${query}`, {
+                            method:'GET',
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('auth')}`
+                            }
+                        });
+                        let json = await request.json();
+
+                        return json;
+                    }
+
+                    async function searchQueryToEnglish(query) {
+                        let request = await fetch(`https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=en&api-version=3.0&from=pt-br&profanityAction=NoAction&textType=plain`, {
+                            method: 'POST',
+                            headers: {
+                                'content-type': 'application/json',
+                                'X-RapidAPI-Key': '6e64059c43msh880a092c33ffec8p13d910jsn08fc535cb6c1',
+                                'X-RapidAPI-Host': 'microsoft-translator-text.p.rapidapi.com'
+                            },
+                            body: `[{"Text":"${query}"}]`
+                        });
+
+                        let json = await request.json();
+
+                        return json[0].translations[0].text;
+                    }
+
+                    let enQuery = await searchQueryToEnglish(originalQuery);
+
+                    let json = await searchRequest(enQuery);
+
+                    if(json.status === 'success') {
+                        if(
+                            json.results.countries.length === 0 
+                            && json.results.leagues.length === 0 
+                            && json.results.teams.length === 0 
+                        ) {
+                            json = await searchRequest(originalQuery);
+                        }
+
+                        if(json.status === 'success') {
+                            this.countries = json.results.countries;
+                            this.leagues = json.results.leagues;
+                            this.teams = json.results.teams;
+
+                            this.APIFootballSearchLoading = false;
+                        }
+                    }  
                 }
             }
         },
@@ -126,6 +202,13 @@
         components: {
             CardCreateForm,
             CardCreateRound,
+
+            Loading,
+
+            // API Footaball
+            Country,
+            League,
+            Team,
         },  
         watch:{
             championship(value, oldValue) {
@@ -137,10 +220,19 @@
                     this.matches = null;
                     this.roundOpened = true;
 
-                } else {
+                } else if(value.indexOf('custom') > -1) {
                     this.matches = null;
                     this.requestCustomChampMatchs();
-                }
+
+                } else if (value.indexOf('api') > -1) {
+
+                } 
+            },
+            APIFootballSearchFilter() {
+                this.countries = null;
+                this.leagues = null;
+                this.teams = null;
+                this.matchs = null;
             }
         },
         async mounted() {
@@ -175,23 +267,87 @@
         <div id="next-matches">
             <div class="matches">
                 <div class="head">
-                    <div class="title">Próximas partidas</div>
-                    <div class="switch-championship">
-                        <select class="select" v-model="championship">
-                            <option value="world-cup">Copa do Mundo 2022</option>
-                            <option value="brasileirao">Brasileirão</option>
+                    <div class="championship">
+                        <div class="title">Próximas partidas</div>
+                        <div class="switch-championship">
+                            <select class="select" v-model="championship">
+                                <option value="world-cup">Copa do Mundo 2022</option>
+                                <option value="brasileirao">Brasileirão</option>
+                                <option 
+                                    v-for="champ in championships" 
+                                    :value="`${champ.type === 'custom' ? 'custom' : champ.type === 'api-football' ? 'api' : null}-${champ.id}`"
+                                >
+                                    {{champ.name}}
+                                </option>
+                            </select>    
+                        </div>
+                    </div>
+                    
+                    <div class="search">
+                        <div class="search-filter">
+                            Filtro:
+                            <select v-model="APIFootballSearchFilter">
+                                <option value="current">Em andamento</option>
+                                <option value="all">Todos</option>
+                            </select>
+                        </div>
+                        
 
-                            <option 
-                                v-for="champ in championships" 
-                                :value="champ.id"
-                            >
-                                {{champ.name}}
-                            </option>
+                        <div class="search-action">
+                            <input 
+                                v-model="APIFootballSearchQuery"
+                                @keyup.enter="APIFootballSearch"
+                                type="text" 
+                                placeholder="Pesquisar..."
+                            />
+                            
+                            <button @click="APIFootballSearch">
+                                {{! APIFootballSearchLoading ? 'Buscar' : ''}}
+                                <Loading 
+                                    v-if="APIFootballSearchLoading"
+                                    :size="15"
+                                />
+                            </button>
+                        </div>
+                        
+                    
+                    </div>
+                </div>
 
-                        </select>    
+                <div class="search-results">
+                    <div v-if="countries && countries.length > 0" class="countries">
+                        <div class="subtitle">Países</div>
+                        <Country 
+                            v-for="country in countries"
+                            :country="country" 
+                            :filter="APIFootballSearchFilter"   
+                            @addMatch="addMatch"                    
+                        />
+                    </div>
+                    
+                    <div v-if="leagues && leagues.length > 0" class="leagues">
+                        <div class="subtitle">Ligas/Copas</div>
+                        <League
+                            v-for="league in leagues"
+                            :league="league" 
+                            :filter="APIFootballSearchFilter"  
+                            @addMatch="addMatch"                     
+                        />
+                    </div>
+
+                    <div v-if="teams && teams.length > 0" class="teams-result">
+                        <div class="subtitle">Times/Seleções</div>
+                        <Team
+                            v-for="team in teams"
+                            :team="team" 
+                            :filter="APIFootballSearchFilter" 
+                            @addMatch="addMatch"                     
+                        />
                     </div>
                 </div>
                 
+                
+
                 <div v-if="matches" v-for="match in matches" class="match" @click="addMatch(match)">
                     <div class="info">
                         <div class="team home">
@@ -217,14 +373,14 @@
                                     class="custom" 
                                 />
                             </div>
-                            <div class="score home">{{match.home_score}}</div>
+                            <div class="score home">{{match.home_score ? match.home_score : 0}}</div>
                         </div>
                         
                         
                         <div class="x">X</div>
     
                         <div class="team away">
-                            <div class="score away">{{match.away_score}}</div>
+                            <div class="score away">{{match.away_score ? match.away_score : 0}}</div>
                             <div class="flag">
                                 <img 
                                     v-if="championship === 'world-cup'" 
@@ -300,14 +456,14 @@
                                         class="custom" 
                                     />
                                 </div>
-                                <div class="score home">{{match.home_score}}</div>
+                                <div class="score home">{{match.home_score ? match.home_score : 0}}</div>
                             </div>
                             
                             
                             <div class="x">X</div>
         
                             <div class="team away">
-                                <div class="score away">{{match.away_score}}</div>
+                                <div class="score away">{{match.away_score ? match.away_score : 0}}</div>
                                 <div class="flag">
                                     <img 
                                         v-if="championship === 'world-cup'" 
@@ -344,7 +500,7 @@
                                 
                                 <span>{{match.group}}</span>
                             </div>
-                            <div class="finished">Terminada: <span>{{match.finished === 'FALSE' ? 'NÂO' : 'SIM'}}</span></div>
+                            <div class="finished">Terminada: <span>{{match.finished ? 'SIM' : 'NÃO'}}</span></div>
                             <div class="datetime">Data: <span>{{match.datetime}}</span></div>
                         </div>  
                     </div>
@@ -363,6 +519,64 @@
     #create-card {
         display:flex;
         width:100%;
+    }
+    #create-card .head{
+        display: flex;
+        flex-direction: column;
+    }
+    #create-card .head .championship {
+        display:flex;
+        align-items: center;
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+    #create-card .head .search {
+        position: relative;
+        left: 0;
+        width:100%;
+        display:flex;
+        flex-direction: column;
+        width:100%;
+    }
+    #create-card .head .search-action {
+        display:flex;
+        align-items: center;
+        justify-content: flex-start;
+        width:100%;
+    }
+    #create-card .head .search-action button {
+        width:72px;
+        display:flex;
+        justify-content: center;
+    }
+    #create-card .head .search-filter {
+        position: relative;
+        width:100%;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+    #create-card .head .search-filter select {
+        outline: none;
+        padding:2px 5px;
+        border:1px solid #888;
+        border-radius: 4px;
+    }
+    #create-card .head .search input {
+        width:300px;
+    }
+    #create-card .search-results {
+        margin-top: 20px;
+    }
+    #create-card .search-results .subtitle{
+        font-weight: 600;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    #create-card .search-results .leagues {
+        margin-top: 20px;
+    }
+    #create-card .search-results .teams-result {
+        margin-top: 20px;
     }
     .matches {
         padding:20px;
@@ -492,6 +706,17 @@
         font-size: 18px;
         font-weight: 700;
         margin-bottom: 15px;
+    }
+    #card .match .flag img{
+        max-width: 80%;
+        max-height: 80%;
+    }
+    #card .match .flag img.brasileirao {
+        max-width: 40px;
+        max-height: 40px;
+    }
+    #card .match .flag img.custom {
+        max-width: 80%;
     }
     #card .info {
         position: relative;

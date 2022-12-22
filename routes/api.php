@@ -131,6 +131,18 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('admin/options', [AdminOptsController::class, 'updateOpts']);
 
     // API-FOOTBALL
-    Route::get('admin/api-football/search', [APIFootballController::class, 'search']);
+    //-search
+    Route::get('admin/api-football/search/{current?}', [APIFootballController::class, 'search']);
+
+    //-leagues by country
+    Route::get('admin/api-football/country-leagues/{code}/{current?}', [APIFootballController::class, 'leguesByCountry']);
+
+    //-matchs by league
+    Route::get('admin/api-football/league-matchs/{league_id}/{current?}/{season?}/{between?}/{next?}/{round?}', [APIFootballController::class, 'matchsByLeague']);
+    //-matchs by team
+    Route::get('admin/api-football/team-matchs/{team_id}/{current?}/{between?}', [APIFootballController::class, 'matchsByTeam']);
+
+    // teams-by-country
+    Route::get('admin/api-football/league-teams/{league_id}/{season}', [APIFootballController::class, 'teamsByLeague']);
 });
 

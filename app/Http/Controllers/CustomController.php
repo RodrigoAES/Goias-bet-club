@@ -54,7 +54,10 @@ class CustomController extends Controller
             return response()->json($response, 422);
         }
 
-        $response['championship'] = Championship::create($validator->validated());
+        $data = $validator->validated();
+        $data['type'] = 'custom';
+
+        $response['championship'] = Championship::create($data);
         if($response['championship']) {
             $response['status'] = 'success';
             return response()->json($response, 200);
