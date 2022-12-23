@@ -26,13 +26,13 @@ class AdminBrasileiraoController extends Controller
         
         if($round) {
             foreach($round as $match) {
-                $datetime = explode(' ', $match['datetime']);
+                $datetime = explode(' ', $match->datetime);
                 $date = explode('-', $datetime[0]);
                 $date = "$date[2]/$date[1]/$date[0]";
                 $time = explode(':', $datetime[1]);
                 $time = "$time[0]:$time[1]";
     
-                $match['datetime'] = "$date $time";
+                $match->datetime = "$date $time";
             }
 
             $response['status'] = 'success';

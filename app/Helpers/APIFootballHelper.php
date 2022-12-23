@@ -3,9 +3,9 @@
 namespace App\Helpers;
 
 class APIFootballHelper {
-    public static function requestMatch() {
+    public static function requestMatch($id) {
 
-        $url = 'https://api-football-v1.p.rapidapi.com/v2/fixtures/live';
+        $url = "https://api-football-v1.p.rapidapi.com/v3/fixtures?id=$id";
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -20,8 +20,49 @@ class APIFootballHelper {
         curl_close($curl);
         $response = json_decode($response);
 
-        dd($response);
+        $match = $response->response[0];
 
+        $finished = $match->fixture->status->long === 'Match Finished' ? true : false;
+    
+        if($finished) {
+            $home_score = $match->score->fulltime->home;
+            $away_score = $match->score->fulltime->away;
+
+        } else {
+            $home_score = $match->goals->home;
+            $away_score = $match->goals->away;
+
+            if(
+                $match->score->extratime->home != null 
+                && $match->score->extratime->away != null
+            ) {
+                $home_score = $home_score - $match->score->extratime->home;
+                $away_score = $away_score - $match->score->extratime->away;
+            }
+
+            if(
+                $match->score->penalty->home != null
+                && $match->score->penalty->away != null
+            ) {
+                $home_score = $home_score - $match->score->penalty->home;
+                $away_score = $away_score - $match->score->penalty->away;
+            }
+        }
+
+        $match = [
+            'id' => $match->fixture->id,
+            'datetime' => date('d/m/Y H:i',strtotime($match->fixture->date)),
+            'finished' => $finished,
+            'home_name' => $match->teams->home->name,
+            'away_name' => $match->teams->away->name,
+            'home_flag' => $match->teams->home->logo,
+            'away_flag' => $match->teams->away->logo,
+            'home_score' => $home_score,
+            'away_score' => $away_score,
+            'src' => 'API_FOOTBALL'
+        ];
+
+        return json_decode(json_encode($match));
     }
 
     public static function search($q, $current) {
@@ -168,6 +209,7 @@ class APIFootballHelper {
                         'away_flag' => $match->teams->away->logo,
                         'home_score' => $home_score,
                         'away_score' => $away_score,
+                        'src' => 'API_FOOTBALL'
     
                     ];
                 }
@@ -284,7 +326,6 @@ class APIFootballHelper {
         curl_close($curl);
         $response = json_decode($response);
 
-        return $response;
         $results = [];
         if(is_array($response->errors) && count($response->errors) === 0 && $response->results > 0) {
             foreach($response->response as $result) {
@@ -339,6 +380,7 @@ class APIFootballHelper {
                 'away_flag' => $match->teams->away->logo,
                 'home_score' => $home_score,
                 'away_score' => $away_score,
+                'src' => 'API_FOOTBALL'
             ];
         }
 
@@ -422,6 +464,7 @@ class APIFootballHelper {
                 'away_flag' => $match->teams->away->logo,
                 'home_score' => $home_score,
                 'away_score' => $away_score,
+                'src' => 'API_FOOTBALL'
             ];
         }
 

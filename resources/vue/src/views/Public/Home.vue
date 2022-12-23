@@ -140,52 +140,22 @@
                                 <div class="team-name">{{match.home_name}}</div>
                                 <div class="flag">
                                     <img 
-                                        v-if="card.championship === 'world-cup'" 
-                                        :src="match.home_flag" 
-                                        :alt="`${match.home_name} flag`" 
-                                    />
-
-                                    <img 
-                                        v-else-if="card.championship === 'brasileirao'" 
-                                        :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
-                                        :alt="match.home_name" 
-                                        class="brasileirao"
-                                    />
-        
-                                    <img 
-                                        v-else
                                         :src="match.home_flag"
-                                        :alt="match.home_name"
-                                        class="custom" 
+                                        :alt="match.home_name" 
                                     />
                                 </div>
-                                <div class="score home">{{match.home_score}}</div>
+                                <div class="score home">{{match.home_score ? match.home_score : 0}}</div>
                             </div>
                             
                             
                             <div class="x">X</div>
             
                             <div class="team away">
-                                <div class="score away">{{match.away_score}}</div>
+                                <div class="score away">{{match.away_score ? match.away_score : 0}}</div>
                                 <div class="flag">
                                     <img 
-                                        v-if="card.championship === 'world-cup'" 
-                                        :src="match.away_flag" 
-                                        :alt="`${match.away_name} flag`" 
-                                    />
-
-                                    <img 
-                                        v-else-if="card.championship === 'brasileirao'" 
-                                        :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
-                                        :alt="match.home_name" 
-                                        class="brasileirao"
-                                    />
-
-                                    <img 
-                                        v-else
                                         :src="match.away_flag"
                                         :alt="match.away_name"
-                                        class="custom" 
                                     />
                                 </div>
                                 <div class="team-name">{{match.away_name}}</div>
@@ -197,7 +167,7 @@
                             <div class="datetime">Data: <span>{{match.datetime}}</span></div>
                         </div>  
                     </div>
-                    <div class="price">R$ <span>{{card.price}},00</span></div>
+                    <div class="price">R$ <span>{{card.price.toFixed(2)}}</span></div>
                     <div class="buttons-card">
                         <button @click="makeBets(card)">Fazer Aposta</button>
                     </div>

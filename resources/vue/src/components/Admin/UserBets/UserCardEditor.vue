@@ -87,27 +87,12 @@
                             <div class="team-name">{{bet.match.home_name}}</div>
                             <div class="flag">
                                 <img 
-                                    v-if="userCard.card.championship === 'world-cup'" 
-                                    :src="bet.match.home_flag" 
-                                    :alt="`${bet.match.home_name} flag`" 
-                                />
-
-                                <img 
-                                    v-else-if="userCard.card.championship === 'brasileirao'" 
-                                    :src="`${this.$root.base}brasileirao/flag/${bet.match.home_flag}`" 
-                                    :alt="bet.match.home_name" 
-                                    class="brasileirao"
-                                />
-
-                                <img 
-                                    v-else
                                     :src="bet.match.home_flag"
                                     :alt="bet.match.home_name"
-                                    class="custom" 
                                 />
                             </div>
                             <div class="score home">
-                                <span v-if="userCard.card.type === 'common'">{{bet.match.home_score}}</span>
+                                <span v-if="userCard.card.type === 'common'">{{bet.match.home_score ? bet.match.home_score : 0}}</span>
 
                                 <input 
                                     v-if="userCard.card.type === 'detailed'"
@@ -124,7 +109,7 @@
         
                         <div class="team away">
                             <div class="score away">
-                                <span v-if="userCard.card.type === 'common'">{{bet.match.away_score}}</span>
+                                <span v-if="userCard.card.type === 'common'">{{bet.match.away_score ? bet.match.away_score : 0}}</span>
 
                                 <input 
                                     v-if="userCard.card.type === 'detailed'" 
@@ -137,26 +122,11 @@
                             </div>
                             <div class="flag">
                                 <img 
-                                    v-if="userCard.card.championship === 'world-cup'" 
-                                    :src="bet.match.away_flag" 
-                                    :alt="`${bet.match.away_name} flag`" 
-                                />
-
-                                <img 
-                                    v-else-if="userCard.card.championship === 'brasileirao'" 
-                                    :src="`${this.$root.base}brasileirao/flag/${bet.match.away_flag}`" 
-                                    :alt="bet.match.home_name" 
-                                    class="brasileirao"
-                                />
-
-                                <img 
-                                    v-else
                                     :src="bet.match.away_flag"
                                     :alt="bet.match.away_name"
-                                    class="custom" 
                                 />
                             </div>
-                            <div class="team-name">{{bet.match.away_name}}</div>
+                            <div class="team-name">{{bet.match.away_name ? bet.match.away_name : 0}}</div>
                         </div>
                     </div>
                     <div v-if="userCard.card.type === 'common'" class="bet-buttons">
@@ -177,7 +147,7 @@
                     </div>
                     <div class="date-group-info">
                         <div class="group">Grupo <span>{{bet.match.group}}</span></div>
-                        <div class="finished">Terminada: <span>{{bet.match.finished === 'FALSE' ? 'NÂO' : 'SIM'}}</span></div>
+                        <div class="finished">Terminada: <span>{{bet.match.finished ? 'SIM' : 'NÃO'}}</span></div>
                         <div class="datetime">Data: <span>{{bet.match.datetime}}</span></div>
                     </div>  
                 </div>

@@ -40,7 +40,7 @@ class PublicBetController extends Controller
             $endtime = date_timestamp_get($endtime);
             
             if($endtime >= strtotime('now')) {
-                $card_matchs = explode(',', $card->matchs);
+                $card_matchs = explode(';', $card->matchs);
                 array_pop($card_matchs);
 
                 if(count($card_matchs) === count($data['bets'])) {
@@ -49,7 +49,14 @@ class PublicBetController extends Controller
                     }
                     
                     foreach($data['bets'] as $bet) {
-                        if(array_search($bet->match_id, $card_matchs) === false || !$bet->bet) {
+                        $inCard = false;
+                        foreach($card_matchs as $match) {
+                            $match = json_decode($match);
+                            if($bet->match_id === $match->id) {
+                                $inCard = true;
+                            }
+                        }
+                        if(!$inCard || !$bet->bet) {
                             $response['status'] = 'error';
                             $response['error'] = 'Cartela inválida ao sistema.';
                             
@@ -74,12 +81,15 @@ class PublicBetController extends Controller
                         'code' => substr(md5(time()), rand(0, 24), 6),
                         'created_at' => date('Y-m-d H:i:s', strtotime('now'))
                     ]);
+
                     if($response['user_card']) {
                         if($card->type === 'common') {
                             foreach($data['bets'] as $bet) {
                                 $bets[] = Bet::create([
                                     'user_card_id' => $response['user_card']->id,
                                     'match_id' => $bet->match_id,
+                                    'match_src' => $bet->match_src,
+                                    'match_round' => $bet->match_round,
                                     'bet' => $bet->bet,
                                 ]);
                             }
@@ -90,6 +100,8 @@ class PublicBetController extends Controller
                                 $bets[] = Bet::create([
                                     'user_card_id' => $response['user_card']->id,
                                     'match_id' => $bet->match_id,
+                                    'match_src' => $bet->match_src,
+                                    'match_round' => $bet->match_round,
                                     'home_score' => $bet->bet->home_score,
                                     'away_score' => $bet->bet->away_score,
                                 ]);

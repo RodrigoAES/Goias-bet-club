@@ -67,51 +67,21 @@
                         <div class="team-name">{{bet.match.home_name}}</div>
                         <div class="flag">
                             <img 
-                                v-if="userCard.card.championship === 'world-cup'" 
-                                :src="bet.match.home_flag" 
-                                :alt="`${bet.match.home_name} flag`" 
-                            />
-
-                            <img 
-                                v-else-if="userCard.card.championship === 'brasileirao'" 
-                                :src="`http://localhost:8000/api/brasileirao/flag/${bet.match.home_flag}`" 
-                                :alt="bet.match.home_name" 
-                                class="brasileirao"
-                            />
-
-                            <img 
-                                v-else
                                 :src="bet.match.home_flag"
-                                :alt="bet.match.home_name"
-                                class="custom" 
+                                :alt="bet.match.home_name" 
                             />
                         </div>
-                        <div class="score home">{{bet.match.home_score}}</div>
+                        <div class="score home">{{bet.match.home_score ? bet.match.home_score : 0}}</div>
                     </div>
                     
                     <div class="x">X</div>
     
                     <div class="team away">
-                        <div class="score away">{{bet.match.away_score}}</div>
+                        <div class="score away">{{bet.match.away_score ? bet.match.away_score : 0}}</div>
                         <div class="flag">
                             <img 
-                                v-if="userCard.card.championship === 'world-cup'" 
-                                :src="bet.match.away_flag" 
-                                :alt="`${bet.match.away_name} flag`" 
-                            />
-                        
-                            <img 
-                                v-else-if="userCard.card.championship === 'brasileirao'" 
-                                :src="`http://localhost:8000/api/brasileirao/flag/${bet.match.away_flag}`" 
-                                :alt="bet.match.home_name" 
-                                class="brasileirao"
-                            />
-
-                            <img 
-                                v-else
                                 :src="bet.match.away_flag"
                                 :alt="bet.match.away_name"
-                                class="custom" 
                             />
                         </div>
                         <div class="team-name">{{bet.match.away_name}}</div>
@@ -135,43 +105,15 @@
                     <span>Voce apostou:</span>
                     <span>
                         <img 
-                            v-if="userCard.card.championship === 'world-cup'" 
-                            :src="bet.match.home_flag" 
-                            :alt="`${bet.match.home_name} flag`" 
-                        />
-
-                        <img 
-                            v-else-if="userCard.card.championship === 'brasileirao'" 
-                            :src="`${this.$root.base}brasileirao/flag/${bet.match.home_flag}`" 
-                            :alt="bet.match.home_name" 
-                            class="brasileirao"
-                        />
-
-                        <img 
-                            v-else
                             :src="bet.match.home_flag"
                             :alt="bet.match.home_name"
-                            class="custom" 
-                        />
-                        {{bet.home_score}} X {{bet.away_score}}
-                        <img 
-                            v-if="userCard.card.championship === 'world-cup'" 
-                            :src="bet.match.away_flag" 
-                            :alt="`${bet.match.away_name} flag`" 
-                        />
-                    
-                        <img 
-                            v-else-if="userCard.card.championship === 'brasileirao'" 
-                            :src="`${this.$root.base}brasileirao/flag/${bet.match.away_flag}`" 
-                            :alt="bet.match.home_name" 
-                            class="brasileirao"
                         />
 
-                        <img 
-                            v-else
+                        {{bet.home_score ? bet.home_score : 0}} X {{bet.away_score ? bet.away_score : 0}}
+
+                        <img
                             :src="bet.match.away_flag"
                             :alt="bet.match.away_name"
-                            class="custom" 
                         />
                     </span>
                 </div>

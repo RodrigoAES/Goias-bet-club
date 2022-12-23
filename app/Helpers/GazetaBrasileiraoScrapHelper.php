@@ -3,6 +3,17 @@
 namespace App\Helpers;
 
 class GazetaBrasileiraoScrapHelper {
+
+    public static function match($round, $id) {
+        $matchs = GazetaBrasileiraoScrapHelper::scrapRound($round);
+
+        foreach($matchs as $match) {
+            if($match->id == $id) {
+                return $match;
+            }
+        }
+    }
+
     public static function scrapRound($round) {
         $file = file_get_contents('https://www.gazetaesportiva.com/campeonatos/brasileiro-serie-a/');
         $dom = new \DOMDocument('1.0', 'UTF-8');
@@ -13,11 +24,11 @@ class GazetaBrasileiraoScrapHelper {
         $xPath = new \DOMXPath($dom);
         $node_list = $xPath->query(".//*[contains(concat(' ',normalize-space(@class),' '),' rodadas_grupo_A_numero_rodada_$round ')]");
 
+        $matchs = [];
         foreach($node_list as $node) {
             foreach($node->childNodes as $key => $child) {
                 $childs[] = $xPath->query('.//*[contains(concat(" ",normalize-space(@class)," ")," table__games__item ")]', $child);
 
-                $matchs = [];
                 foreach($childs as $child) {
                     if($child->length > 0) {
                         foreach($child as $key => $li) {
@@ -67,7 +78,7 @@ class GazetaBrasileiraoScrapHelper {
                                     $matchs[$key]['home_name'] = $info->value;
                                 }
                                 if($index === 1) {
-                                     $matchs[$key]['home_flag'] = explode('/', $info->value)[6];
+                                     $matchs[$key]['home_flag'] = url('api/brasileirao/flag',explode('/', $info->value)[6]);
                                 }
                             }
                             $teams_away = $xPath->query('.//*[contains(concat(" ",normalize-space(@class)," ")," teams ")]//*[contains(concat(" ",normalize-space(@class)," ")," guest ")]//a', $li);
@@ -85,16 +96,23 @@ class GazetaBrasileiraoScrapHelper {
                                     $matchs[$key]['away_name'] = $info->value;
                                 }
                                 if($index === 1) {
-                                    $matchs[$key]['away_flag'] = explode('/', $info->value)[6];
+                                    $matchs[$key]['away_flag'] = url('api/brasileirao/flag',explode('/', $info->value)[6]);
                                 }
                             }
                             $matchs[$key]['group'] = $round; 
                             $matchs[$key]['id'] = $key;
+                            $matchs[$key]['src'] = 'Gazeta_Scrapper';
+                            $matchs[$key]['round'] = $round;
                         }
                     }
                 }
             }
         }
+
+        foreach($matchs as $key => $match) {
+            $matchs[$key] = json_decode(json_encode($match));
+        }
+
         return $matchs;
     }
 

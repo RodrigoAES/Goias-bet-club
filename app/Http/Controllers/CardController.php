@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\Card;
 use App\Models\Championship;
 use App\Models\UserCard;
+use App\Models\Game;
 
 use App\Helpers\RequestAPIHelper;
 use App\Helpers\GazetaBrasileiraoScrapHelper;
+use App\Helpers\APIFootballHelper;
 
 class CardController extends Controller
 {
@@ -20,67 +22,22 @@ class CardController extends Controller
 
         $cardsArray = [];
         foreach($cards as $card) {
-            if($card->championship === 'world-cup') {
-                $allMatchs = RequestAPIHelper::requestAllMatchs();
-
-            } elseif($card->championship === 'brasileirao') {
-                $allMatchs = GazetaBrasileiraoScrapHelper::scrapRound($card->round);
-                $allMatchs = ['data' => json_decode(json_encode($allMatchs))];
-                $allMatchs = json_decode(json_encode($allMatchs));
-
-            } elseif(is_numeric($card->championship)) {
-                $championship = Championship::find($card->championship);
-                $allMatchs = ['data' => $championship->matchs];
-                $allMatchs = json_decode(json_encode($allMatchs));
-            }
-
-
             $matchs = [];
-            foreach(explode(',', $card->matchs) as $matchId) {
-                foreach($allMatchs->data as $match) {
-                    if($match->id == $matchId) {
-                        if($card->championship === 'world-cup') {
-                            $datetime = explode(' ',$match->local_date);
-                            $date = explode('/', $datetime[0]);
-                            $date = "$date[2]-$date[0]-$date[1]";
-                            $time = $datetime[1];
+            $card_matchs = explode(';', $card->matchs);
+            array_pop($card_matchs);
 
-                            $timestamp = strtotime("$date $time");
+            foreach($card_matchs as $matchSource) {
+                $matchSource = json_decode($matchSource);
 
-                            $home_team = $match->home_team_en;
-                            $away_team = $match->away_team_en;
-                        }
-
-                        if($card->championship === 'brasileirao') {
-                            $timestamp = strtotime($match->datetime);
-
-                            $home_team = $match->home_name;
-                            $away_team = $match->away_name;
-                        }
-
-                        if(is_numeric($card->championship)) {
-                            $timestamp = strtotime($match->datetime);
-
-                            $home_team = $match->home_name;
-                            $away_team = $match->away_name;
-                        }
-                        
-                        $datetime = date('d/m/Y H:i', $timestamp);
-
-                        $matchs[] = [
-                            'id' => $match->id,
-                            'group' => $match->group,
-                            'datetime' => $datetime,
-                            'home_score' => $match->home_score,
-                            'away_score' => $match->away_score,
-                            'home_name' => $home_team,
-                            'away_name' => $away_team,
-                            'home_flag' => $match->home_flag,
-                            'away_flag' => $match->away_flag,
-                            'finished' => $match->finished,
-                        ];
-                    }
+                if($matchSource->src === 'API_FOOTBALL') {
+                    $match = APIFootballHelper::requestMatch($matchSource->id);
+                } else if ($matchSource->src === 'Gazeta_Scrapper') {
+                    $match = GazetaBrasileiraoScrapHelper::match($matchSource->round, $matchSource->id);
+                } else if($matchSource->src === 'Custom') {
+                    $match = Game::find($matchSource->id);
                 }
+
+                $matchs[] = $match;
             }
 
             $validated_cards = UserCard::where('card_id', $card->id)

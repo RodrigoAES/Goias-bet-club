@@ -69,8 +69,17 @@
                     body.append('round', this.round);
                 }
 
-                for(let i=0; i<this.cardMatchesIds.length; i++) {
-                    body.append('matchs[]', this.cardMatchesIds[i]);
+                for(let i=0; i < this.cardMatches.length; i++) {
+                    let round = false;
+                    if(this.cardMatches[i].src === 'Gazeta_Scrapper') {
+                        round = this.cardMatches[i].round;
+                    }
+                    body.append('matchs[]', JSON.stringify({
+                        id:this.cardMatches[i].id,
+                        src:this.cardMatches[i].src,
+                        round:round ? round : null
+                        
+                    }));
                 }
 
                 let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/card`, {
@@ -101,16 +110,6 @@
                     matchs:null,
                 }
             },
-            requestWorldCupMatchs:async function() {
-                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/matches`, {
-                method:'GET',
-                headers:{
-                    'Authorization': `Bearer ${localStorage.getItem('auth')}`
-                }
-            });
-                let json = await request.json();
-                this.matches = json.matches;
-            }, 
             requestCustomChampMatchs:async function() {
                 let championship = this.championship.split('-')[1];
                 let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/championship/${championship}`, {
@@ -190,15 +189,6 @@
                 }
             }
         },
-        computed:{
-            cardMatchesIds:function() {
-                let ids = [];
-                this.cardMatches.forEach((match)=>{
-                    ids.push(match.id);
-                });
-                return ids;
-            }
-        },
         components: {
             CardCreateForm,
             CardCreateRound,
@@ -212,16 +202,20 @@
         },  
         watch:{
             championship(value, oldValue) {
-                if(value === 'world-cup') {
+                if(value === 'brasileirao') {
                     this.matches = null;
-                    this.requestWorldCupMatchs();
+                    this.countries = null;
+                    this.leagues = null;
+                    this.teams = null;
 
-                } else if(value === 'brasileirao') {
-                    this.matches = null;
                     this.roundOpened = true;
 
                 } else if(value.indexOf('custom') > -1) {
                     this.matches = null;
+                    this.countries = null;
+                    this.leagues = null;
+                    this.teams = null;
+
                     this.requestCustomChampMatchs();
 
                 } else if (value.indexOf('api') > -1) {
@@ -232,7 +226,7 @@
                 this.countries = null;
                 this.leagues = null;
                 this.teams = null;
-                this.matchs = null;
+                this.matches = null;
             }
         },
         async mounted() {
@@ -354,23 +348,8 @@
                             <div class="team-name">{{match.home_name}}</div>
                             <div class="flag">
                                 <img 
-                                    v-if="championship === 'world-cup'" 
-                                    :src="match.home_flag" 
-                                    :alt="`${match.home_name} flag`" 
-                                />
-                                
-                                <img 
-                                    v-else-if="championship === 'brasileirao'" 
-                                    :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
-                                    :alt="match.home_name" 
-                                    class="brasileirao"
-                                />
-
-                                <img 
-                                    v-else
                                     :src="match.home_flag"
-                                    :alt="match.home_name"
-                                    class="custom" 
+                                    :alt="match.home_name" 
                                 />
                             </div>
                             <div class="score home">{{match.home_score ? match.home_score : 0}}</div>
@@ -383,23 +362,8 @@
                             <div class="score away">{{match.away_score ? match.away_score : 0}}</div>
                             <div class="flag">
                                 <img 
-                                    v-if="championship === 'world-cup'" 
-                                    :src="match.away_flag" 
-                                    :alt="`${match.away_name} flag`" 
-                                />
-
-                                <img 
-                                    v-else-if="championship === 'brasileirao'" 
-                                    :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
-                                    :alt="match.home_name" 
-                                    class="brasileirao"
-                                />
-
-                                <img 
-                                    v-else
                                     :src="match.away_flag"
                                     :alt="match.away_name"
-                                    class="custom" 
                                 />
                             </div>
                             <div class="team-name">{{match.away_name}}</div>
@@ -437,20 +401,6 @@
                                 <div class="team-name">{{match.home_name}}</div>
                                 <div class="flag">
                                     <img 
-                                        v-if="championship === 'world-cup'" 
-                                        :src="match.home_flag" 
-                                        :alt="`${match.home_name} flag`" 
-                                    />
-
-                                    <img 
-                                        v-else-if="championship === 'brasileirao'" 
-                                        :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
-                                        :alt="match.home_name" 
-                                        class="brasileirao"
-                                    />
-
-                                    <img 
-                                        v-else
                                         :src="match.home_flag"
                                         :alt="match.home_name"
                                         class="custom" 
@@ -466,20 +416,6 @@
                                 <div class="score away">{{match.away_score ? match.away_score : 0}}</div>
                                 <div class="flag">
                                     <img 
-                                        v-if="championship === 'world-cup'" 
-                                        :src="match.away_flag" 
-                                        :alt="`${match.away_name} flag`" 
-                                    />
-
-                                    <img 
-                                        v-else-if="championship === 'brasileirao'" 
-                                        :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
-                                        :alt="match.home_name" 
-                                        class="brasileirao"
-                                    />
-
-                                    <img 
-                                        v-else
                                         :src="match.away_flag"
                                         :alt="match.away_name"
                                         class="custom" 
@@ -537,6 +473,7 @@
         display:flex;
         flex-direction: column;
         width:100%;
+        z-index: 2;
     }
     #create-card .head .search-action {
         display:flex;
@@ -652,15 +589,8 @@
         align-items: center;
     }
     .match .flag img{
-        max-width: 70px;
-        max-height: 70px;
-    }
-    .match .flag img.brasileirao {
-        max-width: 40px;
-        max-height: 40px;
-    }
-    .match .flag img.custom {
         max-width: 80%;
+        max-height: 80%;
     }
     .match .home .score {
         font-weight: 700;

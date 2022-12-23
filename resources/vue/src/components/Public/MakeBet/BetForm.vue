@@ -14,65 +14,72 @@
             }
         },
         methods:{
-            bet: function(matchId, bet) {
-                let betExists = this.localizeBet(matchId);
+            bet: function(match, bet) {
+                let betExists = this.localizeBet(match.id);
 
                 if(betExists.length > 0) {
                     this.bets[this.bets.indexOf(betExists[0])].bet = bet
                     
                 } else {
+                    let round = match.src === 'Gazeta_Scrapper' ? match.round : null;
                     this.bets.push({
-                        match_id:matchId,
+                        match_id: match.id,
+                        match_src: match.src,
+                        match_round: round,
                         bet:bet
                     });
                 }
             }, 
-            betDetailed: function (matchId, team) {
+            betDetailed: function (match, team) {
                 if(team === 'home') {
-                    let input = document.querySelector(`input.home_score[data-key="${matchId}"]`);
+                    let input = document.querySelector(`input.home_score[data-key="${match.id}"]`);
 
                     if(input.value.length > 2) {
                         input.value = input.value.substring(0,2);
                     }
 
-                    let betExists = this.localizeBet(matchId);
+                    let betExists = this.localizeBet(match.id);
                     if(betExists.length > 0) {
                         this.bets[this.bets.indexOf(betExists[0])].bet.home_score = parseInt(input.value);
 
                     } else {
+                        let round = match.src === 'Gazeta_Scrapper' ? match.round : null;
                         this.bets.push({
-                            match_id:matchId,
+                            match_id: match.id,
+                            match_src: match.src,
+                            match_round:round,
                             bet: {
                                 home_score: parseInt(input.value),
-                                away_score:null,
+                                away_score: null,
                             }
                         });
                     }
                 }
             
                 if(team === 'away') {
-                    let input = document.querySelector(`input.away_score[data-key="${matchId}"]`);
+                    let input = document.querySelector(`input.away_score[data-key="${match.id}"]`);
 
                     if(input.value.length > 2) {
                         input.value = input.value.substring(0,2);
                     }
 
-                    let betExists = this.localizeBet(matchId);
+                    let betExists = this.localizeBet(match.id);
                     if(betExists.length > 0) {
                         this.bets[this.bets.indexOf(betExists[0])].bet.away_score = parseInt(input.value);
 
                     } else {
+                        let round = match.src === 'Gazeta_Scrapper' ? match.round : null;
                         this.bets.push({
-                            match_id:matchId,
+                            match_id:match.id,
+                            match_src:match.src,
+                            match_round:round,
                             bet: {
                                 home_score:null,
                                 away_score:parseInt(input.value),
                             }
                         });
                     }
-
                 }
-                
             },
             localizeBet: function(id) {
                 return this.bets.filter(bet => bet.match_id === id);
@@ -151,31 +158,16 @@
                             <div class="team-name">{{match.home_name}}</div>
                             <div class="flag">
                                 <img 
-                                    v-if="card.championship === 'world-cup'" 
-                                    :src="match.home_flag" 
-                                    :alt="`${match.home_name} flag`" 
-                                />
-
-                                <img 
-                                    v-else-if="card.championship === 'brasileirao'" 
-                                    :src="`${this.$root.base}brasileirao/flag/${match.home_flag}`" 
-                                    :alt="match.home_name" 
-                                    class="brasileirao"
-                                />
-    
-                                <img 
-                                    v-else
                                     :src="match.home_flag"
                                     :alt="match.home_name"
-                                    class="custom" 
                                 />
                             </div>
                             <div class="score home">
-                                <span v-if="card.type === 'common'">{{match.home_score}}</span>
+                                <span v-if="card.type === 'common'">{{match.home_score ? match.home_score : 0}}</span>
 
                                 <input 
                                     v-if="card.type === 'detailed'"
-                                    @input="betDetailed(match.id, 'home')"
+                                    @input="betDetailed(match, 'home')"
                                     type="number" 
                                     :data-key="match.id"
                                     class="home_score"
@@ -187,11 +179,11 @@
         
                         <div class="team away">
                             <div class="score away">
-                                <span v-if="card.type === 'common'">{{match.away_score}}</span>
+                                <span v-if="card.type === 'common'">{{match.away_score ? match.away_score : 0}}</span>
 
                                 <input 
                                     v-if="card.type === 'detailed'" 
-                                    @input="betDetailed(match.id, 'away')"
+                                    @input="betDetailed(match, 'away')"
                                     type="number" 
                                     :data-key="match.id"
                                     class="away_score"
@@ -199,23 +191,8 @@
                             </div>
                             <div class="flag">
                                 <img 
-                                    v-if="card.championship === 'world-cup'" 
-                                    :src="match.away_flag" 
-                                    :alt="`${match.away_name} flag`" 
-                                />
-
-                                <img 
-                                    v-else-if="card.championship === 'brasileirao'" 
-                                    :src="`${this.$root.base}brasileirao/flag/${match.away_flag}`" 
-                                    :alt="match.home_name" 
-                                    class="brasileirao"
-                                />
-
-                                <img 
-                                    v-else
                                     :src="match.away_flag"
                                     :alt="match.away_name"
-                                    class="custom" 
                                 />
                             </div>
                             <div class="team-name">{{match.away_name}}</div>
@@ -223,23 +200,23 @@
                     </div>
                     <div v-if="card.type === 'common'" class="bet-buttons">
                         <button
-                            @click="bet(match.id, 'victory')"
+                            @click="bet(match, 'victory')"
                             :class="bets.filter(bet => {return bet.match_id == match.id && bet.bet == 'victory' ? true : false}).length > -0 ? 'active' : null"
                         >Casa</button>
 
                         <button
-                            @click="bet(match.id, 'draw')"
+                            @click="bet(match, 'draw')"
                             :class="bets.filter(bet => {return bet.match_id == match.id && bet.bet == 'draw' ? true : false}).length > -0 ? 'active' : null"
                         >Empate</button>
 
                         <button
-                            @click="bet(match.id, 'loss')"
+                            @click="bet(match, 'loss')"
                             :class="bets.filter(bet => {return bet.match_id == match.id && bet.bet == 'loss' ? true : false}).length > -0 ? 'active' : null"
                         >Visitante</button>
                     </div>
                     <div class="date-group-info">
                         <div class="group">Grupo <span>{{match.group}}</span></div>
-                        <div class="finished">Terminada: <span>{{match.finished === 'FALSE' ? 'NÂO' : 'SIM'}}</span></div>
+                        <div class="finished">Terminada: <span>{{match.finished ? 'SIM' : 'NÃO'}}</span></div>
                         <div class="datetime">Data: <span>{{match.datetime}}</span></div>
                     </div>  
                 </div>
