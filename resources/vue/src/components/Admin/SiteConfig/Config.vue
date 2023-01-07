@@ -3,6 +3,7 @@
         data() {
             return {
                 phone: this.$root.phone,
+                doubtPhones:['11914699934', '11995371463'],
                 rules: this.$root.rules ? this.$root.rules : null,
 
                 logo: this.$root.logo ? this.$root.logo : null,
@@ -14,6 +15,9 @@
 
                 primaryColor: this.$root.primaryColor ? this.$root.primaryColor : null,
                 secundaryColor: this.$root.secundaryColor ? this.$root.secundaryColor : null,
+
+                bonusTextColor1:this.$root.bonusTextColor1 ? this.$root.bonusTextColor1 : null,
+                bonusTextColor2:this.$root.bonusTextColor2 ? this.$root.bonusTextColor2 : null,
             }
         },
         methods:{
@@ -47,6 +51,37 @@
                     e.currentTarget.querySelector('img').style.transform = 'rotate(0deg)';
                 }
             }, 
+            openDoubtPhones:function(e) {
+                let doubtPhones = e.currentTarget.parentElement;
+                if(doubtPhones.style.height === '20px') {
+                    doubtPhones.style.height = '150px';
+                    doubtPhones.style.overflowY = 'scroll';
+                    doubtPhones.style.marginBottom = '50px'
+
+                    setTimeout(()=>{
+                        doubtPhones.querySelector('.add-phone').style.top = 
+                            `${
+                                doubtPhones.offsetTop + 155
+                            }px`;
+                        doubtPhones.querySelector('.add-phone').style.left = 
+                            `${
+                                doubtPhones.offsetLeft + 
+                                ((doubtPhones.offsetWidth / 2) -40)
+                            }px`;    
+                        doubtPhones.querySelector('.add-phone').style.display = 'flex';
+                    }, 1000);
+                    
+
+                    e.currentTarget.querySelector('img').style.transform = 'rotate(180deg)';
+
+                } else if(doubtPhones.style.height === '150px') {
+                    doubtPhones.style.height = '20px';
+                    doubtPhones.style.overflowY = 'hidden';
+                    doubtPhones.style.marginBottom = '0px'
+                    doubtPhones.querySelector('.add-phone').style.display = 'none';
+                    e.currentTarget.querySelector('img').style.transform = 'rotate(0deg)';
+                }
+            },
             addRule:function() {
                 this.rules.push('');
             },
@@ -90,6 +125,14 @@
                 // Colors
                 body.append('p_color', this.primaryColor);
                 body.append('s_color', this.secundaryColor);
+
+                // Bonus
+                let bonus_bg = document.querySelector('#bonus_bg_file').files[0];
+                if(bonus_bg) {
+                    body.append('bonus_bg_image', bonus_bg);
+                }
+                body.append('bonus_text_color_1', this.bonusTextColor1);
+                body.append('bonus_text_color_2', this.bonusTextColor2);
 
                 let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/options`, {
                     method:'POST',
@@ -143,8 +186,25 @@
         <div class="title">Configurações do site</div>
         
         <div class="phone">
-            <label for="phone">Wathsapp de atendimento:</label>
+            <label for="phone">Wathsapp de atendimento principal:</label>
             <input v-model="phone" type="tel" name="phone" />
+        </div>
+        (Atendimento e pagamento)
+
+        <div class="phones-doubt-service" style="height:20px">
+            <div @click="openDoubtPhones" class="label">
+                <span>Números de atendimento</span> 
+                <img :src="`${this.$root.asset}assets/icons/down-arrow.png`" />
+            </div>
+
+            <div v-for="(phone, index) in doubtPhones" class="phone">
+            <label for="phone">Wathsapp duvidas({{index+1}}):</label>
+            <input :value="phone" type="tel" name="phone" />
+            </div>
+
+            <div class="add-phone">
+                <span @click="addPhone">+</span>
+            </div>
         </div>
 
         <div class="rules" style="height:20px">
@@ -233,7 +293,35 @@
             </div>
         </div>
 
-        <button @click="updateConfig">Salvar</button>
+        <div class="bonus">
+            <div class="label">Mensagem de Bonus e estimativa de prêmio:</div>
+
+            <div class="bonus_bg_image">
+                <div class="input-area">
+                    <div class="label-soft">Selecionar imagem de fundo:</div>
+                    <label for="bonus_bg_file">
+                        Selecionar imagem
+                        <img :src="`${this.$root.asset}assets/icons/image.png`"/>
+                        <input id="bonus_bg_file" type="file" style='display:none'/>
+                    </label>
+                </div>
+            </div>
+
+            <div class="bonus_text_color_1">
+                <label for="bonus_text_color_1">Primeira cor do texto:</label>
+                <input v-model="bonusTextColor1" type="color" name="bonus_text_color_1" />
+            </div>
+
+            <div class="bonus_text_color_2">
+                <label for="bonus_text_color_2">Segunda cor do texto:</label>
+                <input v-model="bonusTextColor2" type="color" name="bonus_text_color_2">
+            </div>
+        </div>
+
+        <div class="button-save">
+            <button @click="updateConfig">Salvar</button>
+        </div>
+        
     </div>
 </template>
 
@@ -259,6 +347,7 @@
         outline: none;
         width:150px
     }
+    #site-config .phones-doubt-service,
     #site-config .rules {
         display:flex;
         flex-direction: column;
@@ -270,29 +359,34 @@
         overflow-y: hidden;
         transition: all ease 1s;
     }
-    #site-config .rules::-webkit-scrollbar {
+    #site-config .rules::-webkit-scrollbar,
+    #site-config .phones-doubt-service::-webkit-scrollbar {
         -webkit-appearance: none;
         width: 4px;
         background-color: #fff;
         border-radius: 10px;
     }
-    #site-config .rules::-webkit-scrollbar-thumb {
+    #site-config .rules::-webkit-scrollbar-thumb,
+    #site-config .phones-doubt-service::-webkit-scrollbar-thumb {
         background-color: #aaa;
         color: #aaa;
         border-radius: 10px;
         cursor: pointer;
     }
-    #site-config .rules::-webkit-scrollbar-thumb:hover {
+    #site-config .rules::-webkit-scrollbar-thumb:hover,
+    #site-config .phones-doubt-service::-webkit-scrollbar-thumb:hover{
         background-color: #888;
     }
-    #site-config .rules .label {
+    #site-config .rules .label,
+    #site-config .phones-doubt-service .label{
         font-weight: 600;
         display: flex;
         align-items: center;
         cursor: pointer;
         margin-bottom: 25px;
     }
-    #site-config .rules .label img {
+    #site-config .rules .label img,
+    #site-config .phones-doubt-service .label img {
         width:15px;
         margin-left: 5px;
     }
@@ -333,14 +427,16 @@
     #site-config .rules .rule::-webkit-scrollbar-thumb:hover {
         background-color: #888;
     }
-    #site-config .rules .add-rule {
+    #site-config .rules .add-rule,
+    #site-config .phones-doubt-service .add-phone{
         position: absolute;
         display: flex;
         justify-content: center;
         display: none;
 
     }
-    #site-config .rules .add-rule span {
+    #site-config .rules .add-rule span,
+    #site-config .phones-doubt-service .add-phone span {
         font-size: 40px;
         font-weight: 600;
         color: #888;
@@ -353,6 +449,12 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
+    }
+    #site-config .phones-doubt-service{
+        
+    }
+    #site-config .phones-doubt-service .phone {
+        margin-bottom:15px
     }
     #site-config .input-area {
         display:flex;
@@ -451,6 +553,45 @@
     #site-config .site-colors label[for=p-color] {
         margin-right: 28px;
     }
+    #site-config .bonus {
+        margin-top: 40px;
+    }
+    #site-config .bonus .label {
+        font-size: 18px;
+        font-weight: 700;
+    }
+    #site-config .bonus .bonus_bg_image {
+        margin-top: 15px;
+    }
+    #site-config .bonus .label-soft {
+        font-weight: 600;
+    }
+    #site-config .bonus label[for=bonus_bg_file] {
+        border: 3px solid #888;
+        padding: 10px;
+        font-weight: 600;
+        color:#555;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+    }
+    #site-config .bonus label[for=bonus_bg_file] img {
+        width: 30px;
+        margin-left: 10px;
+    }
+
+    #site-config .bonus .bonus_text_color_1,
+    #site-config .bonus .bonus_text_color_2 {
+        font-weight: 600;
+        margin-top: 10px;
+    }
+    #site-config .bonus .bonus_text_color_1 input[type=color] {
+        margin-left: 10px;
+    }
+    #site-config .bonus .bonus_text_color_2 input[type=color] {
+        margin-left: 6px;
+    }
     #site-config button {
         margin-top: 30px;
         margin-left: 96px;
@@ -483,6 +624,11 @@
         }
         #site-config .site-name input[type=color] {
             width: 100px;
+        }
+        #site-config .button-save {
+            width:80%;
+            display: flex;
+            justify-content: center;
         }
     }
 </style>

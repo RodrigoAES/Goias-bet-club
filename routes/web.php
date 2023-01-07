@@ -28,6 +28,10 @@ Route::get('home_bg', function() {
     $home_bg = AdminOpt::select('value')->where('name', 'home_bg')->first();
     return Storage::download($home_bg['value']);
 });
+Route::get('bonus_bg_image', function() {
+    $bonus_bg = AdminOpt::select('value')->where('name', 'bonus_bg_image')->first();
+    return Storage::download($bonus_bg['value']);
+});
 
 Route::get('team/flag/{file}', function($file) {
     return Storage::download("public/$file");

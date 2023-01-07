@@ -141,6 +141,10 @@ class RankingController extends Controller
 
                     foreach($winners as $winner) {
                         $winner->award = $award / count($winners);
+
+                        if($winner->points === count($winner->bets)) {
+                            $winner->award += $card->bonus;
+                        }
                     }
                 }
 

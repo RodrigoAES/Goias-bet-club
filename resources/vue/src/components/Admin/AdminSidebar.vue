@@ -76,6 +76,15 @@
                 </div>
             </router-link>
 
+            <router-link to="/bolaodefutebol/admin/attendances" @click="this.$parent.menuActive = 'attendances'">
+                <div 
+                  class="link" 
+                  :style="this.$route.name === 'attendances' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
+                >
+                    Atendimentos
+                </div>
+            </router-link>
+
             <router-link to="/bolaodefutebol/admin/config" @click="this.$parent.menuActive = 'config'">
                 <div 
                   class="link" 

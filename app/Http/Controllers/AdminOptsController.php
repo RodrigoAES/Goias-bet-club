@@ -13,12 +13,7 @@ use App\Models\AdminOpt;
 class AdminOptsController extends Controller
 {   
     public function __construct() {
-        if(! Auth::user()->active) {
-            return response()->json([
-                'status' => 'error',
-                'error' => 'Contas desativadas não tem permissão para acessar o sistema como administrador.',
-            ]);
-        }
+        $this->middleware('active');
     }
 
     public function updateOpts(Request $request) {
@@ -34,6 +29,9 @@ class AdminOptsController extends Controller
             'name' => 'required|string',
             'name_color_1' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
             'name_color_2' => ['regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
+            'bonus_bg_image' => 'image|mimes:jps,png',
+            'bonus_text_color_1' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
+            'bonus_text_color_2' => ['regex:/^#(?:[0-9a-f]{3}){1,2}$/i']
         ], [
             'phone.required' => 'É necessario um número de celular para o atendimento do cliente.',
             'phone.numeric' => 'Número de ceuluar invalido.',
@@ -49,6 +47,11 @@ class AdminOptsController extends Controller
             'name_color_1.required' => 'O nome/título do site precisa ter uma cor.',
             'name_color_1.regex' => 'Cor inválida.',
             'name_color_2' => 'Cor inválida.',
+            'bonus_bg_image.image' => 'O arquivo para o fundo do bonus deve ser uma imagem.',
+            'bonus_bg_image.mimes' => 'Extensão de arquivo não suportada (somente jps e png).',
+            'bonus_text_color_1' => 'O texto do bonus deve ter pelo menos uma cor.',
+            'bonus_text_color_1.regex' => 'Formato de cor inválido (somente hexadecimal).',
+            'bonus_text_color_2' => 'Formato de cor inválido (somente hexadecimal).',
         ]);
         if($validator->fails()) {
             $response['status'] = 'error';
@@ -79,8 +82,17 @@ class AdminOptsController extends Controller
             unset($data['logo']);
         }
 
+        if(isset($data['bonus_bg_image'])) {
+            $data['bonus_bg_image'] = Storage::disk('local')->put('Site/Images/BonusBackground', $data['bonus_bg_image']);
+        } else {
+            unset($data['bonus_bg_image']);
+        }
+
         foreach($data as $key => $opt) {
             $config = AdminOpt::where('name', $key)->first();
+            if(!$config) {
+                return response()->json(['config' => $key]);
+            }
             $config->value = $opt;
             $config->save();
             $response['config'][] = $config;

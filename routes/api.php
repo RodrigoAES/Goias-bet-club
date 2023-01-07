@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Middleware\Admin;
+
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminAccountController;
 use App\Http\Controllers\AdminController;
@@ -16,6 +18,9 @@ use App\Http\Controllers\RankingController;
 use App\Http\Controllers\AdminOptsController;
 use App\Http\Controllers\SiteConfigController;
 use App\Http\Controllers\APIFootballController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\EntryController;
+use App\Http\Controllers\PaymentController;
 
 use App\Helpers\GazetaBrasileiraoScrapHelper;
 
@@ -33,10 +38,6 @@ use Illuminate\Support\Facades\Auth;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::get('test', function() {
-    APIFootballHelper::requestMatch();
-});
 
 // Admin 401
 Route::get('401', function(){
@@ -70,10 +71,21 @@ Route::get('card/{code}', [UserCardController::class, 'getCard']);
 Route::get('ranking/cards', [RankingController::class, 'publicRankingCards']);
 Route::get('ranking/{id}', [RankingController::class, 'getRanking']);
 
-// Site config options
+// Site config options get
 Route::get('config', [SiteConfigController::class, 'getOpts']);
 
+// Validate Receipt
 Route::get('admin/validate-receipt/{id}', [AdminController::class, 'validateReceipt'])->name('receipt.validate');
+
+// Register Attendance
+Route::post('attendance', [AttendanceController::class, 'registerAttendance']);
+
+// Register Entry
+Route::post('entry', [EntryController::class, 'registerEntry']);
+
+Route::get('test', [PaymentController::class, 'test']);
+
+Route::post('paymentconfirm', [PaymentController::class, 'paymentConfirm']);
 
 Route::middleware(['auth:api'])->group(function () {
     //Auth
@@ -83,10 +95,11 @@ Route::middleware(['auth:api'])->group(function () {
     //Accounts/users
     Route::get('admin/users', [AdminAccountController::class, 'allUsers']);
     Route::get('admin/user/{id}', [AdminAccountController::class, 'getUser']);
-    Route::post('admin/user', [AdminAccountController::class, 'createUser']);
-    Route::put('admin/account/update/{id}', [AdminAccountController::class, 'updateAccount']);
-    Route::delete('admin/user/delete/{id}', [AdminAccountController::class, 'deleteUser']);
-    Route::put('admin/account/status/{id}', [AdminAccountController::class, 'activateAccountToggle']);
+    Route::post('admin/user', [AdminAccountController::class, 'createUser'])->middleware('admin');
+    Route::put('admin/account/update/{id}', [AdminAccountController::class, 'updateAccount'])->middleware('adm_or_owner');
+    Route::delete('admin/user/delete/{id}', [AdminAccountController::class, 'deleteUser'])->middleware('admin');
+    Route::put('admin/account/status/{id}', [AdminAccountController::class, 'activateAccountToggle'])->middleware('adm_or_owner');
+    Route::put('admin/account/permissions/{id}', [AdminAccountController::class, 'upadateAccountPermissions'])->middleware('admin');
 
     // World Cup matchs
     Route::get('admin/matches', [AdminController::class, 'nextMatches']);
@@ -95,54 +108,63 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('admin/brasileirao/round/{round}', [AdminBrasileiraoController::class, 'round']);
     
     // Cards
-    Route::post('admin/card', [AdminController::class, 'createCard']);
-    Route::delete('admin/card/{id}', [AdminController::class, 'deleteCard']);
+    Route::post('admin/card', [AdminController::class, 'createCard'])->middleware('adm_or_sub_adm');
+    Route::delete('admin/card/{id}', [AdminController::class, 'deleteCard'])->middleware('adm_or_sub_adm');
 
     // Admin Panel user bets
     Route::get('admin/user-bets', [AdminController::class, 'userBets']);
-    Route::post('admin/validate', [AdminController::class, 'validateCard']);
+    Route::post('admin/validate', [AdminController::class, 'validateCard'])->middleware('validate_permission');
     Route::get('admin/user-receipt/{id}', [AdminController::class, 'generateReceipt']);
-    Route::put('admin/user-card/{id}', [AdminController::class, 'updateUserCard']);
-    Route::delete('admin/user-card/{id}', [AdminController::class, 'deleteUserCard']);
+    Route::put('admin/user-card/{id}', [AdminController::class, 'updateUserCard'])->middleware('adm_or_sub_adm');
+    Route::delete('admin/user-card/{id}', [AdminController::class, 'deleteUserCard'])->middleware('adm_or_sub_adm');
     Route::get('admin/search-user-card/{q}', [AdminController::class, 'searchUserCard']);
 
     // Admin User Cards Ranking
     Route::get('admin/card-ranking/{id}', [AdminController::class, 'cardRanking']);
-    Route::post('admin/card-ranking/{id}/publicate', [AdminController::class, 'publicateRanking']);
+    Route::post('admin/card-ranking/{id}/publicate', [AdminController::class, 'publicateRanking'])->middleware('adm_or_sub_adm');
+    Route::get('admin/card-ranking/{id}/pdf', [AdminController::class, 'rankingPDF'])->middleware('adm_or_sub_adm');
 
     // Admin Custom Championships
     Route::get('admin/championships', [CustomController::class, 'allChampionships']);
-    Route::post('admin/championship', [CustomController::class, 'createChampionship']);
-    Route::delete('admin/championship/{id}', [CustomController::class, 'deleteChampionship']);
+    Route::post('admin/championship', [CustomController::class, 'createChampionship'])->middleware('adm_or_sub_adm');
+    Route::delete('admin/championship/{id}', [CustomController::class, 'deleteChampionship'])->middleware('adm_or_sub_adm');
 
     // Admin Custom Matchs 
     Route::get('admin/championship/{id}', [CustomController::class, 'allMatchs']);
-    Route::post('admin/match', [CustomController::class, 'createMatch']);
-    Route::put('admin/match/{id}', [CustomController::class, 'updateMatch']);
-    Route::delete('admin/match/{id}', [CustomController::class, 'deleteMatch']);
+    Route::post('admin/match', [CustomController::class, 'createMatch'])->middleware('adm_or_sub_adm');
+    Route::put('admin/match/{id}', [CustomController::class, 'updateMatch'])->middleware('adm_or_sub_adm');
+    Route::delete('admin/match/{id}', [CustomController::class, 'deleteMatch'])->middleware('adm_or_sub_adm');
 
     // Admin Custom Teams
     Route::get('admin/teams/{id}', [CustomController::class, 'allTeams']);
-    Route::post('admin/team', [CustomController::class, 'createTeam']);
-    Route::post('admin/team/{id}', [CustomController::class, 'updateTeam']);
-    Route::delete('admin/team/{id}', [CustomController::class, 'deleteTeam']);
+    Route::post('admin/team', [CustomController::class, 'createTeam'])->middleware('adm_or_sub_adm');
+    Route::post('admin/team/{id}', [CustomController::class, 'updateTeam'])->middleware('adm_or_sub_adm');
+    Route::delete('admin/team/{id}', [CustomController::class, 'deleteTeam'])->middleware('adm_or_sub_adm');
 
     // Admin options site-config
-    Route::post('admin/options', [AdminOptsController::class, 'updateOpts']);
+    Route::post('admin/options', [AdminOptsController::class, 'updateOpts'])->middleware('adm_or_sub_adm');
 
     // API-FOOTBALL
     //-search
-    Route::get('admin/api-football/search/{current?}', [APIFootballController::class, 'search']);
+    Route::get('admin/api-football/search/{current?}', [APIFootballController::class, 'search'])->middleware('adm_or_sub_adm');
 
     //-leagues by country
-    Route::get('admin/api-football/country-leagues/{code}/{current?}', [APIFootballController::class, 'leguesByCountry']);
+    Route::get('admin/api-football/country-leagues/{code}/{current?}', [APIFootballController::class, 'leguesByCountry'])->middleware('adm_or_sub_adm');
 
     //-matchs by league
-    Route::get('admin/api-football/league-matchs/{league_id}/{current?}/{season?}/{between?}/{next?}/{round?}', [APIFootballController::class, 'matchsByLeague']);
+    Route::get('admin/api-football/league-matchs/{league_id}/{current?}/{season?}/{between?}/{next?}/{round?}', [APIFootballController::class, 'matchsByLeague'])->middleware('adm_or_sub_adm');
     //-matchs by team
-    Route::get('admin/api-football/team-matchs/{team_id}/{current?}/{between?}', [APIFootballController::class, 'matchsByTeam']);
+    Route::get('admin/api-football/team-matchs/{team_id}/{current?}/{between?}', [APIFootballController::class, 'matchsByTeam'])->middleware('adm_or_sub_adm');
 
     // teams-by-country
-    Route::get('admin/api-football/league-teams/{league_id}/{season}', [APIFootballController::class, 'teamsByLeague']);
+    Route::get('admin/api-football/league-teams/{league_id}/{season}', [APIFootballController::class, 'teamsByLeague'])->middleware('adm_or_sub_adm');
+
+    // Attendances
+    Route::get('admin/attendances', [AttendanceController::class, 'allAttendances'])->middleware('adm_or_sub_adm');
+    Route::get('admin/attendance/{attendant_id}', [AttendanceController::class, 'attendantAttendance']);
+    Route::get('admin/search-client-attendance', [AttendanceController::class, 'searchClient']);
+
+    // Attendant Sales Receipt
+    Route::get('admin/attendant-sales-pdf', [AdminAuthController::class, 'AttendantSalesPDF']);
 });
 

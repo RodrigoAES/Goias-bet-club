@@ -13,6 +13,7 @@ import { RouterLink, RouterView } from 'vue-router';
             base:import.meta.env.VITE_BASE_URL,
 
             phone:null,
+            attendants:null,
             rules:[],
 
             logo:'',
@@ -20,12 +21,14 @@ import { RouterLink, RouterView } from 'vue-router';
             siteNameSecondColor:'',
             homeBackground:'',
 
-
             primaryColor:'#069446',
             primaryColorHover:'#09a750',
             secundaryColor:'rgb(255, 238, 0)',
             nameColor1:'rgb(36, 36, 241)',
             nameColor2:'#035528',
+
+            bonusTextColor1:'#000000',
+            bonusTextColor2:'#000000',
           }
         },
         methods: {
@@ -45,7 +48,7 @@ import { RouterLink, RouterView } from 'vue-router';
                 }
             }
         },
-        async mounted() {
+        async beforeCreate() {
             // site config
             let request = await fetch(`${import.meta.env.VITE_BASE_URL}config`, {
               method:'GET',
@@ -55,6 +58,7 @@ import { RouterLink, RouterView } from 'vue-router';
 
             if(json.status === 'success') {
               this.phone = json.phone;
+              this.attendants = json.attendants ? json.attendants : [];
               this.rules = json.rules ? json.rules : [];
 
               this.logo = json.logo;
@@ -65,6 +69,9 @@ import { RouterLink, RouterView } from 'vue-router';
 
               this.primaryColor = json.p_color;
               this.secundaryColor = json.s_color;
+
+              this.bonusTextColor1 = json.bonus_text_color_1;
+              this.bonusTextColor2 = json.bonus_text_color_2;
             }
 
             this.root = document.documentElement;
@@ -75,6 +82,8 @@ import { RouterLink, RouterView } from 'vue-router';
             this.root.style.setProperty("--name-color-s", this.nameColor2);
             this.root.style.setProperty("--titles-color", this.titlesColor);
             this.root.style.setProperty("--subtitles-color", this.subtitlesColor);
+            this.root.style.setProperty("--bonus-text-color-1", this.bonusTextColor1);
+            this.root.style.setProperty("--bonus-text-color-2", this.bonusTextColor2);
 
             // Admin validate user
             request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/auth/validate`, {
@@ -88,7 +97,7 @@ import { RouterLink, RouterView } from 'vue-router';
             if(json.authenticated) {
                 this.loggedUser = json.user;
             }
-        }
+        } 
     }
 </script>
 

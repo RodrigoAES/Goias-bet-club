@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\AdminOpt;
+use App\Models\Attendant;
 
 class SiteConfigController extends Controller
 {
@@ -17,7 +18,7 @@ class SiteConfigController extends Controller
                 if($opt->name === 'phone') {
                     $response['phone'] = $opt->value;
 
-                }else if($opt->name === 'rules') {
+                } else if($opt->name === 'rules') {
                     foreach(explode('|', $opt->value) as $rule) {
                         $rules[] = $rule;
                     } 
@@ -45,8 +46,21 @@ class SiteConfigController extends Controller
 
                 } else if ($opt->name === 'name_color_2') {
                     $response['name_color_2'] = $opt->value;
+
+                } else if ($opt->name === 'bonus_bg_image') {
+                    $response['bonus_bg_image'] = $opt->value;
+
+                } else if ($opt->name === 'bonus_text_color_1') {
+                    $response['bonus_text_color_1'] = $opt->value;
+                    
+                } else if ($opt->name === 'bonus_text_color_2') {
+                    $response['bonus_text_color_2'] = $opt->value;
+                    
                 }
             }
+
+            $response['attendants'] = Attendant::all();
+            
             $response['status'] = 'success';
             return response()->json($response, 200);
         }

@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use App\Models\Attendant;
+
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -21,6 +23,7 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'password',
         'active',
+        'level'
     ];
 
     
@@ -33,6 +36,10 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function attendant() {
+        return $this->hasOne(Attendant::class);
+    }
 
     public function getJWTIdentifier() {
         return $this->getKey();

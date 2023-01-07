@@ -12,7 +12,7 @@ class Card extends Model
     use HasFactory;
 
     protected $fillable = [
-        'matchs', 'endtime', 'price', 'name', 'championship', 'round', 'type', 'host_percentage'
+        'matchs', 'endtime', 'price', 'name', 'round', 'type', 'host_percentage', 'bonus', 'valuation'
     ];
 
     public function userCards() {

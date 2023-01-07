@@ -1,4 +1,6 @@
 <script>
+    import Loading from '../../components/Loading.vue';
+
     export default {
         props:['code'],
         data() {
@@ -6,10 +8,14 @@
                 userCardCode:this.$route.params.code ? this.$route.params.code : null,
                 userCard:null,
                 cardCreatedAt:null,
+
+                loading:false,
             }
         },
         methods: {
             consultCard:async function() {
+                this.loading = true;
+
                 let request = await fetch(`${import.meta.env.VITE_BASE_URL}card/${this.userCardCode}`, {
                     method:'GET',
                 });
@@ -18,7 +24,8 @@
                 if(json.status === 'success') {
                     this.userCard = json.user_card;
                     this.cardCreatedAt = json.user_card.created_at;
-                    console.log(this.userCard);
+
+                    this.loading = false;
                 }
             },
             mask: function(e) {
@@ -32,6 +39,26 @@
             date: function () {
                 let d = new Date(this.cardCreatedAt);
                 return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`;
+            }
+        },
+        components: {
+            Loading,
+        },
+        async mounted() {
+            if(this.$route.params.code) {
+                this.loading = true;
+
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}card/${this.$route.params.code}`, {
+                    method:'GET',
+                });
+                let json = await request.json();
+
+                if(json.status === 'success') {
+                    this.userCard = json.user_card;
+                    this.cardCreatedAt = json.user_card.created_at;
+
+                    this.loading = false;
+                }
             }
         }
     }
@@ -49,7 +76,13 @@
             </div>
             
             <div class="buttons-succes card-code">
-                <button @click="consultCard">Consultar</button>
+                <button @click="consultCard">
+                    {{!loading ? 'Consultar' : ''}}
+                    <Loading 
+                        v-if="loading"
+                        :size="20"
+                    />
+                </button>
             </div>
 
         </div>
@@ -120,7 +153,7 @@
 
                 <div class="date-group-info">
                     <div class="group">Grupo <span>{{bet.match.group}}</span></div>
-                    <div class="finished">Terminada: <span>{{bet.match.finished === 'FALSE' ? 'NÂO' : 'SIM'}}</span></div>
+                    <div class="finished">Terminada: <span>{{bet.match.finished ? 'SIM' : 'NÃO'}}</span></div>
                     <div class="datetime">Data: <span>{{bet.match.datetime}}</span></div>
                 </div>  
             </div>
@@ -157,6 +190,11 @@
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
+    }
+    .card-code button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .card-code button:hover {
         transform: none;

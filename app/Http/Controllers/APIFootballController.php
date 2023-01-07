@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 use App\Helpers\APIFootballHelper;
 
 class APIFootballController extends Controller
-{
+{   
+    public function __construct() {
+        $this->middleware('active');
+    }
+    
     public function search(Request $request, $current = 'true') {
         $response = ['status' => null];
         if(is_string($request->q)) {

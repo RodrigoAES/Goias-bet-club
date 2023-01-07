@@ -2,6 +2,7 @@
     import AccountForm from './AccountForm.vue';
     import AccountSuccess from './AccountSuccess.vue';
     import AccountConfirm from './AccountConfirm.vue';
+    import AccountPermissionsForm from './AccountPermissionsForm.vue';
    
     export default {
         data() {
@@ -19,7 +20,9 @@
                 accountConfirmOpened:false,
                 accountConfirmData:null,
                 accountConfirmMessage:null,
-                accountConfirmAction:null
+                accountConfirmAction:null,
+
+                accountPermissionFormopened:false,
             }
         },
          
@@ -27,6 +30,7 @@
             AccountForm,
             AccountSuccess,
             AccountConfirm,
+            AccountPermissionsForm
         }, 
         methods: {
             openCreate: function() {
@@ -50,6 +54,10 @@
                 this.accountConfirmAction = 'status'
                 this.accountConfirmMessage = `Tem certeza que deseja ${user.active ? 'desativar' : 'ativar'} esta conta?`;
                 this.accountConfirmOpened = true;
+            },
+            openAccountPermissions:function(user) {
+                this.accountFormUser = user;
+                this.accountPermissionFormopened = true
             }
         },
         async mounted() {
@@ -63,7 +71,7 @@
             let json = await request.json();
 
             if(json.status === 'success') {
-                this.users = json.users.data;
+                this.users = json.users;
             }
         }
     }
@@ -90,9 +98,21 @@
             :action="accountConfirmAction"
         />
 
+        <AccountPermissionsForm 
+            v-if="accountPermissionFormopened"
+            :user="accountFormUser"
+        />
         <div id="users">
             <div class="new-user">
-                <button @click="openCreate">Novo <span>+</span></button>
+                <button 
+                    v-if="
+                        this.$root.loggedUser 
+                        && this.$root.loggedUser.level === 'admin'
+                    " 
+                    @click="openCreate"
+                >
+                    Novo <span>+</span>
+                </button>
             </div>
             <table>
                 <thead>
@@ -112,30 +132,40 @@
                         <td><span class="mobile-title">Email</span>{{user.email}}</td>
                         <td class="actions">
                             <button 
-                                v-if="(this.$root.loggedUser.id === 1 || this.$root.loggedUser.id === user.id)"
+                                v-if="(
+                                    this.$root.loggedUser && this.$root.loggedUser.level === 'admin' 
+                                    ||this.$root.loggedUser &&  this.$root.loggedUser.id === user.id
+                                )"
                                 @click="openEdit(user)" 
                                 class="edit"
                             >Editar</button>
 
                             <button 
                                 @click="openDeleteConfirm(user)"
-                                v-if="(this.$root.loggedUser.id === 1 || this.$root.loggedUser.id === user.id) && user.id != 1"
+                                v-if="(
+                                    this.$root.loggedUser && this.$root.loggedUser.level === 'admin'
+                                ) && user.level != 'admin'"
                                 class="delete"
                             >Excluir</button>
 
                             <button
                                 @click="openStatusConfirm(user)"
-                                v-if="(this.$root.loggedUser.id === 1 || this.$root.loggedUser.id === user.id) && user.id != 1" 
+                                v-if="(
+                                    this.$root.loggedUser && this.$root.loggedUser.level === 'admin' 
+                                    ||this.$root.loggedUser &&  this.$root.loggedUser.id === user.id
+                                ) && user.level != 'admin'" 
                                 class='status'
                             >{{user.active ? 'Desativar' : 'Ativar'}}</button>
+
+                            <button
+                                @click="openAccountPermissions(user)"
+                                v-if="(this.$root.loggedUser && this.$root.loggedUser.level === 'admin' )" 
+                                class='permisions'
+                            >Permissões</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-    
-            <div class="paginate">
-    
-            </div>
         </div>
         
     </div>
@@ -222,6 +252,10 @@
     #users table .actions .status {
         background-color: #006ed4;
         color:#fff;
+    }
+    #users table .actions .permisions {
+        background-color: #20af6c;
+        color: #fff;
     }
 
     @media(max-width:420px) {

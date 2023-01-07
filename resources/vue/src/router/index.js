@@ -9,6 +9,7 @@ import UserRanking from '../components/Admin/UserRanking/UserRanking.vue';
 import Account from '../components/Admin/Account/Account.vue';
 import Custom from '../components/Admin/Custom/Custom.vue';
 import Config from '../components/Admin/SiteConfig/Config.vue';
+import Attendances from '../components/Admin/Attendances/Attendances.vue';
 
 import Home from '../views/Public/Home.vue';
 import UserCard from '../views/Public/UserCard.vue';
@@ -55,6 +56,11 @@ const router = createRouter({
                     component: UserRanking,
                 }, 
                 {
+                    path:'attendances',
+                    name:'attendances',
+                    component: Attendances
+                },
+                {
                     path:'config',
                     name:'config',
                     component: Config,               
@@ -68,7 +74,7 @@ const router = createRouter({
         },
         
         {
-            path: '/bolaodefutebol',
+            path: '/bolaodefutebol/:attendant?',
             name: 'home',
             component: Home,
         },
@@ -78,7 +84,7 @@ const router = createRouter({
             component: UserCard,
         },
         {
-            path:'/bolaodefutebol/ranking',
+            path:'/bolaodefutebol/ranking/:cardId?',
             name:'publicRanking',
             component: PublicUserRanking,
         }
@@ -92,8 +98,11 @@ router.beforeEach(async (to, from)=>{
         to.name === 'AdminPanel' 
         || to.name === 'cardCreate' 
         || to.name === 'cards' 
+        || to.name === 'custom'
         || to.name === 'user-bets' 
-        || to.nem === 'ranking'
+        || to.name === 'ranking'
+        || to.name === 'config'
+        || to.name === 'account'
     ) {
         let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/auth/validate`, {
             method:'GET',
@@ -105,6 +114,16 @@ router.beforeEach(async (to, from)=>{
         
         if(! response.authenticated) {
             return {name: 'login'}
+        }
+
+        if(
+            to.name === 'cardCreate'
+            || to.name === 'config'
+            || to.name === 'custom'
+        ) {
+            if(response.user.level === 'attendant') {
+                return {name: from.name}
+            }
         }
 
     } else if(to.name === 'login') {

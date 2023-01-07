@@ -73,6 +73,27 @@
             if(json.status === 'success') {
                 this.cards = json.cards;
             }
+
+            if(this.$route.params.cardId) {
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}ranking/${this.$route.params.cardId}`,{
+                    method:'GET',
+                    headers:{
+                        'Authorization': `Bearer ${localStorage.getItem('auth')}`
+                    }
+                });
+
+                let json = await  request.json();
+                
+                if(json.status === 'success') {
+                    this.cardRanking = json.ranked_user_cards;
+                    this.winners = json.winners;
+                    this.pages = json.pages;
+                    this.activeCard = id;
+
+                } else if(json.status === 'message') {
+                    this.message = json.message;
+                }
+            }
         }
     }
 </script>
@@ -270,7 +291,7 @@
     }
     .ranking-pos {
         font-size: 30px;
-        color:var(--p-color);
+        color:var(--s-color);
     }
     .ranking-actions button {
         padding: 5px 6px;

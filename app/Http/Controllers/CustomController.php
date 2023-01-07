@@ -14,12 +14,7 @@ use App\Models\Game;
 class CustomController extends Controller
 {
     public function __construct() {
-        if(! Auth::user()->active) {
-            return response()->json([
-                'status' => 'error',
-                'error' => 'Contas desativadas não tem permissão para acessar o sistema como administrador.',
-            ]);
-        }
+        $this->middleware('active');
     }
 
     // Championships

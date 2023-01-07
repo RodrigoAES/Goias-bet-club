@@ -1,6 +1,7 @@
 <script>
     import UserCardViewer from '../../Public/UserCardViewer.vue';
     import UserRankingPublicateSuccess from './UserRankingPublicateSuccess.vue';
+    import Loading from '../../Loading.vue';
     export default {
         data() {
             return {
@@ -12,6 +13,8 @@
                 UserCardViewerOpened:false,
                 UserCardViewerData:null,
                 publicRankingConfirmOpened:false,
+
+                loadingPdf:false,
             }
         },
         methods:{
@@ -61,6 +64,36 @@
                     this.publicRankingConfirmOpened = true;
                 }
             },
+            generateRankingPDF:async function(id) {
+                this.loadingPdf = true;
+
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/card-ranking/${id}/pdf`, {
+                    method:'GET',
+                    headers:{
+                        'Authorization': `Bearer ${localStorage.getItem('auth')}`
+                    }
+                });
+
+                let blob = await request.blob();
+                let blobURL = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                link.href = blobURL;
+
+                link.download = `Ranking.pdf`;
+
+                document.body.appendChild(link);
+
+                link.dispatchEvent(
+                    new MouseEvent('click', { 
+                        bubbles: true, 
+                        cancelable: true, 
+                        view: window 
+                    })
+                );
+                document.body.removeChild(link);
+                this.loadingPdf = false;
+            },
             openViewer:function(userCard) {
                 this.UserCardViewerData = userCard;
                 this.UserCardViewerOpened = true;
@@ -73,6 +106,7 @@
         components:{
             UserRankingPublicateSuccess,
             UserCardViewer,
+            Loading
         },  
         async mounted() {
             let request = await fetch(`${import.meta.env.VITE_BASE_URL}cards`, {
@@ -155,6 +189,13 @@
 
                 <div class="actions">
                     <button @click="publicateRanking(activeCard)">Publicar</button>
+                    <button @click="generateRankingPDF(activeCard)">
+                        {{!loadingPdf ? 'Gerar PDF' : ''}}
+                        <Loading 
+                            v-if="loadingPdf"
+                            :size="15"
+                        />
+                    </button>
                 </div>
             </div>
             <div 
@@ -282,7 +323,7 @@
     
     .ranking-pos {
         font-size: 30px;
-        color: var(--p-color);
+        color: var(--s-color);
     }
     .ranking-actions button {
         padding: 5px 6px;
@@ -326,6 +367,7 @@
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
+        margin-right: 15px;
     }
     .users .actions button:hover {
         background-color: #1c7fdb;

@@ -20,6 +20,7 @@ use App\Models\Championship;
 use App\Models\Game;
 use App\Models\AdminOpt;
 use App\Models\Receipt;
+use App\Models\Attendance;
 
 use App\Helpers\APIFootballHelper;
 use App\Helpers\GazetaBrasileiraoScrapHelper;
@@ -27,47 +28,7 @@ use App\Helpers\GazetaBrasileiraoScrapHelper;
 class AdminController extends Controller
 {   
     public function __construct() {
-        return response()->json(Auth::user());
-        if(! Auth::user()->active) {
-            return response()->json([
-                'status' => 'error',
-                'error' => 'Contas desativadas não tem permissão para acessar o sistema como administrador.',
-            ]);
-        }
-    }
-
-    public function nextMatches() {
-        $response = RequestAPIHelper::requestAllMatchs();
-
-        $matches = [];
-        foreach($response->data as $key => $_match) {
-            
-            $date = explode('/',explode(' ',$_match->local_date)[0]);
-            $date = "$date[2]-$date[0]-$date[1]";
-            $time = explode(' ',$_match->local_date)[1];
-            
-            $timestamp = strtotime("$date $time") - (3600 * 6);
-            if(strtotime(date('Y-m-d H:i:s', $timestamp)) >= strtotime('NOW')) {
-                $match = [
-                    'id' => $_match->id,
-                    'away_score' => $_match->away_score,
-                    'home_score' => $_match->home_score,
-                    'away_name' => $_match->away_team_en,
-                    'home_name' => $_match->home_team_en,
-                    'away_flag' => $_match->away_flag,
-                    'home_flag' => $_match->home_flag,
-                    'finished' => $_match->finished,
-                    'group' => $_match->group,
-                    'datetime' => date('d/m/Y H:i:s', $timestamp) 
-                ];
-                array_push($matches, $match);
-            }
-        }
-        
-        $response = ['status' => 'success'];
-        $response['matches'] = $matches;
-
-        return response()->json($response, 200);
+        $this->middleware('active');
     }
 
     public function createCard(Request $request) {
@@ -77,8 +38,9 @@ class AdminController extends Controller
             'price' => 'required|numeric',
             'type' => 'required|string|in:detailed,common',
             'name' => 'string',
-            'round' => 'numeric|min:1|max:38|max_digits:2',
             'host_percentage' => 'required|numeric|min:0|max:100|max_digits:3',
+            'bonus' => 'nullable|numeric',
+            'valuation' => 'required|numeric'
         ],[
             'matchs.rquired' => 'É necessario adicionar partidas para criar uma cartela.',
             'price.required' => 'A cartela precisa ter um preço.',
@@ -92,6 +54,7 @@ class AdminController extends Controller
             'host_percentage.min' => 'A porcentagem do organizador não pode ser menor do que 0%.',
             'host_percentage.max' => 'A porcentagem do organizador não pode ser maior do que 100%.',
             'host_percentage.max_digits' => 'A  porcentagem deve ser  inserida com no maximo 3 digitos.',
+            'valuation.required' => 'É necessario inserir a estimativa de premiação da cartela.',
         ]);
         if($validator->fails()) {
             $response['status'] = 'error';
@@ -127,9 +90,11 @@ class AdminController extends Controller
             'endtime' => $endtime,
             'price' => $validator->validated()['price'],
             'type' => $validator->validated()['type'],
-            'round' => $round ?? null,
             'host_percentage' => $validator->validated()['host_percentage'],
+            'bonus' => $validator->validated()['bonus'],
+            'valuation' => $validator->validated()['valuation'],
         ]);
+
         if($response['card']) {
             $response['status'] = 'success';
             return response()->json($response, 200);
@@ -305,25 +270,17 @@ class AdminController extends Controller
         ->first();
 
         if($user_card) {
-            if($user_card->card->championship === 'world-cup') {
-                $matchs = RequestAPIHelper::requestAllMatchs();
-                $matchs = $matchs->data;
-
-            } elseif($user_card->card->championship === 'brasileirao') {
-                $matchs = GazetaBrasileiraoScrapHelper::scrapRound($user_card->card->round);
-                $matchs = json_decode(json_encode($matchs));
-
-            } elseif(is_numeric($user_card->card->championship)) {
-                $championship = Championship::find($user_card->card->championship);
-                $matchs = $championship->matchs;
-            }
 
             foreach($user_card->bets as $bet) {
-                foreach($matchs as $match) {
-                    if($bet->match_id === $match->id) {
-                        $bet->match = $match;
-                    }
-                }
+                if($bet->match_src === 'API_FOOTBALL') {
+                    $bet->match = APIFootballHelper::requestMatch($bet->match_id);
+
+                } else if ($bet->match_src === 'Gazeta_Scrapper') {
+                    $bet->match = GazetaBrasileiraoScrapHelper::match($bet->match_round, $bet->match_id);
+                    
+                } else if($bet->match_src === 'Custom') {
+                    $bet->match = Game::find($bet->match_id);
+                }   
             }
 
             $data['date'] = date('d/m/Y H:i');
@@ -347,14 +304,22 @@ class AdminController extends Controller
                 ]);
             }
 
-            $data['signature']['duplicate'] = URL::temporarySignedRoute('receipt.validate', now()->addMonths(4) ,[
+            $data['signature'] = URL::temporarySignedRoute('receipt.validate', now()->addMonths(4) ,[
                 'id' => $receipt->id,
             ]);
 
+
             ini_set('max_execution_time', 300);
+
             $pdf = PDF::loadView('CardReceipt', $data);
             
-            return $pdf->download('comprovante.pdf');
+            return $pdf->download("comprovante-$user_card->code.pdf");
+
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'error' => 'Cartela inexistente.'
+            ]);
         }
 
         
@@ -371,25 +336,17 @@ class AdminController extends Controller
                     ->where('validated', true)
                 ->first();
                 if($user_card) {
-                    if($user_card->card->championship === 'world-cup') {
-                        $matchs = RequestAPIHelper::requestAllMatchs();
-                        $matchs = $matchs->data;
-        
-                    } elseif($user_card->card->championship === 'brasileirao') {
-                        $matchs = GazetaBrasileiraoScrapHelper::scrapRound($user_card->card->round);
-                        $matchs = json_decode(json_encode($matchs));
-        
-                    } elseif(is_numeric($user_card->card->championship)) {
-                        $championship = Championship::find($user_card->card->championship);
-                        $matchs = $championship->matchs;
-                    }
 
                     foreach($receipt->bets as $bet) {
-                        foreach($matchs as $match) {
-                            if($bet->match_id === $match->id) {
-                                $bet->match = $match;
-                            }
-                        }
+                        if($bet->match_src === 'API_FOOTBALL') {
+                            $bet->match = APIFootballHelper::requestMatch($bet->match_id);
+        
+                        } else if ($bet->match_src === 'Gazeta_Scrapper') {
+                            $bet->match = GazetaBrasileiraoScrapHelper::match($bet->match_round, $bet->match_id);
+                            
+                        } else if($bet->match_src === 'Custom') {
+                            $bet->match = Game::find($bet->match_id);
+                        }   
                     }
 
                     $user_card->bets = $receipt->bets;
@@ -402,6 +359,7 @@ class AdminController extends Controller
                     ]);
                     
                     ini_set('max_execution_time', 300);
+
                     $pdf = PDF::loadView('CardReceipt', $data);
                     
                     return $pdf->download('comprovante.pdf');
@@ -544,6 +502,10 @@ class AdminController extends Controller
                 
                 foreach($winners as $winner) {
                     $winner->award = $award / count($winners);
+
+                    if($winner->points === count($winner->bets)) {
+                        $winner->award += $card->bonus;
+                    }
                 }
             }
             
@@ -599,6 +561,131 @@ class AdminController extends Controller
         }
     }
 
+    public function rankingPDF($id) {
+        $card = Card::find($id); 
+        if($card) {
+            $user_cards = [];
+            foreach($card->userCards as $user_card) {
+                if($user_card->validated == 1) {
+                    $user_card->points = 0;
+                    $user_card->card;
+
+                    foreach($user_card->bets as $bet) {
+                        if($bet->match_src === 'API_FOOTBALL') {
+                            $match = APIFootballHelper::requestMatch($bet->match_id);
+        
+                        } else if ($bet->match_src === 'Gazeta_Scrapper') {
+                            $match = GazetaBrasileiraoScrapHelper::match($bet->match_round, $bet->match_id);
+                            
+                        } else if($bet->match_src === 'Custom') {
+                            $match = Game::find($bet->match_id);
+                        }   
+                        
+                        if(is_array($match)) {
+                            return response()->json(['match' => $match->id]);
+                        }
+                        if($match->finished){
+                            if($card->type === 'common') {
+                                if($match->home_score > $match->away_score){
+                                    if($bet->bet === 'victory') {
+                                        $bet->point = true;
+                                        $user_card->points++;
+                                    } else {
+                                        $bet->point = false;
+                                    }
+                                }
+                                if($match->home_score === $match->away_score){
+                                    if($bet->bet === 'draw') {
+                                        $bet->point = true;
+                                        $user_card->points++;
+                                    } else {
+                                        $bet->point = false;
+                                    }
+                                }
+                                if($match->home_score < $match->away_score){
+                                    if($bet->bet === 'loss') {
+                                        $bet->point = true;
+                                        $user_card->points++;
+                                    } else {
+                                        $bet->point = false;
+                                    }
+                                }
+                            }
+
+                            if($card->type === 'detailed') {
+                                if(
+                                    $bet->home_score === $match->home_score
+                                    && $bet->away_score === $match->away_score
+                                ) {
+                                    $bet->point = true;
+                                    $user_card->points++;
+
+                                } else {
+                                    $bet->point = false;
+                                }
+                            }
+                        } 
+
+                        $bet->match = $match;
+                    } 
+
+                    $user_cards[] = $user_card;
+                }
+                    
+            }
+
+            foreach($user_cards as $key => $user_card) {
+                foreach($user_cards as $_key => $_user_card) {
+                    if($user_card->points > $_user_card->points && $key > $_key) {
+                        array_splice($user_cards, $_key, 0, array_splice($user_cards, $key, 1));
+                    }
+                }
+            }
+
+
+            $award = (($card->price * count($user_cards)) / 100) * (100 - $card->host_percentage);
+
+            $winners = [];
+            if(count($user_cards) > 0 && $user_cards[0]->points > 0) {
+                $winners[] = $user_cards[0];
+
+                $first_winner_points = $user_cards[0]->points;
+
+                for($i=1; $i<count($user_cards); $i++) {
+                    if($user_cards[$i]->points === $first_winner_points) {
+                        $winners[] = $user_cards[$i];
+
+                    } else {
+                        break;
+                    }
+                }
+                
+                foreach($winners as $winner) {
+                    $winner->award = $award / count($winners);
+                }
+            }
+
+            $data['card'] = $card;
+            $data['ranked_user_cards'] = $user_cards;
+            $data['winners'] = $winners;
+
+            $data['p_color'] = AdminOpt::select('value')->where('name', 'p_color')->first();
+            $data['s_color'] = AdminOpt::select('value')->where('name', 's_color')->first();
+
+            ini_set('max_execution_time', 300);
+
+            $pdf = PDF::loadView('Ranking', $data);
+            
+            return $pdf->download("ranking-$card->name.pdf");
+
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'error' => 'Cartela inexistente.'
+            ]);
+        }
+    }
+
     public function searchUserCard($q) {
         $response = ['status' => null];
 
@@ -636,6 +723,5 @@ class AdminController extends Controller
             return response()->json($response, 200);
         }
     }
-
 }
 

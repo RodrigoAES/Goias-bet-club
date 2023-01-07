@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+use App\Models\Attendant;
+
 class AdminAuthController extends Controller
 {
-
     public function login(Request $request) {
         $response = ['status' => null];
 
@@ -41,7 +42,7 @@ class AdminAuthController extends Controller
                 return response()->json($response, 422);
             }
 
-        } elseif(! is_numeric($data['user'])) {
+        } else if(! is_numeric($data['user'])) {
             if(filter_var($data['user'], FILTER_VALIDATE_EMAIL)) {
                 $response['token'] = Auth::attempt([
                     'email' => $validator->validated()['user'],
@@ -57,6 +58,14 @@ class AdminAuthController extends Controller
         }
 
         if($response['token']) {
+            if(! Auth::user()->active) {
+                Auth::logout();
+                return response()->json([
+                    'status' => 'unathorized',
+                    'error' => 'Está conta está desativada e não tem permissão para acessar o painel de admimstração.',
+                ]); 
+            }
+
             $response['user'] = Auth::user();
             $response['status'] = 'success';
 
@@ -81,12 +90,16 @@ class AdminAuthController extends Controller
     }
 
     public function validateToken() {
-        $response = ['status' => 'success', 'authenticated' => true, 'user' => Auth::user()];
-        return response()->json($response, 200);
-    }
+        $response = ['status' => 'success', 'authenticated' => true];
+        $user = Auth::user();
+        $attendant = Attendant::where('user_id', $user->id)->first();
+        $user->permissions = [
+            'payment_permission' => $attendant->payment_permission,
+            'doubt_permission' => $attendant->doubt_permission,
+            'validate_permission' => $attendant->validate_permission,
+        ];
+        $response['user'] = $user;
 
-    public function username()
-    {
-        return 'phone';
+        return response()->json($response, 200);
     }
 }

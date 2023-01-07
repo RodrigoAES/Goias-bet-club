@@ -6,6 +6,13 @@
                 name:this.method === 'edit' ? this.user.name : null,
                 email:this.method === 'edit' ? this.user.email : null,
                 phone:this.method === 'edit' ? this.user.phone : null,
+                level:this.method === 'edit' ? this.user.level : 'attendant',
+                slug:this.method === 'edit' ? this.user.slug : null,
+
+                paymentPermission:false,
+                doubtPermission:false,
+                validatePermission:false,
+
                 password:'',
                 password_confirmation:'',
                 current_password:'',
@@ -17,6 +24,11 @@
                     password:null,
                     current_password:null,
                 },
+            }
+        },
+        computed:{
+            slugModel:function() {
+                return this.slug ? this.slug.split(' ').join('-') : '';
             }
         },
         methods:{
@@ -37,6 +49,13 @@
                 body.append('name', this.name);
                 body.append('email', this.email);
                 body.append('phone', this.phone);
+                body.append('level', this.level);
+                body.append('slug', this.slug);
+
+                body.append('payment_permission', this.paymentPermission ? 1 : 0);
+                body.append('doubt_permission', this.doubtPermission ? 1 : 0);
+                body.append('validate_permission', this.validatePermission ? 1 : 0);
+
                 body.append('password', this.password);
                 body.append('password_confirmation', this.password_confirmation);
 
@@ -94,6 +113,12 @@
                 }
                 if(this.phone) {
                     body.append('phone', this.phone);
+                }
+                if(this.$root.loggedUser.level === 'admin') {
+                    body.append('level', this.level);
+                }
+                if(this.slug) {
+                    body.append('slug', this.slug);
                 }
                 if(this.password) {
                     body.append('password', this.password);
@@ -165,6 +190,15 @@
 
             <div class="title">Dados da conta</div>
             <div v-if="errors.auth" class="danger">{{errors.auth}}</div>
+
+            <div class="level">
+                <label for="level">Nivel da conta:</label>
+                <select v-model="level" name="level" id="level">
+                    <option value="sub-admin">Co-Administrador</option>
+                    <option value="attendant">Atendente/Vendedor</option>
+                </select>
+            </div>
+
             <label for="name">Nome:</label>
             <div v-if="errors.name" v-for="error in errors.name" class="danger">{{error}}</div>
             <input 
@@ -174,7 +208,7 @@
                 name="name" 
             />
             
-            <label for="phone">phone:</label>
+            <label for="phone">Celular:</label>
             <div v-if="errors.phone" v-for="error in errors.phone" class="danger">{{error}}</div>
             <input 
                 v-model="phone" 
@@ -193,6 +227,30 @@
                 type="email" 
                 name="email" 
             />
+
+            <label for="url-signature">Assinatura da URL:</label>
+            <input v-model="slug" id="url-siganture" type="text">
+            <div class="url">www.bolaotrevodasorte.com/bolaodefutebol/{{slugModel}}</div>
+
+            
+            <div v-if="method === 'create'" class="permissions">
+                <label>Permissões:</label>
+
+                <div class="payment">
+                    <label class="tiny-label" for="payment">Receber pagamentos:</label>
+                    <input v-model="paymentPermission" type="checkbox" name="payment_permission" id="payment_permission" />
+                </div>
+
+                <div class="doubt">
+                    <label class="tiny-label" for="doubt">Tirar dúvidas:</label>
+                    <input v-model="doubtPermission" type="checkbox" name="doubt_permission" id="doubt_permission" />
+                </div>   
+               
+                <div class="validate">
+                    <label class="tiny-label" for="validate">Válidar cartelas:</label>
+                    <input v-model="validatePermission" type="checkbox" name="validate_permission" id="validate_permission" />
+                </div> 
+            </div>
     
             <label for="password">Nova senha:</label>
             <div v-if="errors.password" v-for="error in errors.password" class="danger">{{error}}</div>
@@ -294,6 +352,56 @@
     .form-account .buttons button:hover {
         background-color: var(--p-color-h);
         transform: scale(1.1);
+    }
+    .form-account .level {
+        display:flex;
+        align-items: center;
+        justify-content: flex-start;
+        width:100%;
+    }
+    .form-account .level label {
+        width:auto;
+        margin: 0;
+        margin-right: 10px;
+
+    }
+    .form-account .level select {
+        padding:4px;
+        outline: none;
+        border:1px solid #888;
+        border-radius: 4px;
+    }
+
+    .form-account .permissions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width:100%
+    }
+    .form-account .permissions .payment,
+    .form-account .permissions .doubt,
+    .form-account .permissions .validate {
+        display: flex;
+        align-items: center;
+        width:100%;
+    }
+    .form-account .tiny-label {
+        width:auto;
+        font-weight: 500;
+        margin: 0;
+        height: 25px;
+        display: flex;
+        align-items: center;
+    }
+    .form-account input[type=checkbox] {
+        width:16px;
+        height:16px;
+        margin-left: 10px;
+    }
+
+    .form-account .url {
+        font-size: 12px;
+        width:100%
     }
 
     @media (max-width:420px) {

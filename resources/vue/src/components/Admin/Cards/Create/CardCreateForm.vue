@@ -7,6 +7,8 @@
                 price:null,
                 type:null,
                 hostPercentage:null,
+                bonus:null,
+                valuation:null,
                 name:null,
             }
         },
@@ -84,6 +86,16 @@
                 />
                 %
             </div>
+
+            <label for="bonus">Bônus da cartela:</label>
+            <div class="bonus">
+                R$ <input v-model="bonus" name="bonus" type="number">
+            </div>
+            
+            <label for="award-valuation">Estimativa de prêmio:</label>
+            <div class="award-valuation">
+                R$ <input v-model="valuation" name="award-valuation" type="number">
+            </div>
             
             <label for="endtime">Data de encerramento:</label>
             <div v-if="error.endtime != null" v-for="error in error.endtime" class="danger">
@@ -112,7 +124,7 @@
                 />
             </div>
 
-            <button @click="this.$parent.createCard(endtime, price, name, type, hostPercentage)">Criar bolão</button>
+            <button @click="this.$parent.createCard(endtime, price, name, type, hostPercentage, bonus, valuation)">Criar bolão</button>
         </div>
     </div>
     
@@ -129,7 +141,9 @@
         height: 100vh;
         display:flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
+        overflow-y: scroll;
+        
     }
     #cardCreateForm {
         padding: 40px;
@@ -139,6 +153,7 @@
         background-color: #fff;
         border:5px solid var(--p-color);
         border-radius: 20px;
+        margin: 20px 0px;
 
     }
     #cardCreateForm .title {
@@ -205,6 +220,20 @@
     #cardCreateForm input[type=number] {
         width:50px;
     }
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    #cardCreateForm .bonus,
+    #cardCreateForm .award-valuation {
+        font-size: 20px;
+        font-weight: 500;
+    }
+    #cardCreateForm .bonus input[type=number],
+    #cardCreateForm .award-valuation input[type=number]{
+        width:100px
+    }
     #cardCreateForm button {
         border: none;
         border-radius: 6px;
@@ -226,6 +255,7 @@
     .alert-danger {
         border: 2px solid rgb(221, 37, 37);
     }
+
     @media (max-width:420px) {
         #cardCreateForm .close span{
             left:10%;

@@ -181,7 +181,6 @@
         font-weight:bold;
         width:400px;
         padding-top:40px;
-        border:1px solid #000;
     }
     .signature a {
 	word-wrap:break-word;
@@ -216,44 +215,22 @@
             <div class="team home">
                 <div class="team-name">{{$bet->match->home_name}}</div>
                 <div class="flag">
-                    @if($user_card->card->championship === 'world-cup')
-                        <img src="{{$bet->match->home_flag}}" />
-
-                    @elseif ($user_card->card->championship === 'brasileirao')
-                        <img 
-                            src="{{url('api/brasileirao/flag/'.$bet->match->home_flag)}}" 
-                            class="brasileirao"
-                        />
-                    @else
                         <img 
                             src="{{$bet->match->home_flag}}"
-                            class="custom" 
                         />
-                    @endif
                 </div>
                
-                <div class="score home">{{$bet->match->home_score}}</div>
+                <div class="score home">{{$bet->match->home_score ?? 0}}</div>
             </div>
             
             <div class="x"><span>X</span></div>
 
             <div class="team away">
-                <div class="score away">{{$bet->match->away_score}}</div>
+                <div class="score away">{{$bet->match->away_score ?? 0}}</div>
                 <div class="flag">
-                   @if($user_card->card->championship === 'world-cup')
-                        <img src="{{$bet->match->away_flag}}" />
-
-                    @elseif ($user_card->card->championship === 'brasileirao')
-                        <img 
-                            src="{{url('api/brasileirao/flag/'.$bet->match->away_flag)}}" 
-                            class="brasileirao"
-                        />
-                    @else
                         <img 
                             src="{{$bet->match->away_flag}}"
-                            class="custom" 
                         />
-                    @endif
                 </div>
                 <div class="team-name">{{$bet->match->away_name}}</div>
             </div>
@@ -280,20 +257,20 @@
 
                 <span>
                     <div>
-                        <img src="https://www.bolaotrevodasorte.com/bolaodefutebol/core/public/team/flag/Yu0CUPOmn2SDZGrRggjWxyqbCkpdWdHy5vS8IKvF.jpg" />
+                        <img src="{{$bet->match->home_flag}}" />
                     </div>
                    
                     <div><span>{{$bet->home_score}}</span><span>X</span><span>{{$bet->away_score}}</span></div>
                     
                     <div>
-                        <img src="https://www.bolaotrevodasorte.com/bolaodefutebol/core/public/team/flag/pZfrz0lOl9LSsgeSsqRMEorCjyjXLMcfYkEdx3gm.png" />
+                        <img src="{{$bet->match->away_flag}}" />
                     </div>
                 </span>
             </div>
         @endif
         <div class="date-group-info">
-            <div class="group">Grupo <span>{{$bet->match->group}}</span></div>
-            <div class="finished">Terminada: <span>{{$bet->match->finished === false ? 'NÃƒÆ’Ã¢â‚¬Å¡O' : 'SIM'}}</span></div>
+            <div class="group">Grupo <span>{{$bet->match->group ?? ''}}</span></div>
+            <div class="finished">Terminada: <span>{{$bet->match->finished ? 'SIM' : 'NÃO'}}</span></div>
             <div class="datetime">Data: <span>{{$bet->match->datetime}}</span></div>
         </div>  
     </div>
@@ -309,7 +286,7 @@
     </div>
 
     <div>
-        <span>Ranking de resultados:</span><br><a>https://www.bolaotrevodasorte.com/bolaodefutebol/ranking</a>
+        <span>Ranking de resultados:</span><br><a>http://localhost:5173/bolaodefutebol/ranking/{{$user_card->card->id}}</a>
     </div>
         
   </div>

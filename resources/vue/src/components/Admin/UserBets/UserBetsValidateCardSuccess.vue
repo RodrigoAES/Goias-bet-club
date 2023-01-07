@@ -1,5 +1,6 @@
 <script>
-    import Loading from '../../Loading.vue';
+    import { isMemberExpressionBrowser } from '@vue/compiler-core';
+import Loading from '../../Loading.vue';
 
     export default {
         props:['card'],
@@ -28,11 +29,9 @@
                 let blobURL = URL.createObjectURL(blob);
                 const link = document.createElement('a');
 
-                // Set link's href to point to the Blob URL
                 link.href = blobURL;
-                link.download = 'Comprovante.pdf';
+                link.download = `Comprovante-${this.card.code}-${this.card.name}.pdf`
 
-                // Append link to the body
                 document.body.appendChild(link);
 
                 link.dispatchEvent(
@@ -42,9 +41,9 @@
                         view: window 
                     })
                 );
+
                 document.body.removeChild(link);
                 this.loading = false;
-                
             }
         },
         components: {

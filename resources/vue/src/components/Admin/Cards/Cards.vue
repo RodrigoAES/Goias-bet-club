@@ -27,7 +27,7 @@
             }
         },
         methods:{
-            deleteCard: async function(id, card) {
+            deleteCard: async function(card, id) {
                 async function request() {
                     let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/card/${id}`, {
                     method:'DELETE',
@@ -44,12 +44,12 @@
                 }
 
                 if((await request()).response.deleted) {
-                    
+                    console.log('entrou no if');
                     this.cards.splice(this.cards.indexOf(card), 1);
                     console.log(this.cards);
                 }
             },
-            confirm:function(id, card) {
+            confirm:function(card, id) {
                 this.cardToDelete = card;
                 this.cardIdToDelete = id;
                 this.confirmOpened = true;
@@ -108,14 +108,14 @@
                                 class="custom" 
                             />
                         </div>
-                        <div class="score home">{{match.home_score}}</div>
+                        <div class="score home">{{match.home_score ? match.home_score : 0}}</div>
                     </div>
                     
                     
                     <div class="x">X</div>
     
                     <div class="team away">
-                        <div class="score away">{{match.away_score}}</div>
+                        <div class="score away">{{match.away_score ? match.away_score : 0}}</div>
                         <div class="flag">
                             <img 
                                 v-if="card.championship === 'world-cup'" 
@@ -142,7 +142,7 @@
                 </div>
                 <div class="date-group-info">
                     <div class="group">Grupo <span>{{match.group}}</span></div>
-                    <div class="finished">Terminada: <span>{{match.finished === 'FALSE' ? 'NÂO' : 'SIM'}}</span></div>
+                    <div class="finished">Terminada: <span>{{match.finished ? 'SIM' : 'NÃO' }}</span></div>
                     <div class="datetime">Data: <span>{{match.datetime}}</span></div>
                 </div>  
             </div>

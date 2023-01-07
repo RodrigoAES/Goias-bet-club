@@ -46,7 +46,7 @@
                     this.cardMatches.indexOf(match), 1
                 );
             },
-            createCard: async function(endtime, price, name, type, host_percentage) {
+            createCard: async function(endtime, price, name, type, host_percentage, bonus, valuation) {
                 let body = new FormData();
                 body.append('name', name);
 
@@ -62,22 +62,19 @@
                 
                 body.append('price', price);
                 body.append('type', type);
-                body.append('championship', this.championship);
                 body.append('host_percentage', host_percentage);
-
-                if(this.championship === 'brasileirao') {
-                    body.append('round', this.round);
-                }
+                body.append('bonus', bonus);
+                body.append('valuation', valuation);
 
                 for(let i=0; i < this.cardMatches.length; i++) {
-                    let round = false;
+                    let round = null;
                     if(this.cardMatches[i].src === 'Gazeta_Scrapper') {
                         round = this.cardMatches[i].round;
                     }
                     body.append('matchs[]', JSON.stringify({
-                        id:this.cardMatches[i].id,
-                        src:this.cardMatches[i].src,
-                        round:round ? round : null
+                        id: this.cardMatches[i].id,
+                        src: this.cardMatches[i].src,
+                        round: round,
                         
                     }));
                 }
@@ -380,7 +377,7 @@
                             }}
                             <span>{{match.group}}</span>
                         </div>
-                        <div class="finished">Terminada: <span>{{match.finished === 'FALSE' ? 'NÂO' : 'SIM'}}</span></div>
+                        <div class="finished">Terminada: <span>{{match.finished ? 'SIM' : 'NÃO'}}</span></div>
                         <div class="datetime">Data: <span>{{match.datetime}}</span></div>
                     </div>  
                 </div>
@@ -749,8 +746,8 @@
             align-items: center;
         }
         .match .flag img{
-            max-width: 50px;
-            max-height: 50px;
+            max-width: 80%;
+            max-height: 80%;
         }
         .match .home .score {
             font-weight: 700;
