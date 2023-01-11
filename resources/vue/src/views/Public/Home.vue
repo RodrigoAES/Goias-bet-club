@@ -139,7 +139,7 @@
             BetForm,
             BetSuccess,
             DoubtContactForm,
-
+            
             Loading,
         },  
         async mounted() {
@@ -170,8 +170,7 @@
             let json = await request.json();
             if(json.status === 'success') {
                 sessionStorage.setItem('entry', entry);
-            }   
-            
+            }
         },
     }
 </script>

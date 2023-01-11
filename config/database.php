@@ -46,11 +46,19 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
+<<<<<<< HEAD
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
+=======
+            'host' => env('DB_HOST', '45.132.240.109'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'www_bolao'),
+            'username' => env('DB_USERNAME', 'www_root'),
+            'password' => env('DB_PASSWORD', 'PPEf*O4EwP*j!#pe'),
+>>>>>>> 1aa371becf7c2a3bdf86e0da37909b67fa54c330
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',

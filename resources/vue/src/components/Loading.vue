@@ -4,7 +4,6 @@
         data() {
             return {
                 s: `${this.size}px`,
-                borderSize: `${this.size / 1.5}px`,
             }
         }
     }
@@ -27,6 +26,7 @@
         animation-duration: 1.7s;
         animation-iteration-count: infinite;
     }
+
 
     @keyframes rotate {
         from {
