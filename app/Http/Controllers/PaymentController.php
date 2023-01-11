@@ -13,6 +13,13 @@ class PaymentController extends Controller
     public function test() {
         GerenciaNetPIXHelper::test();
     }
+    
+    public function generateCharge() {
+        $price = '';
+        $card_code = 'xxxxxx';
+        
+        GerenciaNetPIXHelper::imediateChargeTxid($price, $card_code);       
+    }
 
     public function paymentConfirm(Request $request) {
         $method = $request->method();
