@@ -162,7 +162,7 @@ class GerenciaNetPIXHelper {
             }
 
             $response = json_decode($response);
-            dd($response);
+            return $response;
 
             $httpReturnCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             
@@ -213,6 +213,63 @@ class GerenciaNetPIXHelper {
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => "PUT",
                 CURLOPT_POSTFIELDS => json_encode($body),
+                CURLOPT_SSLCERT => self::$certificate_path, // Caminho do certificado
+                CURLOPT_SSLCERTPASSWD => "",
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: Bearer ".GerenciaNetPIXHelper::OAuthToken(),
+                    "Content-Type: application/json"
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            if ($response === false) {
+                throw new \Exception(curl_error($curl), curl_errno($curl));
+            }
+
+            $response = json_decode($response);
+            return $response;            
+
+            $httpReturnCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            
+        } catch(Exception $e) {
+
+            trigger_error(sprintf(
+                'Curl failed with error #%d: %s',
+                $e->getCode(), $e->getMessage()),
+                E_USER_ERROR);
+
+        } finally {
+            if (is_resource($curl)) {
+                curl_close($curl);
+            }
+        }
+    }
+    
+    public static function locationQRcode($id) {
+        $config = [
+            "certificate" => self::$certificate_path,
+            "client_id" => self::$client_id,
+            "client_secret" => self::$client_secret,
+          ];
+
+        $authorization =  base64_encode($config["client_id"] . ":" . $config["client_secret"]);
+
+        try {
+            $curl = curl_init();
+
+            if ($curl === false) {
+                throw new Exception('failed to initialize');
+            }
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://api-pix.gerencianet.com.br/v2/loc/$id/qrcode",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
                 CURLOPT_SSLCERT => self::$certificate_path, // Caminho do certificado
                 CURLOPT_SSLCERTPASSWD => "",
                 CURLOPT_HTTPHEADER => array(

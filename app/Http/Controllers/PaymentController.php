@@ -18,7 +18,20 @@ class PaymentController extends Controller
         $price = '';
         $card_code = 'xxxxxx';
         
-        GerenciaNetPIXHelper::imediateChargeTxid($price, $card_code);       
+        $charge = GerenciaNetPIXHelper::imediateChargeTxid($price, $card_code);
+
+        $payment = Payment::create([
+            'user_card_id' => 1,
+            'txid' => $charge->txid,
+            'location_id' => $charge->loc->id,
+            'price' => 10,
+            'pix_key' => $charge->chave,
+            'paid' => false,
+        ]);
+
+        if($payment) {
+            $qrcode = GerenciaNetPIXHelper::locationQRcode($payment->location_id);
+        }
     }
 
     public function paymentConfirm(Request $request) {
