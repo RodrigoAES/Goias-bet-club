@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use App\Models\UserCard;
+
 return new class extends Migration
 {
     /**
@@ -15,7 +17,13 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-	    $table->text('body');
+            $table->foreignIdFor(UserCard::class);
+            $table->foreign('user_card_id')->references('id')->on('user_cards')->onDelete('CASCADE');
+            $table->string('txid');
+            $table->bigInteger('location_id');
+            $table->integer('price');
+            $table->string('pix_key');
+            $table->boolean('paid')->default(false);
             $table->timestamps();
         });
     }
