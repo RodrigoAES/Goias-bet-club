@@ -2,6 +2,7 @@
     import BetForm from '../../components/Public/MakeBet/BetForm.vue';
     import BetSuccess from '../../components/Public/MakeBet/BetSuccess.vue';
     import DoubtContactForm from '../../components/Public/Contact/DoubtContactForm.vue';
+    import Loading from '../../components/Loading.vue';
 
     export default {
         data() {
@@ -16,6 +17,12 @@
 
                 doubtContactFormOpened:false,
                 doubtContactAttendant:null,
+
+                cardCode:null,
+                qrcode:null,
+                qrcodeImage:null,
+
+                qrcodeLoading:false,
             }
         },
         methods:{
@@ -59,7 +66,6 @@
                     setTimeout(()=>{
                         payment.style.height = '42px';
                     }, 1);
-                    
                 }
             },
             openAttendantPayment:function() {
@@ -87,6 +93,10 @@
                 } else {
                     autopay.style.height = '42px';
                 }
+            },
+            generateCharge:async function() {
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}charge/${this.cardCode}`);
+                let json = await request.json();
             }
 
         },  
@@ -129,6 +139,8 @@
             BetForm,
             BetSuccess,
             DoubtContactForm,
+
+            Loading,
         },  
         async mounted() {
             async function requestCards() {
@@ -158,9 +170,7 @@
             let json = await request.json();
             if(json.status === 'success') {
                 sessionStorage.setItem('entry', entry);
-            }
-            
-
+            }   
             
         },
     }
@@ -199,7 +209,25 @@
 
                 <div id="autopay" style="height:42px">
                     <div @click="openAutopay" class="label-autopay">Pagar Com Pix</div>
+                    <div class="code">
+                        <label for="code">Insirá o código da sua cartela:</label>
+                        <input v-model="cardCode" type="text">
+                        <button @click="generateCharge">Gerar QRcode</button>
+                    </div>
 
+                    <div class="qrcode">
+                        <Loading 
+                            v-if="qrcodeLoading"
+                            :size="30"
+                        />
+
+                        <div v-if="qrcodeimage" class="qrcode-image">
+                            <img :src="qrcodeImage" />
+                        </div>
+                        <div v-if="qrcode" class="qrcode-code">
+
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -412,6 +440,35 @@
         align-items: center;
         overflow-y: hidden;
         transition: all ease 1s;
+    }
+    #payment #autopay .code {
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #payment #autopay label {
+        font-weight: 600;
+    }
+    #payment #autopay input {
+        width:100px;
+        margin-top: 10px;
+        padding:6px 10px;
+        font-size: 16px;
+        border:1px solid #888;
+        color:#555;
+        outline:none;
+        border-radius: 4px;
+    }
+    #payment #autopay button {
+        margin-top:10px;
+        font-size: 16px;
+        font-weight: 600;
+        padding:5px 10px;
+        border:none;
+        border-radius: 6px;
+        background-color: var(--p-color);
+        color:var(--s-color);
+        cursor:pointer;
     }
     #payment .label-attendants,
     #payment .label-autopay {

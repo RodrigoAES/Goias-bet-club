@@ -4,7 +4,7 @@
         data() {
             return {
                 s: `${this.size}px`,
-                infoSize: `${this.size / 1.5}px`,
+                borderSize: `${this.size / 1.5}px`,
             }
         }
     }
@@ -12,9 +12,7 @@
 
 <template>
     <div class="loading">
-        <div class="info">
 
-        </div>
     </div>
 </template>
 
@@ -22,24 +20,13 @@
     .loading {
         width: v-bind(s);
         height: v-bind(s);
-        border-left: none;
-        border-radius:100%;
-        background: linear-gradient(to right, var(--p-color) 20%, var(--s-color) 30%, var(--s-color) 50%);
-        animation-name: rotate;
-        animation-duration:1.5s;
-        animation-iteration-count: infinite;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
-    .loading .info{
-        width:v-bind(infoSize);
-        height:v-bind(infoSize);
-        background-color: var(--p-color);
+        border: 5px solid var(--s-color);
         border-radius: 50%;
-        margin-top: 20px;
-    } 
+        border-left: 5px solid var(--p-color);
+        animation-name: rotate;
+        animation-duration: 1.7s;
+        animation-iteration-count: infinite;
+    }
 
     @keyframes rotate {
         from {

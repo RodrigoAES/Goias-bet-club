@@ -86,6 +86,7 @@ Route::post('entry', [EntryController::class, 'registerEntry']);
 Route::get('test', [PaymentController::class, 'test']);
 
 Route::post('paymentconfirm', [PaymentController::class, 'paymentConfirm']);
+Route::get('paymentconfirm', [PaymentController::class, 'paymentConfirm']);
 
 Route::middleware(['auth:api'])->group(function () {
     //Auth
