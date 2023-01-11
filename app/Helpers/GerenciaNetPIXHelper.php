@@ -191,7 +191,7 @@ class GerenciaNetPIXHelper {
         
         $body = [
             'calendario' => ['expiracao' => 2147483647],
-            'valor' => ['original' => '00.01'],
+            'valor' => ['original' => strval(number_format($price, 2))],
             'chave' => '326aec75-9bd2-40ac-8568-047bf2769827',
             'solicitacaoPagador' => "www.goiasbetclub.com - cartela: $card_code",
         ];
@@ -284,7 +284,7 @@ class GerenciaNetPIXHelper {
             }
 
             $response = json_decode($response);
-            dd($response);
+            return $response;
 
             $httpReturnCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Payment;
+use App\Models\UserCard;
 
 use App\Helpers\GerenciaNetPIXHelper;
 
@@ -14,24 +15,36 @@ class PaymentController extends Controller
         GerenciaNetPIXHelper::test();
     }
     
-    public function generateCharge() {
-        $price = '';
-        $card_code = 'xxxxxx';
-        
-        $charge = GerenciaNetPIXHelper::imediateChargeTxid($price, $card_code);
+    public function generateCharge($card_code) {
+        $response = ['status' => null];
 
-        $payment = Payment::create([
-            'user_card_id' => 1,
-            'txid' => $charge->txid,
-            'location_id' => $charge->loc->id,
-            'price' => 10,
-            'pix_key' => $charge->chave,
-            'paid' => false,
-        ]);
+        $user_card = UserCard::where('code', $card_code)->first();
+        if($user_card) {
+            $charge = GerenciaNetPIXHelper::imediateChargeTxid($user_card->card->price, $user_card->code);
 
-        if($payment) {
-            $qrcode = GerenciaNetPIXHelper::locationQRcode($payment->location_id);
+            $payment = Payment::create([
+                'user_card_id' => $user_card->id,
+                'txid' => $charge->txid,
+                'location_id' => $charge->loc->id,
+                'price' => $user_card->card->price,
+                'pix_key' => $charge->chave,
+                'paid' => false,
+            ]);
+
+            if($payment) {
+                $response['qrcode'] = GerenciaNetPIXHelper::locationQRcode($payment->location_id);
+                if($response['qrcode']) {
+                    return response()->json($response, 200);
+                }
+            }
+    
+        } else {
+            $response['status'] = 'error';
+            $response['error'] = 'Cartela inexistente.';
+
+            return response()->json($response, 422);
         }
+    
     }
 
     public function paymentConfirm(Request $request) {
