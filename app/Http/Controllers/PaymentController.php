@@ -72,5 +72,33 @@ class PaymentController extends Controller
 
             break;
         } 
-        }                  
+    }   
+    
+    public function pixPaymentConfirm(Request $request) {
+        $method = $request->method();
+        $params = explode('/', $request->url());
+        $body = json_decode(file_get_contents('php://input'), true);
+        $body = implode('|', $body);
+        switch($method) {
+            case 'POST':
+                $payment = Payment::create([
+                'body' => $body
+            ]);
+            
+            if($payment) {
+                return response()->json($body, 200);
+            } else {
+                return response()->body($body, 300);
+            }  
+            break;
+            case 'GET':
+            $response['status'] = 200;
+                    $response['mensagem'] = 'Requisição realizada com sucesso!';
+                    $response['dados'] = $body;
+
+                    return response()->json($response, 200);
+
+            break;
+        } 
+    }
 }
