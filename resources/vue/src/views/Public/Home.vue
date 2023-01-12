@@ -58,7 +58,7 @@
                         payment.style.height = `${height - 26}px`;
                         setTimeout(() => {
                             payment.style.height = 'auto';
-                        }, 1000)
+                        }, 1000);
                     }, 1);
                 } else {
                     let height = payment.offsetHeight;
@@ -89,14 +89,44 @@
                     autopay.style.height = '42px';
                     setTimeout(()=>{
                         autopay.style.height = `${height}px`;
+                        setTimeout(()=>{
+                            autopay.style.height = 'auto';
+                        }, 1000);
                     }, 1);
                 } else {
-                    autopay.style.height = '42px';
+                    autopay.style.height = `${autopay.offsetHeight}px`;
+                    setTimeout(()=>{
+                        autopay.style.height = '42px';
+                    }, 1);
+                    
                 }
             },
+            copyQrcode:function() {
+                navigator.clipboard.writeText(this.qrcode);
+                document.querySelector('#copy-message').style.display = 'block';
+            },
             generateCharge:async function() {
+                this.qrcode = null;
+                this.qrcodeImage = null;
+
+                let qrcodeArea = document.querySelector('#qrcode');
+                if(qrcodeArea.style.height === '0px') {
+                    qrcodeArea.style.height = '0px';
+                    setTimeout(()=>{
+                        document.querySelector('#qrcode').style.height = '335px';
+                    }, 1);
+                }
+                
+                this.qrcodeLoading = true;
+
                 let request = await fetch(`${import.meta.env.VITE_BASE_URL}charge/${this.cardCode}`);
                 let json = await request.json();
+
+                if(json.status === 'success') {
+                    this.qrcodeLoading = false;
+                    this.qrcode = json.qrcode.qrcode;
+                    this.qrcodeImage = json.qrcode.imagemQrcode;
+                }
             }
 
         },  
@@ -210,21 +240,25 @@
                     <div @click="openAutopay" class="label-autopay">Pagar Com Pix</div>
                     <div class="code">
                         <label for="code">Insirá o código da sua cartela:</label>
-                        <input v-model="cardCode" type="text">
+                        <input v-model="cardCode" type="text" maxlength="6">
                         <button @click="generateCharge">Gerar QRcode</button>
                     </div>
 
-                    <div class="qrcode">
+                    <div id="qrcode" style="height:0px">
                         <Loading 
                             v-if="qrcodeLoading"
                             :size="30"
                         />
 
-                        <div v-if="qrcodeimage" class="qrcode-image">
+                        <div v-if="qrcodeImage" class="qrcode-image">
                             <img :src="qrcodeImage" />
                         </div>
                         <div v-if="qrcode" class="qrcode-code">
-
+                            <span id="copy-message" style="display:none;">Copiado!</span>
+                            <button @click="copyQrcode">
+                                Copiar
+                                <img src="/assets/icons/copy.png" alt="">
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -279,7 +313,7 @@
                     <div 
                         :style="`
                             background-image:url(${this.$root.asset}core/public/bonus_bg_image);
-                        `" 
+                        `"
                         class="bonus"
                     >
                         <div class="text">
@@ -449,6 +483,7 @@
         font-weight: 600;
     }
     #payment #autopay input {
+        text-align: center;
         width:100px;
         margin-top: 10px;
         padding:6px 10px;
@@ -468,6 +503,33 @@
         background-color: var(--p-color);
         color:var(--s-color);
         cursor:pointer;
+
+        display: flex;
+        align-items: center;
+    }
+    #payment #autopay button img {
+        width:30px;
+        margin-left: 10px;
+    }
+    #payment #autopay #qrcode {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: all ease 1s;
+    }
+    #payment #autopay .qrcode-code {
+        height:100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    #payment #autopay .qrcode-code button {
+        width:auto;
+        padding: 10px 20px;
+        background-color: transparent;
+        color:#000;
+        border: 2px solid #000;
     }
     #payment .label-attendants,
     #payment .label-autopay {
