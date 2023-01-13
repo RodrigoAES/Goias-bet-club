@@ -646,6 +646,7 @@ class ComposerStaticInit754223c1ae09a905ec5d25f5ca49990e
         'App\\Models\\Championship' => __DIR__ . '/../..' . '/app/Models/Championship.php',
         'App\\Models\\Entry' => __DIR__ . '/../..' . '/app/Models/Entry.php',
         'App\\Models\\Game' => __DIR__ . '/../..' . '/app/Models/Game.php',
+        'App\\Models\\Payment' => __DIR__ . '/../..' . '/app/Models/Payment.php',
         'App\\Models\\PublicRanking' => __DIR__ . '/../..' . '/app/Models/PublicRanking.php',
         'App\\Models\\Receipt' => __DIR__ . '/../..' . '/app/Models/Receipt.php',
         'App\\Models\\Team' => __DIR__ . '/../..' . '/app/Models/Team.php',
