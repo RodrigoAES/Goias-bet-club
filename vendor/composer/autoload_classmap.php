@@ -51,6 +51,7 @@ return array(
     'App\\Models\\Championship' => $baseDir . '/app/Models/Championship.php',
     'App\\Models\\Entry' => $baseDir . '/app/Models/Entry.php',
     'App\\Models\\Game' => $baseDir . '/app/Models/Game.php',
+    'App\\Models\\Payment' => $baseDir . '/app/Models/Payment.php',
     'App\\Models\\PublicRanking' => $baseDir . '/app/Models/PublicRanking.php',
     'App\\Models\\Receipt' => $baseDir . '/app/Models/Receipt.php',
     'App\\Models\\Team' => $baseDir . '/app/Models/Team.php',

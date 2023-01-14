@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 /vendor/
 node_modules/
 npm-debug.log
@@ -22,7 +22,6 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
-=======
 logs
 *.log
 npm-debug.log*
@@ -51,4 +50,3 @@ coverage
 *.sln
 *.sw?
 
->>>>>>> 1aa371becf7c2a3bdf86e0da37909b67fa54c330

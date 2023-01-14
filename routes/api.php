@@ -85,10 +85,11 @@ Route::post('entry', [EntryController::class, 'registerEntry']);
 
 Route::get('test', [PaymentController::class, 'test']);
 
-Route::get('charge/{card_code}', [PaymentController::class, 'generateCharge']);
 Route::post('paymentconfirm', [PaymentController::class, 'paymentConfirm']);
 Route::get('paymentconfirm', [PaymentController::class, 'paymentConfirm']);
+Route::get('charge/{card_code}', [PaymentController::class, 'generateCharge']);
 Route::post('paymentconfirm/pix', [PaymentController::class, 'pixPaymentConfirm']);
+Route::get('paymentconfirm/pix', [PaymentController::class, 'pixPaymentConfrim']);
 
 Route::middleware(['auth:api'])->group(function () {
     //Auth
