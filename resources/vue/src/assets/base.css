@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Rubik+Distressed&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Rubik+Spray+Paint&display=swap');
 body {
   margin:0;
   font-weight: 400;
-  font-family: Montserrat;
+  font-family: Open Sans;
   min-height: 100vh;
   min-width: 100vw;
   overflow-x: hidden;

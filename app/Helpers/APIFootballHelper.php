@@ -19,7 +19,7 @@ class APIFootballHelper {
         $response = curl_exec($curl);
         curl_close($curl);
         $response = json_decode($response);
-
+        dd($response);
         $match = $response->response[0];
 
         $finished = $match->fixture->status->long === 'Match Finished' ? true : false;

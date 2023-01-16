@@ -294,8 +294,6 @@
         margin-top: 20px;
     }
     .bet {
-        padding: 20px;
-        border:2px solid #000;
         border-radius: 15px;
         height: auto;
     }

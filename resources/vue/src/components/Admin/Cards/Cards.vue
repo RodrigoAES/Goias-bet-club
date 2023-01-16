@@ -190,15 +190,22 @@
         font-size: 18px;
         font-weight: 700;
         margin-bottom: 15px;
+        color:#000;
     }
     .card .name span{
         margin-left: 15px;
         margin-bottom: 20px;
+        color:var(--s-color);
+        font-size: 20px;
+        font-weight: 700;
     }
     .card .award {
         font-weight: 600;
         margin-left: 15px;
         margin-bottom: 20px;
+        color:var(--s-color);
+        font-size: 20px;
+        font-weight: 700;
     }
     .buttons {
         width:100%;
@@ -220,9 +227,15 @@
         font-weight: 600;
         margin-bottom: 20px;
         margin-left: 14px;
+        color:var(--s-color);
+        font-size: 20px;
+        font-weight: 700;
     }
 
     @media (max-width: 420px) {
+        #cards{
+            padding: 0px;
+        }
         .card {
             border: 2px solid #000;
             padding: 5px;

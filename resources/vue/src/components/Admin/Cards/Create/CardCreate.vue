@@ -530,6 +530,12 @@
         margin-bottom: 25px;
         margin-right: 15px;
     }
+    .card {
+        background-image: url('/assets/images/card-water-mark.jpeg');
+        background-size: 100%;
+
+        margin-bottom: 80px;
+    }
     .switch-championship {
         height: auto;
         margin-bottom: 25px;
@@ -557,8 +563,10 @@
         align-items: center;
         justify-content: space-between;
         border:2px solid #000;
-        border-radius: 18px;
+        border-radius: 6% / 50%;
         padding: 8px 0px;
+        background-color: #fff;
+        color:#000;
     }
     .match .team {
         display:flex;
@@ -567,6 +575,7 @@
     .match .team-name {
         width:110px;
         font-weight: 700;
+        text-align: center;
     }
     .match .home .team-name {
         display: flex;
@@ -577,8 +586,8 @@
         margin-left: 10px;
     }
     .match .flag {
-        width: 40px;
-        height: 40px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         overflow: hidden;
         display:flex;
@@ -610,6 +619,7 @@
         justify-content: space-around;
         margin-bottom: 25px;
         font-weight: 500;
+        color:#000
     }
     .match .date-group-info span {
         font-weight: 700;
@@ -621,7 +631,6 @@
         margin-right: 15px;
     }
     #card .card {
-        border:2px solid #000;
         border-radius: 20px;
         padding: 25px 20px;
         width:496px;
@@ -633,6 +642,7 @@
         font-size: 18px;
         font-weight: 700;
         margin-bottom: 15px;
+        color:#000;
     }
     #card .match .flag img{
         max-width: 80%;
@@ -652,8 +662,8 @@
     #card .remove {
         position: absolute;
         z-index: 2;
-        right:3px;
-        top:3px;
+        right:-8px;
+        top:-8px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -661,6 +671,7 @@
         border-radius: 50%;
         height: 20px;
         width: 20px;
+        background-color: #fff;
     }
     #card .remove span {
         margin-top: -2px;
@@ -677,8 +688,8 @@
         border: none;
         border-radius: 6px;
         padding:10px 20px;
-        background-color: var(--p-color);
-        color: var(--s-color);
+        background-color: var(--s-color);
+        color: var(--p-color);
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
@@ -699,7 +710,13 @@
     @media (max-width:420px) {
         #create-card {
             flex-direction: column;
+            align-items: center;
             margin-top: 15px;
+            margin-left: -14px;
+        }
+        .matches{
+            width: 320px;
+            margin-left: 0px;
         }
         .matches .title {
             width:auto;
@@ -713,25 +730,27 @@
             display: block;
         }
         #card .card {
-            border:2px solid #000;
             border-radius: 20px;
             padding: 25px 6px;
             width:calc(100vw - 40px);
-            margin-left: -27px;
+            margin-left: -13px;
         }
         #card .remove {
-        top:-10px;
-        right:-5px ;
-        height: 22px;
-        width: 22px;
-        background-color: #fff;
+            top:-10px;
+            right:-5px ;
+            height: 22px;
+            width: 22px;
+            background-color: #fff;
         }
         #card .remove span {
             margin-right: -1px;
         }
+        .card {
+            margin-bottom: 5px;
+        }
         .match .team-name {
             width:85px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             overflow-x: hidden;
             text-align: center;
@@ -772,7 +791,7 @@
         }
         .match .date-group-info {
             width:100%;
-            margin-right: -40px;
+            font-size: 12px;
         } 
     }
 </style>

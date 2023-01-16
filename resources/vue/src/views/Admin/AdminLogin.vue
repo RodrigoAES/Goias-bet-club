@@ -101,7 +101,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        border: 3px solid var(--p-color);
+        border: 3px solid var(--s-color);
         border-radius: 6px;
         padding: 20px;
     }

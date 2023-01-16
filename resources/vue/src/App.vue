@@ -24,6 +24,7 @@ import { RouterLink, RouterView } from 'vue-router';
             primaryColor:'#069446',
             primaryColorHover:'#09a750',
             secundaryColor:'rgb(255, 238, 0)',
+            thirdColor: '#45E421',
             nameColor1:'rgb(36, 36, 241)',
             nameColor2:'#035528',
 
@@ -46,7 +47,7 @@ import { RouterLink, RouterView } from 'vue-router';
                     localStorage.removeItem('auth');
                     this.$router.push({name:'home'});
                 }
-            }
+            },
         },
         async beforeCreate() {
             // site config
@@ -78,6 +79,7 @@ import { RouterLink, RouterView } from 'vue-router';
             this.root.style.setProperty("--p-color", this.primaryColor);
             this.root.style.setProperty("--p-color-h", this.primaryColorHover);
             this.root.style.setProperty("--s-color", this.secundaryColor);
+            this.root.style.setProperty("--t-color", this.thirdColor);
             this.root.style.setProperty("--name-color", this.nameColor1);
             this.root.style.setProperty("--name-color-s", this.nameColor2);
             this.root.style.setProperty("--titles-color", this.titlesColor);
@@ -159,7 +161,7 @@ import { RouterLink, RouterView } from 'vue-router';
       display: flex;
       align-items: center;
       height: 70px;
-      background-color:var(--s-color);
+      background-color:var(--t-color);
       position: relative;
     }
     header a img {
@@ -168,14 +170,16 @@ import { RouterLink, RouterView } from 'vue-router';
     }
     .title-main {
       margin-left: 20px;
-      font-family: Rubik Distressed;
-      font-size: 25px;
+      font-family: Open Sans;
+      font-size: 30px;
       color: var(--name-color);
-      font-weight: 500;
+      font-weight: 700;
     }
     .title-main span {
+      font-family: Rubik Spray Paint;
       color:var(--name-color-s);
       margin-left: 5px;
+      font-weight: 500;
     }
 
     #app-body{
@@ -191,15 +195,16 @@ import { RouterLink, RouterView } from 'vue-router';
       align-items: center;
     }
     .login {
-        padding: 10px 20px;
+        padding: 8px 25px;
         margin-right: 15px;
-        font-size: 16px;
+        font-size: 20px;
         font-weight: 600;
         cursor: pointer;
         background-color: var(--p-color);
         color: var(--s-color);
         border:none;
-        border-radius: 5px;
+        border-radius: 22% / 60%;
+        box-shadow: 8px 5px 0px var(--s-color);
     }
     .home-button {
       padding: 10px 20px;
@@ -235,13 +240,17 @@ import { RouterLink, RouterView } from 'vue-router';
       width:60px;
       margin-left: 10px;
     }
-    header .title {
-        width:40%;
+    header .title-main {
+        width:170px;
     }
     .login,
     .home-button{
       padding: 6px 10px;
       font-size: 15px;
+      margin-left: 10px;
+    }
+    .home-button {
+      margin-right: 5px;
     }
     .right {
       left:0%

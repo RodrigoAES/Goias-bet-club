@@ -50,6 +50,10 @@ Route::get('401', function(){
     return response()->json($response, 401);
 })->name('401');
 
+Route::get('testapifootball', function() {
+    APIFootballHelper::requestMatch(2345);
+});
+
 // Brasileirao Flag Scrap
 Route::get('brasileirao/flag/{file}', function($file) {
     GazetaBrasileiraoScrapHelper::requestFlag($file);
