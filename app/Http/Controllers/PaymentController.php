@@ -77,10 +77,8 @@ class PaymentController extends Controller
     }
 
     public function pixPaymentConfirm(Request $request) {
-        WebhookTest::create(['body' => 'recebi requisicao']);
         $response = ['status' => null];
         $pix = json_decode(json_encode($request->pix[0]));
-        WebhookTest::create(['body' => $pix->txid]);
         $payment = Payment::where('txid', $pix->txid)->first();
  
         if($payment) {
