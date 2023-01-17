@@ -23,9 +23,12 @@ class AdminOptsController extends Controller
             'phone' => 'required|string|numeric|digits:11',
             'rules' => 'required|array',
             'home_bg' => 'image|mimes:jpg,png',
+            'home_content_bg' => 'image|mimes:jpg,png',
+            'rules_bg' => 'image|mimes:jpg,png',
             'logo' => 'image|mimes:jpg,png',
             'p_color' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
             's_color' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
+            't_color' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
             'name' => 'required|string',
             'name_color_1' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
             'name_color_2' => ['regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
@@ -73,6 +76,20 @@ class AdminOptsController extends Controller
 
         } else {
             unset($data['home_bg']);
+        }
+
+        if(isset($data['home_content_bg'])) {
+            $data['home_content_bg'] = Storage::disk('local')->put('Site/Images/HomeContentBackground', $data['home_content_bg']);
+
+        } else {
+            unset($data['home_content_bg']);
+        }
+
+        if(isset($data['rules_bg'])) {
+            $data['rules_bg'] = Storage::disk('local')->put('Site/Images/RulesBackground', $data['rules_bg']);
+
+        } else {
+            unset($data['rules_bg']);
         }
         
         if(isset($data['logo'])) {

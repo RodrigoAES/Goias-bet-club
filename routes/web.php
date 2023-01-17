@@ -24,10 +24,22 @@ Route::get('logo', function() {
     $logo = AdminOpt::select('value')->where('name', 'logo')->first();
     return Storage::download($logo['value']);
 });
+
 Route::get('home_bg', function() {
     $home_bg = AdminOpt::select('value')->where('name', 'home_bg')->first();
     return Storage::download($home_bg['value']);
 });
+
+Route::get('home_content_bg', function() {
+    $home_content_bg = AdminOpt::select('value')->where('name', 'home_content_bg')->first();
+    return Storage::download($home_content_bg['value']);
+});
+
+Route::get('rules_bg', function() {
+    $rules_bg = AdminOpt::select('value')->where('name', 'rules_bg')->first();
+    return Storage::download($rules_bg['value']);
+});
+
 Route::get('bonus_bg_image', function() {
     $bonus_bg = AdminOpt::select('value')->where('name', 'bonus_bg_image')->first();
     return Storage::download($bonus_bg['value']);

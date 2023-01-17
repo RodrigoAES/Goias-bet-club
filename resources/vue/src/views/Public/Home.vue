@@ -220,7 +220,7 @@
             <img :src="`${asset}core/public/logo`" alt="logo">
         </div>
         <div class="content" :style="`background-image: url(${this.$root.asset}core/public/home_bg)`">
-            <div class="background" style="background-image:url(/assets/images/home-content_bg.png)">
+            <div class="background" :style="`background-image:url(${this.$root.asset}core/public/home_content_bg)`">
                 <div class="consult">
                     <router-link to="/bolaodefutebol/user-card">Consultar minhas cartelas</router-link>
                 </div>
@@ -295,7 +295,7 @@
                 </div>
 
                 <div class="rules-title">Regulamentação</div>
-                <div class="rules">
+                <div class="rules" :style="`background-image: url(${this.$root.asset}core/public/rules_bg)`">
                     <div 
                         v-if="this.$root.rules"
                         v-for="(rule, index) in this.$root.rules"
@@ -650,6 +650,38 @@
         border-radius: 50%;
         overflow: hidden;
     }
+    .rules-title {
+        margin-top: 40px;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .home-page .rules {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border: none;
+        border-radius: 5% / 50%;
+        background-color: var(--p-color);
+        box-shadow: 20px 20px 0px var(--s-color);
+        font-weight: 700;
+        color:#000;
+        padding: 20px 40px;
+        width:400px;
+        max-height: 250px;
+        overflow-y: scroll;
+    }
+    .home-page .rules::-webkit-scrollbar {
+        -webkit-appearance: none;
+        display:none;
+    }
+    .home-page .rules .rule {
+        margin-bottom: 30px;
+    }
+    .home-page .rules .rule span {
+        font-size: 18px;
+        font-weight: 700;
+    }
     .anoucement {
         font-size: 20px;
         font-weight: 700;
@@ -718,39 +750,7 @@
         font-size: 20px;
         font-weight: 700;
     }
-    .rules-title {
-        margin-top: 40px;
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-    .home-page .rules {
-        background-image: url('/assets/images/card-water-mark.jpeg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        border: none;
-        border-radius: 5% / 50%;
-        background-color: var(--p-color);
-        box-shadow: 20px 20px 0px var(--s-color);
-        font-weight: 700;
-        color:#000;
-        padding: 20px 40px;
-        width:400px;
-        max-height: 250px;
-        overflow-y: scroll;
-    }
-    .home-page .rules::-webkit-scrollbar {
-        -webkit-appearance: none;
-        display:none;
-    }
-    .home-page .rules .rule {
-        margin-bottom: 30px;
-    }
-    .home-page .rules .rule span {
-        font-size: 18px;
-        font-weight: 700;
-    }
+    
     .home-page .card-slot {
         display: flex;
         flex-direction: column;

@@ -11,10 +11,14 @@
                 siteNameSecondColor:null,
                 nameColor1: this.$root.nameColor1 ? this.$root.nameColor1 : null,
                 nameColor2: this.$root.nameColor2 ? this.$root.nameColor2 : null,
+
                 homeBackground: this.$root.homeBackground ? this.$root.homeBackground : null,
+                homeContentBackground: this.$root.homeContentBackground ? this.$root.homeContentBackground : null,
+                rulesBackground: this.$root.rulesBackground ? this.$root.rulesBackground : null,
 
                 primaryColor: this.$root.primaryColor ? this.$root.primaryColor : null,
                 secundaryColor: this.$root.secundaryColor ? this.$root.secundaryColor : null,
+                thirdColor: this.$root.thirdColor ? this.$root.thirdColor : null,
 
                 bonusTextColor1:this.$root.bonusTextColor1 ? this.$root.bonusTextColor1 : null,
                 bonusTextColor2:this.$root.bonusTextColor2 ? this.$root.bonusTextColor2 : null,
@@ -116,15 +120,26 @@
                 body.append('name_color_1', this.nameColor1);
                 body.append('name_color_2', this.nameColor2);
 
-                // Home Background
+                //Backgrounds
                 let homeBg = document.querySelector('#home-bg-file').files[0];
                 if(homeBg) {
                     body.append('home_bg', homeBg);
                 }
 
+                let homeContentBg = document.querySelector('#home-content-bg-file').files[0];
+                if(homeContentBg) {
+                    body.append('home_content_bg', homeContentBg);
+                }
+
+                let rulesBg = document.querySelector('#rules-bg-file').files[0];
+                if(rulesBg) {
+                    body.append('rules_bg', rulesBg);
+                }
+
                 // Colors
                 body.append('p_color', this.primaryColor);
                 body.append('s_color', this.secundaryColor);
+                body.append('t_color', this.thirdColor);
 
                 // Bonus
                 let bonus_bg = document.querySelector('#bonus_bg_file').files[0];
@@ -174,6 +189,7 @@
 
                 this.primaryColor = this.$root.primaryColor;
                 this.secundaryColor = this.$root.secundaryColor;
+                this.thirdColor = this.$root.thirdColor;
 
                 document.getElementById('site-config').style.display = 'block';
             }, 3000);
@@ -277,7 +293,31 @@
                 <img :src="homeBackground" alt="">
             </div>
             
-            <input id="home-bg-file" style="display:none" type="file">
+            <input id="home-bg-file" style="display:none" type="file" accept="image/jpeg,image/png">
+        </div>
+
+        <div class="home-content-bg">
+            <div class="input-area">
+                <div class="label">Imagem de fundo do conteúdo:</div>
+                <label for="home-content-bg-file">
+                    Selecionar imagem
+                    <img :src="`${this.$root.asset}assets/icons/image.png`"/>
+                </label>
+            </div>
+            
+            <input id="home-content-bg-file" style="display:none" type="file" accept="image/jpeg,image/png">
+        </div>
+
+        <div class="rules-bg">
+            <div class="input-area">
+                <div class="label">Imagem de fundo do regulamento:</div>
+                <label for="rules-bg-file">
+                    Selecionar imagem
+                    <img :src="`${this.$root.asset}assets/icons/image.png`"/>
+                </label>
+            </div>
+            
+            <input id="rules-bg-file" style="display:none" type="file" accept="image/jpeg,image/png">
         </div>
 
         <div class="site-colors">
@@ -290,6 +330,11 @@
             <div class="site-color">
                 <label for="s-color">Cor Secundaria:</label>
                 <input v-model="secundaryColor" type="color" />
+            </div>
+
+            <div class="site-color">
+                <label for="t-color">Cor tercearia:</label>
+                <input v-model="thirdColor" type="color" />
             </div>
         </div>
 
@@ -450,9 +495,6 @@
         justify-content: center;
         cursor: pointer;
     }
-    #site-config .phones-doubt-service{
-        
-    }
     #site-config .phones-doubt-service .phone {
         margin-bottom:15px
     }
@@ -511,17 +553,23 @@
     #site-config .site-name input[type=color] {
         height: 40px;
     }
-    #site-config .home-bg {
+    #site-config .home-bg,
+    #site-config .home-content-bg,
+    #site-config .rules-bg{
         margin-top: 30px;
         display: flex;
         align-items: center;
     }
-    #site-config .home-bg .label {
+    #site-config .home-bg .label,
+    #site-config .home-content-bg .label,
+    #site-config .rules-bg .label {
         font-weight: 700;
         font-size: 18px;
         margin-right: 5px;
     }
-    #site-config .home-bg label {
+    #site-config .home-bg label,
+    #site-config .home-content-bg label,
+    #site-config .rules-bg label {
         border: 3px solid #888;
         padding: 10px;
         font-weight: 600;
@@ -530,7 +578,9 @@
         display: flex;
         align-items: center;
     }
-    #site-config .home-bg label img {
+    #site-config .home-bg label img,
+    #site-config .home-content-bg label img,
+    #site-config .rules-bg label img {
         width: 30px;
         margin-left: 10px;
     }
@@ -545,6 +595,8 @@
         margin-top: 10px;
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        width:180px;
     }
     #site-config .site-colors label {
         font-weight: 600;
