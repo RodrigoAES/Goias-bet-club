@@ -25,6 +25,7 @@ class AdminOptsController extends Controller
             'home_bg' => 'image|mimes:jpg,png',
             'home_content_bg' => 'image|mimes:jpg,png',
             'rules_bg' => 'image|mimes:jpg,png',
+            'card_bg' => 'image|mimes:jpg,png',
             'logo' => 'image|mimes:jpg,png',
             'p_color' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
             's_color' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
@@ -90,6 +91,13 @@ class AdminOptsController extends Controller
 
         } else {
             unset($data['rules_bg']);
+        }
+
+        if(isset($data['card_bg'])) {
+            $data['card_bg'] = Storage::disk('local')->put('Site/Images/CardBackground', $data['card_bg']);
+
+        } else {
+            unset($data['card_bg']);
         }
         
         if(isset($data['logo'])) {

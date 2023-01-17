@@ -19,7 +19,8 @@ import { RouterLink, RouterView } from 'vue-router';
             logo:'',
             siteName:'',
             siteNameSecondColor:'',
-            homeBackground:'',
+
+            cardBackground:`url("${import.meta.env.VITE_ASSET}core/public/card_bg")`,
 
             primaryColor:'#069446',
             primaryColorHover:'#09a750',
@@ -230,6 +231,10 @@ import { RouterLink, RouterView } from 'vue-router';
   .logout img {
     width:30px;
     margin-left: -0px;
+  }
+
+  .card {
+    background-image: v-bind(cardBackground);
   }
    
   @media (max-width: 420px) {
