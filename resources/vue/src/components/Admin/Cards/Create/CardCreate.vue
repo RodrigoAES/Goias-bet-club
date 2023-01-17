@@ -531,9 +531,7 @@
         margin-right: 15px;
     }
     .card {
-        background-image: url('/assets/images/card-water-mark.jpeg');
         background-size: 100%;
-
         margin-bottom: 80px;
     }
     .switch-championship {

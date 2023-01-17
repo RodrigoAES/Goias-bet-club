@@ -40,6 +40,11 @@ Route::get('rules_bg', function() {
     return Storage::download($rules_bg['value']);
 });
 
+Route::get('card_bg', function() {
+    $card_bg = AdminOpt::select('value')->where('name', 'card_bg')->first();
+    return Storage::download($card_bg['value']);
+});
+
 Route::get('bonus_bg_image', function() {
     $bonus_bg = AdminOpt::select('value')->where('name', 'bonus_bg_image')->first();
     return Storage::download($bonus_bg['value']);

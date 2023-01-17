@@ -136,6 +136,11 @@
                     body.append('rules_bg', rulesBg);
                 }
 
+                let cardBg = document.querySelector('#card-bg-file').files[0];
+                if(cardBg) {
+                    body.append('card_bg', cardBg);
+                }
+
                 // Colors
                 body.append('p_color', this.primaryColor);
                 body.append('s_color', this.secundaryColor);
@@ -318,6 +323,18 @@
             </div>
             
             <input id="rules-bg-file" style="display:none" type="file" accept="image/jpeg,image/png">
+        </div>
+
+        <div class="card-bg">
+            <div class="input-area">
+                <div class="label">Imagem de fundo da cartela:</div>
+                <label for="card-bg-file">
+                    Selecionar imagem
+                    <img :src="`${this.$root.asset}assets/icons/image.png`"/>
+                </label>
+            </div>
+            
+            <input id="card-bg-file" style="display:none" type="file" accept="image/jpeg,image/png">
         </div>
 
         <div class="site-colors">
@@ -555,21 +572,24 @@
     }
     #site-config .home-bg,
     #site-config .home-content-bg,
-    #site-config .rules-bg{
+    #site-config .rules-bg,
+    #site-config .card-bg{
         margin-top: 30px;
         display: flex;
         align-items: center;
     }
     #site-config .home-bg .label,
     #site-config .home-content-bg .label,
-    #site-config .rules-bg .label {
+    #site-config .rules-bg .label,
+    #site-config .card-bg .label {
         font-weight: 700;
         font-size: 18px;
         margin-right: 5px;
     }
     #site-config .home-bg label,
     #site-config .home-content-bg label,
-    #site-config .rules-bg label {
+    #site-config .rules-bg label,
+    #site-config .card-bg label {
         border: 3px solid #888;
         padding: 10px;
         font-weight: 600;
@@ -580,7 +600,8 @@
     }
     #site-config .home-bg label img,
     #site-config .home-content-bg label img,
-    #site-config .rules-bg label img {
+    #site-config .rules-bg label img,
+    #site-config .card-bg label img {
         width: 30px;
         margin-left: 10px;
     }
