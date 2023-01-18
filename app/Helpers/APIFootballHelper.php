@@ -18,6 +18,7 @@ class APIFootballHelper {
 
         $response = curl_exec($curl);
         curl_close($curl);
+
         $response = json_decode($response);
         $match = $response->response[0];
 
