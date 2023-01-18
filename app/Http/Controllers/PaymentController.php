@@ -43,7 +43,7 @@ class PaymentController extends Controller
 
             } else {
                 $response['status'] = 'error';
-                $response['error'] = 'A cartela inserida jÃ foi paga.';
+                $response['error'] = 'A cartela inserida jÃ¡ foi paga.';
 
                 return response()->json($response, 422);
             }
