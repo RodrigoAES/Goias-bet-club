@@ -21,25 +21,32 @@ class PaymentController extends Controller
 
         $user_card = UserCard::where('code', $card_code)->first();
         if($user_card) {
-            $charge = GerenciaNetPIXHelper::imediateChargeTxid($user_card->card->price, $user_card->code);
+            if(!$user_card->validated) {
+                $charge = GerenciaNetPIXHelper::imediateChargeTxid($user_card->card->price, $user_card->code);
 
-            $payment = Payment::create([
-                'user_card_id' => $user_card->id,
-                'txid' => $charge->txid,
-                'location_id' => $charge->loc->id,
-                'price' => $user_card->card->price,
-                'pix_key' => $charge->chave,
-                'paid' => false,
-            ]);
+                $payment = Payment::create([
+                    'user_card_id' => $user_card->id,
+                    'txid' => $charge->txid,
+                    'location_id' => $charge->loc->id,
+                    'price' => $user_card->card->price,
+                    'pix_key' => $charge->chave,
+                    'paid' => false,
+                ]);
 
-            if($payment) {
-                $response['qrcode'] = GerenciaNetPIXHelper::locationQRcode($payment->location_id);
-                if($response['qrcode']) {
-                    $response['status'] = 'success';
-                    return response()->json($response, 200);
+                if($payment) {
+                    $response['qrcode'] = GerenciaNetPIXHelper::locationQRcode($payment->location_id);
+                    if($response['qrcode']) {
+                        $response['status'] = 'success';
+                        return response()->json($response, 200);
+                    }
                 }
+
+            } else {
+                $response['status'] = 'error';
+                $response['error'] = 'A cartela inserida jÃ foi paga.';
+
+                return response()->json($response, 422);
             }
-    
         } else {
             $response['status'] = 'error';
             $response['error'] = 'Cartela inexistente.';
