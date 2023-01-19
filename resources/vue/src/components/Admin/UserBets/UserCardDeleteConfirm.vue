@@ -10,7 +10,7 @@
 </script>
 
 <template>
-    <div class="modal-area admin-card-viewer">
+    <div class="modal-area">
         <div class="confirm delete">
             <div class="close"><span>✖</span></div>
             <div class="message">Tem certeza que deseja excluir a cartela?</div>

@@ -53,7 +53,7 @@ import Loading from '../../Loading.vue';
 </script>
 
 <template>
-    <div class="modal-area admin-card-viewer">
+    <div class="modal-area ">
         <div class="success">
             <div class="card-info">
                 <div class="title">Validado Com Sucesso!</div>

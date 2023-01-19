@@ -23,6 +23,8 @@
                 qrcodeImage:null,
 
                 qrcodeLoading:false,
+
+                qrcodeError:null,
             }
         },
         methods:{
@@ -108,6 +110,7 @@
             generateCharge:async function() {
                 this.qrcode = null;
                 this.qrcodeImage = null;
+                this.qrcodeError = null;
 
                 let qrcodeArea = document.querySelector('#qrcode');
                 if(qrcodeArea.style.height === '0px') {
@@ -119,13 +122,19 @@
                 
                 this.qrcodeLoading = true;
 
-                let request = await fetch(`${import.meta.env.VITE_BASE_URL}charge/${this.cardCode}`);
+                let url = `${import.meta.env.VITE_BASE_URL}charge/${this.cardCode}`;
+                url += sessionStorage.entry ? `?entry=${sessionStorage.getItem('entry')}` : '';
+                let request = await fetch(url);
                 let json = await request.json();
 
                 if(json.status === 'success') {
                     this.qrcodeLoading = false;
                     this.qrcode = json.qrcode.qrcode;
                     this.qrcodeImage = json.qrcode.imagemQrcode;
+
+                } else if(json.status === 'error') {
+                    this.qrcodeLoading = false;
+                    this.qrcodeError = json.error;
                 }
             }
 
@@ -199,7 +208,7 @@
 
             let json = await request.json();
             if(json.status === 'success') {
-                sessionStorage.setItem('entry', entry);
+                sessionStorage.setItem('entry', json.entry.id);
             }
         },
     }
@@ -256,9 +265,14 @@
                                 :size="30"
                             />
 
+                            <div v-if="qrcodeError" class=danger style="background-color:#fff; padding:10px; border-radius:5px">
+                                {{ qrcodeError }}
+                            </div>
+
                             <div v-if="qrcodeImage" class="qrcode-image">
                                 <img :src="qrcodeImage" />
                             </div>
+
                             <div v-if="qrcode" class="qrcode-code">
                                 <span id="copy-message" style="display:none;">Copiado!</span>
                                 <button @click="copyQrcode">
@@ -280,7 +294,9 @@
                             v-for="attendant in doubtAttendants"
                             @click="redirectWathsapp(attendant)"
                         >
-                            <img :src="`${this.$root.asset}assets/icons/whatsapp.png`" />
+                            <div class="icon">
+                                <img :src="`${this.$root.asset}assets/icons/whatsapp.png`" />
+                            </div>
                             <span>{{`${attendant.name.split(' ')[0]} ${attendant.name.split(' ')[1] ? attendant.name.split(' ')[1].charAt(0)+'.' : ''}`}}</span>
                         </button>
                     </div>
@@ -630,6 +646,7 @@
         align-items: center;
         justify-content: flex-start;
         border:none;
+        border-radius: 50%;
         cursor: pointer;
         padding: 0;
         font-weight: 600;
@@ -643,12 +660,19 @@
     .contact button:hover {
         transform: scale(1.1);
     }
-    .contact img {
-        padding:10px;
-        background-color: #fff;
-        width:40px;
+    .contact .icon {
         border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        background-color: #fff;
         overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .contact img {
+        width:40px;
+        padding: 20px;
     }
     .rules-title {
         margin-top: 40px;
@@ -780,6 +804,7 @@
 
     .home-page .bonus .text {
         color: #fff;
+        padding: 10px;
         width:280px;
         font-size: 22px;
         font-weight: 700;

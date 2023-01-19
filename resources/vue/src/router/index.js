@@ -10,6 +10,7 @@ import Account from '../components/Admin/Account/Account.vue';
 import Custom from '../components/Admin/Custom/Custom.vue';
 import Config from '../components/Admin/SiteConfig/Config.vue';
 import Attendances from '../components/Admin/Attendances/Attendances.vue';
+import Sales from '../components/Admin/Sales/Sales.vue';
 
 import Home from '../views/Public/Home.vue';
 import UserCard from '../views/Public/UserCard.vue';
@@ -59,6 +60,11 @@ const router = createRouter({
                     path:'attendances',
                     name:'attendances',
                     component: Attendances
+                },
+                {
+                    path:'sales',
+                    name:'sales',
+                    component:Sales
                 },
                 {
                     path:'config',

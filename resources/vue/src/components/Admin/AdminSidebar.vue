@@ -31,7 +31,7 @@
         <div class="menu-title">Menu</div>
         
         <div class="links">
-            <router-link to="/bolaodefutebol/admin/cards" @click="this.$parent.menuActive = 'cards'">
+            <router-link to="/bolaodefutebol/admin/cards" @click="this.$parent.menuActive = 'cards'" >
                 <div 
                   class="link" 
                   :style="this.$route.name === 'cards' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -85,6 +85,15 @@
                 </div>
             </router-link>
 
+            <router-link to="/bolaodefutebol/admin/sales" @click="this.$parent.menuActive = 'sales'">
+                <div 
+                  class="link" 
+                  :style="this.$route.name === 'sales' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
+                >
+                    Vendas
+                </div>
+            </router-link>
+
             <router-link to="/bolaodefutebol/admin/config" @click="this.$parent.menuActive = 'config'">
                 <div 
                   class="link" 
@@ -110,15 +119,21 @@
     nav {
         width:100%;
         height: 100%;
-        background-color: var(--p-color);
+        background-color: var(--t-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     nav .menu-title {
+        background-color: var(--p-color);
+        border-radius: 10% / 50%;
         color: var(--s-color);
         font-size: 20px;
         font-weight: 700;
-        width:100%;
+        width:80%;
         text-align: center;
-        padding-top: 15px;
+        margin-top: 15px;
+        box-shadow: 5px 5px 0px var(--s-color);
     }
     nav.links {
         display: flex;
@@ -128,10 +143,15 @@
     }
     nav .link {
         width: 100%;
-        padding:10px 0px;
-        background-color: var(--s-color);
-        text-align: center;
+        padding:5px 2px;
+        background-color: var(--p-color);
+        border-radius: 10% / 50%;
+        display: flex;
+        justify-content: center;
         color:#000;   
+        box-shadow: 5px 5px 0px var(--s-color);
+        height: 20px;
+        margin-left: -4px;
     }
     nav .link:hover {
         background-color: rgb(216, 202, 0);
@@ -143,10 +163,6 @@
         margin-left: 20px;
         font-weight: bold;
         width:100%;
-    }
-    nav .link.active {
-        color:#1d1de6;
-        background-color: rgb(216, 202, 0);
     }
     .nav-mobile {
         display:none;

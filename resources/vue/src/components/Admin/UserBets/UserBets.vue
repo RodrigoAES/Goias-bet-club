@@ -239,7 +239,6 @@
     .user-bets table {
         border: 1px solid #ccc;
         width:calc(100vw - 200px);
-        margin-right: -200px;
         border-collapse: collapse;
     }
     .user-bets thead{
@@ -322,7 +321,7 @@
         display:flex;
         align-items: center;
         position:relative;
-        left:92%;
+        left:75%;
         margin-bottom: 10px;
     }
     .search input {
