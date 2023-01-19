@@ -14,7 +14,7 @@
 </script>
 
 <template>
-    <div class="modal-area admin-card-viewer">
+    <div class="modal-area ">
         <div class="confirm">
             <div class="message">Tem certeza que deseja validar está cartela?</div>
             <div class="card-info">

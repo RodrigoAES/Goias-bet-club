@@ -20,7 +20,14 @@
                 if(attendant === 'all') {
                     this.allAttendances();
                 } else {
-                    this.attendantAttendances(attendant);
+                    this.attendantAttendances(this.attendant);
+                }
+            },
+            filter() {
+                if(this.attendant === 'all') {
+                    this.allAttendances();
+                } else {
+                    this.attendantAttendances(this.attendant);
                 }
             }
         },
@@ -53,7 +60,8 @@
             },
             attendantAttendances:async function(id, page) {
                 let url = page ? page : `${import.meta.env.VITE_BASE_URL}admin/attendance/${id}`;
-                url =+ this.filter === 'all' ? '' : `?filter=${this.filter}`
+                url += this.filter === 'all' ? '' : `?filter=${this.filter}`;
+
                 let request = await fetch(url, {
                     method:'GET',
                     headers: {
@@ -187,7 +195,7 @@
             </tbody>
         </table>
 
-        <div v-if="pagination" class="pagination">
+        <div v-if="pagination && pagination.pageNumber > 1" class="pagination">
             <div class="prev-page">
                 <div 
                     v-if="pagination.prevPage" 

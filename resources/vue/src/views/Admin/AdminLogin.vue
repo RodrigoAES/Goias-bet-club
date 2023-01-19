@@ -135,8 +135,8 @@
         font-size: 16px;
         font-weight: 600;
         margin-top: 20px;
-        background-color: var(--p-color);
-        color: var(--s-color);
+        background-color: var(--s-color);
+        color: var(--p-color);
         border-radius: 6px;
         cursor: pointer;
     }
