@@ -38,13 +38,18 @@
         table th {
             font-weight: 700;
         }
+        .attendances-number{
+            font-size:18px;
+            font-weight:700;
+            margin-bottom:30px
+        }
     </style>
 </head>
 <body>
     <div class="info">
-        <div class="attendances-numer">
-            Relatório de atendimentos desde: {{date('d/m/Y H:i:s', strtotime($date))}} 
-            Quantidade de atendimentos: {{count($attendances)}}
+        <div class="attendances-number">
+            Relatório de atendimentos desde: {{date('d/m/Y H:i:s', strtotime($date))}} <br>
+            Quantidade de atendimentos: {{count($attendances)}} 
         </div>
     </div>
 
