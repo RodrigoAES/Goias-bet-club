@@ -66,7 +66,7 @@
                 <td>{{$attendance->client_name}}</td>
                 <td>{{$attendance->client_phone}}</td>
                 <td>{{$attendance->user_card_code}}</td>
-                <td>{{$attendance->type === 'payment' ? 'Pagemento' : $attendance->type === 'doubt' ? 'Dúvida' : null}}</td>
+                <td>{{$attendance->type === 'payment' ? 'Pagemento' : ''}}{{$attendance->type === 'doubt' ? 'Dúvida' : ''}}</td>
                 <td>{{$attendance->date}}</td>
             </tr>
             @endforeach

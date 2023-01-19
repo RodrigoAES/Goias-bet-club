@@ -20,6 +20,7 @@ use App\Models\Championship;
 use App\Models\Game;
 use App\Models\AdminOpt;
 use App\Models\Receipt;
+use App\Models\Attendant;
 use App\Models\Attendance;
 
 use App\Helpers\APIFootballHelper;
@@ -694,8 +695,13 @@ class AdminController extends Controller
 
             $data['attendances'] = Attendance::where('attendant_id', $id)->get();
             $data['date'] = $filter;
+            
+            $p_color = AdminOpt::select('value')->where('name', 'p_color')->first();
+            $s_color = AdminOpt::select('value')->where('name', 's_color')->first();
+            $data['p_color'] = $p_color->value;
+            $data['s_color'] = $s_colro->value;
 
-            $pdf = PDF::loadView('attendances', $data);
+            $pdf = PDF::loadView('attendancesReceipt', $data);
          
             return $pdf->download("Atendimentos-$attendant->name");
         }
