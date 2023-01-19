@@ -686,12 +686,16 @@ class AdminController extends Controller
         }
     }
 
-    public function attendantAttendancesPDF($id) {
+    public function attendantAttendancesPDF($id, Request $request) {
         $attendant = Attendant::find($id);
-
+        
         if($attendant) {
-            $atttendances = Attendance::where('attendant_id', $id)->get();
-            $pdf = PDF::loadView('attendances', $attendances);
+            $filter = date('Y-m-d H:i:s', strtotime("-$request->filter days"));
+
+            $data['attendances'] = Attendance::where('attendant_id', $id)->get();
+            $data['date'] = $filter;
+
+            $pdf = PDF::loadView('attendances', $data);
          
             return $pdf->download("Atendimentos-$attendant->name");
         }
