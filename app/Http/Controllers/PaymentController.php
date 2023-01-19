@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Payment;
 use App\Models\UserCard;
-use App\Models\WebhookTest;
+use App\Models\Sale;
 
 use App\Helpers\GerenciaNetPIXHelper;
 
@@ -16,7 +16,7 @@ class PaymentController extends Controller
         GerenciaNetPIXHelper::test();
     }
     
-    public function generateCharge($card_code) {
+    public function generateCharge($card_code, Request $request) {
         $response = ['status' => null];
 
         $user_card = UserCard::where('code', $card_code)->first();
@@ -26,6 +26,7 @@ class PaymentController extends Controller
 
                 $payment = Payment::create([
                     'user_card_id' => $user_card->id,
+                    'entry_id' => $request->entry ?? null,
                     'txid' => $charge->txid,
                     'location_id' => $charge->loc->id,
                     'price' => $user_card->card->price,
@@ -89,26 +90,35 @@ class PaymentController extends Controller
         $payment = Payment::where('txid', $pix->txid)->first();
  
         if($payment) {
-            $user_card = UserCard::find($payment->user_card_id);
-            if($user_card) {
-                $user_card->validated = true;
-                $payment->paid = true;
+            $payment->userCard->validated = true;
+            $payment->entry->sale = true;
+            $payment->paid = true;
                 
-                if($user_card->save() && $payment->save()) {
+            if($payment->userCard->save() && $payment->entry->save() && $payment->save()) {
+                $sale = Sale::create([
+                    'attendant_id' => $payment->entry->attendant_id,
+                    'user_card_id' => $payment->userCard->id,
+                    'name' => $payment->userCard->name,
+                    'code' => $payment->userCard->code,
+                    'phone' => $payment->userCard->phone,
+                    'value' => $payment->price,
+                ]);
+                
+                if($sale) {
                     $response['status'] = 'success';
                     return response()->json($response, 200);
-                
+
                 } else {
                     $response['status'] = 'error';
                     $response['message'] = 'Error during process save register.';
-                    
-                    return response()->json($response, 300);      
-                }      
+
+                    return response()->json($response, 300);
+                }
             } else {
                 $response['status'] = 'error';
                 $response['message'] = 'Error during process save register.';
-
-                return response()->json($response, 300);
+                    
+                return response()->json($response, 300);      
             }
         } else {
             $response['status'] = 'error';

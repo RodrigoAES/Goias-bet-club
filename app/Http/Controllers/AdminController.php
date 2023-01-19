@@ -686,6 +686,18 @@ class AdminController extends Controller
         }
     }
 
+    public function attendantAttendancesPDF($id) {
+        $attendant = Attendant::find($id);
+
+        if($attendant) {
+            $atttendances = Attendance::where('attendant_id', $id)->get();
+            $pdf = PDF::loadView('attendances', $attendances);
+         
+            return $pdf->download("Atendimentos-$attendant->name");
+        }
+
+    }
+
     public function searchUserCard($q) {
         $response = ['status' => null];
 

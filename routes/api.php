@@ -21,6 +21,7 @@ use App\Http\Controllers\APIFootballController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SaleController;
 
 use App\Helpers\GazetaBrasileiraoScrapHelper;
 
@@ -86,11 +87,11 @@ Route::post('entry', [EntryController::class, 'registerEntry']);
 
 Route::get('test', [PaymentController::class, 'test']);
 
+// Gerencianet pix webhook routes
 Route::post('paymentconfirm', [PaymentController::class, 'paymentConfirm']);
 Route::get('paymentconfirm', [PaymentController::class, 'paymentConfirm']);
 Route::get('charge/{card_code}', [PaymentController::class, 'generateCharge']);
 Route::post('paymentconfirm/pix', [PaymentController::class, 'pixPaymentConfirm']);
-Route::get('paymentconfirm/pix', [PaymentController::class, 'pixPaymentConfrim']);
 
 Route::middleware(['auth:api'])->group(function () {
     //Auth
@@ -168,8 +169,11 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('admin/attendances', [AttendanceController::class, 'allAttendances'])->middleware('adm_or_sub_adm');
     Route::get('admin/attendance/{attendant_id}', [AttendanceController::class, 'attendantAttendance']);
     Route::get('admin/search-client-attendance', [AttendanceController::class, 'searchClient']);
+    // Attendant Attendances Receipt
+    Route::get('admin/attendant-sales-pdf', [AdminAuthController::class, 'AttendantAttendancesPDF']);
 
-    // Attendant Sales Receipt
-    Route::get('admin/attendant-sales-pdf', [AdminAuthController::class, 'AttendantSalesPDF']);
+    Route::get('admin/sales', [SaleController::class, 'sales']);
+    Route::get('admin/attendant-sales/{id}', [SaleController::class, 'attendantSales'])->middleware('adm_or_sub_adm');
+    Route::get('admin/sales/search', [SaleController::class, 'search']);
 });
 
