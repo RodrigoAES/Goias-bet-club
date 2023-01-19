@@ -13,8 +13,8 @@
             
         }
         table thead {
-            background-color: var(--p-color);
-            color:var(--s-color);
+            background-color: #016b00;
+            color:#ffd51e;
             font-weight: 700;
         }
         table tbody tr:hover{
