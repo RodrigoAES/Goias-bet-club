@@ -170,7 +170,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('admin/attendance/{attendant_id}', [AttendanceController::class, 'attendantAttendance']);
     Route::get('admin/search-client-attendance', [AttendanceController::class, 'searchClient']);
     // Attendant Attendances Receipt
-    Route::get('admin/attendant-attendances-pdf', [AdminAuthController::class, 'AttendantAttendancesPDF'])->middleware('adm_or_sub_adm');
+    Route::get('admin/attendant-attendances-pdf/{id}', [AdminController::class, 'attendantAttendancesPDF'])->middleware('adm_or_sub_adm');
 
     Route::get('admin/sales', [SaleController::class, 'sales']);
     Route::get('admin/attendant-sales/{id}', [SaleController::class, 'attendantSales'])->middleware('adm_or_sub_adm');

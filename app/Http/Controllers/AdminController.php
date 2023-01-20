@@ -20,6 +20,7 @@ use App\Models\Championship;
 use App\Models\Game;
 use App\Models\AdminOpt;
 use App\Models\Receipt;
+use App\Models\Attendant;
 use App\Models\Attendance;
 
 use App\Helpers\APIFootballHelper;
@@ -690,12 +691,21 @@ class AdminController extends Controller
         $attendant = Attendant::find($id);
         
         if($attendant) {
-            $filter = date('Y-m-d H:i:s', strtotime("-$request->filter days"));
+            $filter = date('Y-m-d H:i', strtotime("-$request->filter days"));
 
-            $data['attendances'] = Attendance::where('attendant_id', $id)->get();
+            $data['attendances'] = Attendance::where('attendant_id', $id)->where('created_at', '>', $filter)->get();
+            foreach($data['attendances'] as $attendance) {
+                $attendance->date = date('d/m/Y H:i', strtotime($attendance->created_at));    
+            }
+
             $data['date'] = $filter;
+            
+            $p_color = AdminOpt::select('value')->where('name', 'p_color')->first();
+            $s_color = AdminOpt::select('value')->where('name', 's_color')->first();
+            $data['p_color'] = $p_color->value;
+            $data['s_color'] = $s_color->value;
 
-            $pdf = PDF::loadView('attendances', $data);
+            $pdf = PDF::loadView('attendancesReceipt', $data);
          
             return $pdf->download("Atendimentos-$attendant->name");
         }
