@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atendimentos</title>
     <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+            font-weight:bold
+        }
         table {
             border:1px solid #aaa;
             border-collapse: collapse;
@@ -56,7 +60,6 @@
     <table>
         <thead>
             <tr>
-                <th>Atendente</th>
                 <th>Cliente</th>
                 <th>Cel. cliente</th>
                 <th>Código</th>
@@ -67,7 +70,6 @@
         <tbody>
             @foreach ($attendances as $attendance)
                 <tr >
-                <td>{{$attendance->attendant_name}}</td>
                 <td>{{$attendance->client_name}}</td>
                 <td>{{$attendance->client_phone}}</td>
                 <td>{{$attendance->user_card_code}}</td>

@@ -101,8 +101,36 @@
                     this.attendances = json.attendances;
                 }
             },
-            generateAttendantSalesReceipt:async function() {
-                let request = await fetch(`${import.meta.env.VITE_BASE_URL}`);
+            attendantAttendancesPDF:async function() {
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/attendant-attendances-pdf?filter=${this.filter}`, {
+                    method:'GET',
+                    headers:{
+                        'Authorization': `Bearer ${localStorage.getItem('auth')}`
+                    }
+                });
+
+                let blob = await request.blob();
+                let blobURL = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                link.href = blobURL;
+
+                let attendantName = this.$root.attendants.filter(attendant => attendant.id === this.attendant);
+                attendantName = attendantName[0].name;
+
+                link.download = `Atendimentos-${attendantName}.pdf`;
+
+                document.body.appendChild(link);
+
+                link.dispatchEvent(
+                    new MouseEvent('click', { 
+                        bubbles: true, 
+                        cancelable: true, 
+                        view: window 
+                    })
+                );
+                document.body.removeChild(link);
+                this.loadingPdf = false;
             }
         },
         components: {
@@ -151,9 +179,16 @@
                         {{attendant.name}}
                     </option>
                 </select>
-
-                <div class="attendant-receipt">
-                    <button>
+                <div 
+                    v-if="
+                        this.$root.loggedUser 
+                        && ['admin', 'sub-admin'].includes(this.$root.loggedUser.level) 
+                        && attendant != 'all'
+                    " 
+                    class="attendant-receipt"
+                >
+                
+                    <button @click="attendantAttendancesPDF">
                         {{!loadingAttendantReceipt ? 'Gerar relatório' : ''}}
                         <Loading 
                             v-if="loadingAttendantReceipt"
