@@ -79,7 +79,41 @@
                 if(json.status === 'success') {
                     this.sales = json.sales;
                 }
-            } 
+            },
+            attendantSalesPDF: async function() {
+                let url = `${import.meta.env.VITE_BASE_URL}admin/sales/attendant-sales-pdf/${this.attendant}`;
+                url += this.filter ? `?filter=${this.filter}` : '';
+
+                let request = await fetch(url, {
+                    method:'GET',
+                    headers:{
+                        'Authorization': `Bearer ${localStorage.getItem('auth')}`
+                    }
+                });
+
+                let blob = await request.blob();
+                let blobURL = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                link.href = blobURL;
+
+                let attendantName = this.$root.attendants.filter(attendant => attendant.id === this.attendant);
+                attendantName = attendantName[0].name;
+
+                link.download = `Vendas-${attendantName}.pdf`;
+
+                document.body.appendChild(link);
+
+                link.dispatchEvent(
+                    new MouseEvent('click', { 
+                        bubbles: true, 
+                        cancelable: true, 
+                        view: window 
+                    })
+                );
+                document.body.removeChild(link);
+                this.loadingPdf = false;
+            }
         },
         watch:{
             attendant(value) {
@@ -133,8 +167,8 @@
                     </option>
                 </select>
 
-                <div class="attendant-receipt">
-                    <button>
+                <div v-if="attendant != 'all'" class="attendant-receipt">
+                    <button @click="attendantSalesPDF">
                         {{!loadingAttendantReceipt ? 'Gerar relatório' : ''}}
                         <Loading 
                             v-if="loadingAttendantReceipt"
@@ -276,6 +310,7 @@
     border-radius: 6px;
     cursor: pointer;
     width: 114px;
+    outline:none;
 }
 #sales table {
     border:1px solid #aaa;

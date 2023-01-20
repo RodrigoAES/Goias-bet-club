@@ -358,6 +358,7 @@
         border-radius: 6px;
         cursor: pointer;
         width: 114px;
+        outline: none;
     }
     #attendances table {
         border:1px solid #aaa;
