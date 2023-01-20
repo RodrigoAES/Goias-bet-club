@@ -59,10 +59,18 @@ class AttendanceController extends Controller
 
     public function allAttendances(Request $request) {
         $response = ['status' => null];
+        
+        $last = $request->last ? date('Y-m-d H:i:s', strtotime("-$request->last days")) : null;
 
-        $attendances = $request->filter ? 
-            Attendance::where('type', $request->filter)->orderBy('created_at', 'DESC')->paginate(30) :
-            Attendance::select('*')->orderBy('created_at', 'DESC')->paginate(30);
+        if($request->filter && $last) {
+            $attendances = Attendance::where('type', $request->filter)->where('created_at', '>', $last)->orderBy('created_at', 'DESC')->paginate(30);
+        } else if($request->filter) {
+            $attendances = Attendance::where('type', $request->filter)->orderBy('created_at', 'DESC')->paginate(30);
+        } else if($last) {
+            $attendances = Attendance::where('created_at', '>', $last)->orderBy('created_at', 'DESC')->paginate(30);
+        } else {
+            $attendances = Attendance::select('*')->orderBy('created_at', 'DESC')->paginate(30);
+        }
 
         if($attendances) {
             foreach($attendances as $key => $attendance) {
@@ -89,9 +97,17 @@ class AttendanceController extends Controller
 
         $attendant = Attendant::find($attendant_id);
         if($attendant) {
-            $attendances = $request->filter ? 
-                Attendance::where('attendant_id', $attendant_id)->where('type', $request->filter)->orderBy('created_at', 'DESC')->paginate(30) :
-                Attendance::where('attendant_id', $attendant_id)->orderBy('created_at', 'DESC')->paginate(30);
+            $last = $request->last ? date('Y-m-d H:i:s', strtotime("-$request->last days")) : null;
+
+            if($request->filter && $last) {
+                $attendances = Attendance::where('type', $request->filter)->where('created_at', '>', $last)->orderBy('created_at', 'DESC')->paginate(30);
+            } else if($request->filter) {
+                $attendances = Attendance::where('type', $request->filter)->orderBy('created_at', 'DESC')->paginate(30);
+            } else if($last) {
+                $attendances = Attendance::where('created_at', '>', $last)->orderBy('created_at', 'DESC')->paginate(30);
+            } else {
+                $attendances = Attendance::select('*')->orderBy('created_at', 'DESC')->paginate(30);
+            }
 
             foreach($attendances as $attendance) {
                 $attendance->date = date('d/m/Y H:i', strtotime($attendance->created_at));

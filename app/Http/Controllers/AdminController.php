@@ -691,9 +691,12 @@ class AdminController extends Controller
         $attendant = Attendant::find($id);
         
         if($attendant) {
-            $filter = date('Y-m-d H:i', strtotime("-$request->filter days"));
+            if($request->filter === 'all') {
+                $data['attendances'] = Attendance::where('attendant_id', $id)->get();
+            } else {
+                $data['attendances'] = Attendance::where('attendant_id', $id)->where('type', $request->filter)->get();
+            }
 
-            $data['attendances'] = Attendance::where('attendant_id', $id)->where('created_at', '>', $filter)->get();
             foreach($data['attendances'] as $attendance) {
                 $attendance->date = date('d/m/Y H:i', strtotime($attendance->created_at));    
             }
