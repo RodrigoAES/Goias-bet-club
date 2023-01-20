@@ -156,25 +156,27 @@
         <div class="actions">
             <div class="attendant">
                 <label for="attendant">Atendente:</label>
-                <select v-model="attendant" name="attendant" id="attendant">
-                    <option value="all">Todos os atendentes</option>
-                    <option
-                        v-if="(this.$root.attendants && this.$root.attendants.length > 0)"
-                        v-for="attendant in this.$root.attendants"
-                        :value="attendant.id"
-                    >
-                        {{attendant.name}}
-                    </option>
-                </select>
+                <div class="container">
+                    <select v-model="attendant" name="attendant" id="attendant">
+                        <option value="all">Todos os atendentes</option>
+                        <option
+                            v-if="(this.$root.attendants && this.$root.attendants.length > 0)"
+                            v-for="attendant in this.$root.attendants"
+                            :value="attendant.id"
+                        >
+                            {{attendant.name}}
+                        </option>
+                    </select>
 
-                <div v-if="attendant != 'all'" class="attendant-receipt">
-                    <button @click="attendantSalesPDF">
-                        {{!loadingAttendantReceipt ? 'Gerar relatório' : ''}}
-                        <Loading 
-                            v-if="loadingAttendantReceipt"
-                            :size="10"
-                        />
-                    </button>
+                    <div v-if="attendant != 'all'" class="attendant-receipt">
+                        <button @click="attendantSalesPDF">
+                            {{!loadingAttendantReceipt ? 'Gerar relatório' : ''}}
+                            <Loading 
+                                v-if="loadingAttendantReceipt"
+                                :size="10"
+                            />
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -198,11 +200,12 @@
             </thead>
             <tbody>
                 <tr v-if="sales" v-for="sale in sales">
-                    <td>{{sale.attendant_name ?? 'Nenhum'}}</td>
-                    <td>{{sale.name}}</td>
-                    <td>{{sale.phone}}</td>
-                    <td>{{sale.code}}</td>
-                    <td>{{sale.value}}</td>
+                    <td class="mobile-tr-title"><span>Venda</span>{{sale.id}}</td>
+                    <td><span class="mobile-title">Atendente:</span>{{sale.attendant_name ?? 'Nenhum'}}</td>
+                    <td><span class="mobile-title">Cliente:</span>{{sale.name}}</td>
+                    <td><span class="mobile-title">Telefone:</span>{{sale.phone}}</td>
+                    <td><span class="mobile-title">Código:</span>{{sale.code}}</td>
+                    <td><span class="mobile-title">Valor:</span>{{sale.value}}</td>
                 </tr>
             </tbody>
         </table>    
@@ -288,6 +291,9 @@
     display: flex;
     align-items: center;
 }
+#sales .attendant .container {
+    display: flex;
+}
 #sales .attendant label {
     font-weight: 600;
     margin-right: 6px;
@@ -336,6 +342,14 @@
     text-align: center;
     font-weight: 600;
 }
+#sales table .mobile-tr-title {
+    display:none;
+    background-color: var(--s-color);
+    color:var(--p-color);
+}
+#sales table .mobile-tr-title span {
+    margin-right: 10px;
+}
 #sales table th:last-child,
 #sales table td:last-child{
     border-right: none;
@@ -354,5 +368,48 @@
     width:100px;
     display: flex;
     justify-content: center;
+}
+
+@media(max-width:420px) {
+    #sales {
+        width:100vw;
+    }
+    #sales .title {
+        margin-top: 20px;
+        width:100%;
+        text-align: center;
+    }
+    #sales .actions {
+        justify-content:flex-start;
+        align-items: flex-start;
+        width:100%;
+        flex-direction: column;
+    }
+    #sales table {
+        width:82vw;
+    }
+    #sales table thead {
+        display:none;
+    }
+    #sales table tr {
+        display: flex;
+        flex-direction: column;
+        border:1px solid #000;
+    }
+    #sales table .mobile-title {
+        display: block;
+        margin-right: 20px;
+    }
+    #sales table .mobile-tr-title {
+        display:block;
+    }
+    #sales table td {
+        display:flex;
+    }
+    #sales .attendant {
+        display:flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 </style>

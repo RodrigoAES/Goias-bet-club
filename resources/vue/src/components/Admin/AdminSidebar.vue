@@ -135,12 +135,7 @@
         margin-top: 15px;
         box-shadow: 5px 5px 0px var(--s-color);
     }
-    nav.links {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-        width: 100%;
-    }
+    
     nav .link {
         width: 100%;
         padding:5px 2px;
@@ -172,7 +167,7 @@
         width:30px;
         margin-bottom: 5px;
         height: 4px;
-        background-color: var(--p-color);
+        background-color: var(--s-color);
         border-radius: 2px;
     }
     nav .close{
@@ -199,5 +194,15 @@
         nav .close{
             display:block
         }
+        nav .links {
+            width: 60%;
+        }
+        nav .menu-title {
+            border-radius: 5% / 50%;
+        }
+        nav .link {
+            border-radius: 8% / 50%;
+        }
+        
     }
 </style>
