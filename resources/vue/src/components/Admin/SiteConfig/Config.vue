@@ -92,7 +92,7 @@
             updateConfig:async function() {
                 let body = new FormData();
 
-                body.append('wathsapp_group', this.whatsappGroup);
+                body.append('whatsapp_group', this.whatsappGroup);
 
                 // Rules
                 let rules = document.querySelectorAll('.rules .rule');
