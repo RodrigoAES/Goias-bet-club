@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\AdminOpt;
+use App\Models\User;
 use App\Models\Attendant;
 
 class SiteConfigController extends Controller
@@ -27,7 +28,12 @@ class SiteConfigController extends Controller
                 }
             }
 
-            $response['attendants'] = Attendant::all();
+            $activeAccounts = User::select('id')->where('active', true)->get();
+            foreach($activeAccounts as $account) {
+                $ids[] = $account->id;
+            }
+
+            $response['attendants'] = Attendant::whereIn('user_id', $ids);
             
             $response['status'] = 'success';
             return response()->json($response, 200);
