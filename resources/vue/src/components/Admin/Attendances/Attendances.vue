@@ -113,7 +113,11 @@
                 }
             },
             attendantAttendancesPDF:async function() {
-                let request = await fetch(`${import.meta.env.VITE_BASE_URL}admin/attendant-attendances-pdf?filter=${this.filter}`, {
+                let url = `${import.meta.env.VITE_BASE_URL}admin/attendant-attendances-pdf/${this.attendant}`;
+                url += this.filter === 'all' ? '' : `?filter=${this.filter}`;
+                url += this.filterDate === 'all' ? '' : `${this.filter === 'all' ? '?last='+this.filterDate : '&last='+this.filterDate0}`;
+
+                let request = await fetch(url, {
                     method:'GET',
                     headers:{
                         'Authorization': `Bearer ${localStorage.getItem('auth')}`
