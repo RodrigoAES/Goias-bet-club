@@ -107,6 +107,8 @@ router.beforeEach(async (to, from)=>{
         || to.name === 'custom'
         || to.name === 'user-bets' 
         || to.name === 'ranking'
+        || to.name === 'attendances'
+        || to.name === 'sales'
         || to.name === 'config'
         || to.name === 'account'
     ) {

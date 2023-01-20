@@ -196,32 +196,34 @@
         <div class="actions">
             <div class="attendant">
                 <label for="attendant">Atendente:</label>
-                <select v-model="attendant" name="attendant" id="attendant">
-                    <option value="all">Todos os atendentes</option>
-                    <option
-                        v-if="(this.$root.attendants && this.$root.attendants.length > 0)"
-                        v-for="attendant in this.$root.attendants"
-                        :value="attendant.id"
+                <div class="container">
+                    <select v-model="attendant" name="attendant" id="attendant">
+                        <option value="all">Todos os atendentes</option>
+                        <option
+                            v-if="(this.$root.attendants && this.$root.attendants.length > 0)"
+                            v-for="attendant in this.$root.attendants"
+                            :value="attendant.id"
+                        >
+                            {{attendant.name}}
+                        </option>
+                    </select>
+                    <div 
+                        v-if="
+                            this.$root.loggedUser 
+                            && ['admin', 'sub-admin'].includes(this.$root.loggedUser.level) 
+                            && attendant != 'all'
+                        " 
+                        class="attendant-receipt"
                     >
-                        {{attendant.name}}
-                    </option>
-                </select>
-                <div 
-                    v-if="
-                        this.$root.loggedUser 
-                        && ['admin', 'sub-admin'].includes(this.$root.loggedUser.level) 
-                        && attendant != 'all'
-                    " 
-                    class="attendant-receipt"
-                >
-                
-                    <button @click="attendantAttendancesPDF">
-                        {{!loadingAttendantReceipt ? 'Gerar relatório' : ''}}
-                        <Loading 
-                            v-if="loadingAttendantReceipt"
-                            :size="10"
-                        />
-                    </button>
+                    
+                        <button @click="attendantAttendancesPDF">
+                            {{!loadingAttendantReceipt ? 'Gerar relatório' : ''}}
+                            <Loading 
+                                v-if="loadingAttendantReceipt"
+                                :size="10"
+                            />
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -247,12 +249,13 @@
             </thead>
             <tbody>
                 <tr v-for="attendance in attendances">
-                    <td>{{attendance.attendant_name}}</td>
-                    <td>{{attendance.client_name}}</td>
-                    <td>{{attendance.client_phone}}</td>
-                    <td>{{attendance.user_card_code}}</td>
-                    <td>{{attendance.type === 'payment' ? 'Pagemento' : attendance.type === 'doubt' ? 'Dúvida' : null}}</td>
-                    <td>{{attendance.date}}</td>
+                    <td class="mobile-tr-title"><span>Atendimento</span>{{attendance.id}}</td>
+                    <td><span class="mobile-title">Atendente:</span>{{attendance.attendant_name}}</td>
+                    <td><span class="mobile-title">Cliente:</span>{{attendance.client_name}}</td>
+                    <td><span class="mobile-title">Telefone:</span>{{attendance.client_phone}}</td>
+                    <td><span class="mobile-title">Código:</span>{{attendance.user_card_code}}</td>
+                    <td><span class="mobile-title">Tipo:</span>{{attendance.type === 'payment' ? 'Pagemento' : attendance.type === 'doubt' ? 'Dúvida' : null}}</td>
+                    <td><span class="mobile-title">Data:</span>{{attendance.date}}</td>
                 </tr>
             </tbody>
         </table>
@@ -337,6 +340,9 @@
         display: flex;
         align-items: center;
     }
+    #attendances .attendant .container {
+        display: flex;
+    }
     #attendances .attendant label {
         font-weight: 600;
         margin-right: 6px;
@@ -378,6 +384,18 @@
     #attendances table tr {
         border-bottom: 1px solid #aaa;
     }
+    #attendances table .mobile-title {
+        display: none;
+    }
+    #attendances table .mobile-tr-title {
+        display:none;
+        background-color: var(--s-color);
+        color:var(--p-color);
+    }
+    #attendances table .mobile-tr-title span {
+        margin-right: 10px;
+    }
+
     #attendances table th,
     #attendances table td {
         padding:12px 8px;
@@ -399,4 +417,46 @@
         justify-content: center;
     }
 
+    @media(max-width:420px) {
+        #attendances {
+            width:100vw;
+        }
+        #attendances .title {
+            margin-top: 20px;
+            width:100%;
+            text-align: center;
+        }
+        #attendances .actions {
+            justify-content:flex-start;
+            align-items: flex-start;
+            width:100%;
+            flex-direction: column;
+        }
+        #attendances table {
+            width:82vw;
+        }
+        #attendances table thead {
+            display:none;
+        }
+        #attendances table tr {
+            display: flex;
+            flex-direction: column;
+            border:1px solid #000;
+        }
+        #attendances table .mobile-title {
+            display: block;
+            margin-right: 20px;
+        }
+        #attendances table .mobile-tr-title {
+            display:block;
+        }
+        #attendances table td {
+            display:flex;
+        }
+        #attendances .attendant {
+            display:flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
 </style>

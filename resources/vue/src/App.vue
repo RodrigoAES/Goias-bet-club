@@ -125,6 +125,8 @@ import { RouterLink, RouterView } from 'vue-router';
                     || this.$route.name === 'cards' 
                     || this.$route.name === 'user-bets' 
                     || this.$route.name === 'ranking' 
+                    || this.$route.name === 'attendances'
+                    || this.$route.name === 'sales'
                     || this.$route.name === 'account'
                     || this.$route.name === 'custom'
                     || this.$route.name === 'login'
@@ -139,7 +141,9 @@ import { RouterLink, RouterView } from 'vue-router';
                     || this.$route.name === 'cardCreate' 
                     || this.$route.name === 'cards' 
                     || this.$route.name === 'user-bets' 
-                    || this.$route.name === 'ranking' 
+                    || this.$route.name === 'ranking'
+                    || this.$route.name === 'attendances'
+                    || this.$route.name === 'sales' 
                     || this.$route.name === 'account'
                     || this.$route.name === 'custom'
                 "
@@ -241,12 +245,13 @@ import { RouterLink, RouterView } from 'vue-router';
     header {
       width:100vw;
     }
-    header img {
+    header a img {
       width:60px;
       margin-left: 10px;
+      
     }
     header .title-main {
-        width:170px;
+        width:140px;
     }
     .login,
     .home-button{
