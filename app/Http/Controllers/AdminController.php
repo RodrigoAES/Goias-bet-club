@@ -503,11 +503,11 @@ class AdminController extends Controller
                 }
                 
                 foreach($winners as $winner) {
+                     if($winner->points === count($winner->bets)) {
+                        $award += $card->bonus;
+                     }
+                    
                     $winner->award = $award / count($winners);
-
-                    if($winner->points === count($winner->bets)) {
-                        $winner->award += $card->bonus;
-                    }
                 }
             }
             
@@ -663,6 +663,10 @@ class AdminController extends Controller
                 }
                 
                 foreach($winners as $winner) {
+                    if($winner->points === count($winner->bets)) {
+                        $award += $card->bonus;
+                    }
+
                     $winner->award = $award / count($winners);
                 }
             }
