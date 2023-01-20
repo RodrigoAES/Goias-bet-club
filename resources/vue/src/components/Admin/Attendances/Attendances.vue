@@ -6,6 +6,7 @@
             return {
                 attendances:[],
                 filter:'all',
+                filterDate:'all',
 
                 attendant:'all',
                 search:null,
@@ -29,12 +30,21 @@
                 } else {
                     this.attendantAttendances(this.attendant);
                 }
+            },
+            filterDate() {
+                if(this.attendant === 'all') {
+                    this.allAttendances();
+                } else {
+                    this.attendantAttendances(this.attendant);
+                }
             }
         },
         methods: {
             allAttendances:async function(page){
                 let url = page ? page : `${import.meta.env.VITE_BASE_URL}admin/attendances`;
                 url += this.filter === 'all' ? '' : `?filter=${this.filter}`;
+                url += this.filterDate === 'all' ? '' : `${this.filter === 'all' ? '?last='+this.filterDate : '&last='+this.filterDate0}`;
+                
                 let request = await fetch(url, {
                     method:'GET',
                     headers:{
@@ -61,6 +71,7 @@
             attendantAttendances:async function(id, page) {
                 let url = page ? page : `${import.meta.env.VITE_BASE_URL}admin/attendance/${id}`;
                 url += this.filter === 'all' ? '' : `?filter=${this.filter}`;
+                url += this.filterDate === 'all' ? '' : `${this.filter === 'all' ? '?last='+this.filterDate : '&last='+this.filterDate0}`;
 
                 let request = await fetch(url, {
                     method:'GET',
@@ -163,6 +174,18 @@
                 <option value="all">Todos os atendimentos</option>
                 <option value="payment">Somente pagamentos</option>
                 <option value="doubt">Somente dúvidas</option>
+            </select>
+        </div>
+
+        <div class="filter">
+            <label for="filter-time">Ultimos:</label>
+            <select v-model="filterDate" name="filter-time" id="filter-time">
+                <option value="all">Todas as datas</option>
+                <option value="15">15 dias</option>
+                <option value="30">30 dias</option>
+                <option value="45">45 dias</option>
+                <option value="60">60 dias</option>
+                <option value="120">120 dias</option>
             </select>
         </div>
 
