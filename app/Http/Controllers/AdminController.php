@@ -691,17 +691,33 @@ class AdminController extends Controller
         $attendant = Attendant::find($id);
         
         if($attendant) {
-            if($request->filter === 'all') {
-                $data['attendances'] = Attendance::where('attendant_id', $id)->get();
+            $last = $request->last ? date('Y-m-d H:i:s', strtotime("-$request-last days")) : null;
+
+            if($request->filter && $last) {
+                $data['attendances'] = Attendance::where('attendant_id', $id)
+                    ->where('type', $request->filter)
+                    ->where('created_at', '>', $last)
+                ->get();
+
+            } else if($request->filter) {
+                $data['attendances'] = Attendance::where('attendant_id', $id)
+                    ->where('type', $request->filter)
+                ->get();
+
+            } else if($last) {
+                $data['attendances'] = Attendance::where('attendant_id', $id)
+                    ->where('created_at', '>', $last)
+                ->get();
+
             } else {
-                $data['attendances'] = Attendance::where('attendant_id', $id)->where('type', $request->filter)->get();
+                $data['attendances'] = Attendance::where('attendant_id', $id)->get();
             }
 
             foreach($data['attendances'] as $attendance) {
                 $attendance->date = date('d/m/Y H:i', strtotime($attendance->created_at));    
             }
 
-            $data['date'] = $filter;
+            $data['date'] = $last ?? date('Y-m-d H:i:s', strtotime('-120 days'));
             
             $p_color = AdminOpt::select('value')->where('name', 'p_color')->first();
             $s_color = AdminOpt::select('value')->where('name', 's_color')->first();
