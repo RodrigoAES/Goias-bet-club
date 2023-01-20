@@ -25,6 +25,8 @@
                 qrcodeLoading:false,
 
                 qrcodeError:null,
+
+                whatsappGroup: this.$root.whatsappGroup ?? null,
             }
         },
         methods:{
@@ -233,13 +235,22 @@
                 <div class="consult">
                     <router-link to="/bolaodefutebol/user-card">Consultar minhas cartelas</router-link>
                 </div>
+
                 <div style="margin-top:20px" class="consult">
                     <router-link to="/bolaodefutebol/ranking">Consultar Ranking</router-link>
                 </div>
+
+                <div class="whatsapp-group">
+                    <a :href="this.$root.whatsappGroup ?? null">
+                        Grupo do Whatsapp
+                        <img :src="`${this.$root.asset}assets/icons/whatsapp.png`">
+                    </a>
+                </div>
+
                 <div id="payment" style="height:42px">
                     <div @click="openPayment" class="label">Efetuar pagamento</div>
 
-                    <div id="attendants" style="height:44px">
+                    <div v-if="paymentAttendants.length > 0" id="attendants" style="height:44px">
                         <div @click="openAttendantPayment" class="label-attendants">Pagar com atendente</div>
 
                         <button
@@ -303,11 +314,11 @@
                 </div>
 
                 <div class="anoucement">
-                    É fácil participar, decida quem ganha ou se empata, foi o que mais acertou? <span>GANHOU!</span> 
+                    É fácil participar, em cartelas do tipo comum decida quem ganha ou se empata e em cartelas do tipo detalhada decida qual será o placar, foi o que mais acertou? <span>GANHOU!</span> 
                 </div>
 
                 <div class="instruction">
-                    Para inserir uma ou mais cartelas, clique no botão <span>Fazer Aposta</span> localizado abaixo da cartela. 
+                    Para inserir uma ou mais cartelas, clique no botão <span>Fazer Aposta</span> localizado abaixo da cartela e depois é só efetuar o pagamento via pix com QRcode na janela que irá abrir ou no botão <span>Efetuar Pagamento</span> logo acima aqui na pagina principal. 
                 </div>
 
                 <div class="rules-title">Regulamentação</div>
@@ -478,6 +489,40 @@
     .consult a:hover {
         transform: scale(1.1);
         
+    }
+    .whatsapp-group {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+        height: 40px;
+        margin-top: 20px;
+    }
+    .whatsapp-group a {
+        padding: 10px 20px;
+        margin-right: 15px;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        width:300px;
+        background-color: var(--p-color);
+        color: var(--s-color);
+        border:none;
+        border-radius: 8% / 50%;
+        margin: auto;
+        text-decoration: none;
+        box-shadow: 8px 5px 0px var(--s-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .whatsapp-group a img {
+        width: 28px;
+        height: 28px;
+        margin-left: 10px;
+    }
+    .whatsapp-group a:hover {
+        transform: scale(1.1);
     }
     #payment {
         margin-top: 20px;
@@ -710,12 +755,19 @@
         font-size: 20px;
         font-weight: 700;
         margin-top: 20px;
+        padding:0px 20px;
         
+    }
+    .anoucement span{
+        font-weight: 700;
+        color: var(--p-color);
+        font-size: 18px;
     }
     .instruction {
         font-size: 16px;
         font-weight: 700;
         margin-top: 20px;
+        padding: 0px 20px;
     }
     .instruction span {
         font-weight: 700;

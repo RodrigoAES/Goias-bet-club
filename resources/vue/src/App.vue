@@ -12,7 +12,7 @@ import { RouterLink, RouterView } from 'vue-router';
             asset:import.meta.env.VITE_ASSET,
             base:import.meta.env.VITE_BASE_URL,
 
-            phone:null,
+            whatsappGroup:null,
             attendants:null,
             rules:[],
 
@@ -59,7 +59,7 @@ import { RouterLink, RouterView } from 'vue-router';
             let json = await request.json();
 
             if(json.status === 'success') {
-              this.phone = json.phone;
+              this.whatsappGroup = json.whatsapp_group;
               this.attendants = json.attendants ? json.attendants : [];
               this.rules = json.rules ? json.rules : [];
 
