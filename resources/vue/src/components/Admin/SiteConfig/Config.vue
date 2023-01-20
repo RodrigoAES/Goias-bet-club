@@ -2,8 +2,8 @@
     export default {
         data() {
             return {
-                phone: this.$root.phone,
-                doubtPhones:['11914699934', '11995371463'],
+                whatsappGroup: this.$root.wathsappGroup ?? null,
+
                 rules: this.$root.rules ? this.$root.rules : null,
 
                 logo: this.$root.logo ? this.$root.logo : null,
@@ -92,8 +92,7 @@
             updateConfig:async function() {
                 let body = new FormData();
 
-                // Phone
-                body.append('phone', this.phone);
+                body.append('wathsapp_group', this.whatsappGroup);
 
                 // Rules
                 let rules = document.querySelectorAll('.rules .rule');
@@ -171,7 +170,6 @@
         mounted() {
             document.getElementById('site-config').style.display = 'none';
             setTimeout(()=>{
-                this.phone = this.$root.phone;
                 this.rules = this.$root.rules;
 
                 this.logo = this.$root.logo;
@@ -205,27 +203,16 @@
 <template>
     <div id="site-config">
         <div class="title">Configurações do site</div>
-        
-        <div class="phone">
-            <label for="phone">Wathsapp de atendimento principal:</label>
-            <input v-model="phone" type="tel" name="phone" />
-        </div>
-        (Atendimento e pagamento)
 
-        <div class="phones-doubt-service" style="height:20px">
-            <div @click="openDoubtPhones" class="label">
-                <span>Números de atendimento</span> 
-                <img :src="`${this.$root.asset}assets/icons/down-arrow.png`" />
-            </div>
-
-            <div v-for="(phone, index) in doubtPhones" class="phone">
-            <label for="phone">Wathsapp duvidas({{index+1}}):</label>
-            <input :value="phone" type="tel" name="phone" />
-            </div>
-
-            <div class="add-phone">
-                <span @click="addPhone">+</span>
-            </div>
+        <div class="wathsapp-group">
+            <label for="wathsapp-group">Grupo do Whatsapp:</label>
+            <textarea v-model="whatsappGroup"
+                name="wathsapp-group" 
+                id="wathsapp-group" 
+                cols="30" 
+                rows="4" 
+                placeholder="Cole aqui o link do grupo"
+            ></textarea>
         </div>
 
         <div class="rules" style="height:20px">
@@ -395,21 +382,23 @@
     #site-config .title {
         margin-bottom: 30px;
     }
-    #site-config .phone label {
-        font-weight: 600;
-        margin-right: 10px;
+    #site-config .wathsapp-group {
+        display: flex;
+        flex-direction: column;
     }
-    #site-config .phone input {
-        font-size: 16px;
-        font-weight: 600;
-        color:#555;
-        padding: 5px 10px;
-        border:1px solid #888;
-        border-radius: 5px;
+    #site-config .wathsapp-group label {
+        font-size: 18px;
+        font-weight: 700;
+    }
+    #site-config .wathsapp-group textarea {
+        width:400px;
+        resize: none;
+        font-size: 14px;
         outline: none;
-        width:150px
+        border:1px solid #888;
+        border-radius: 4px;
+        margin-top: 5px;
     }
-    #site-config .phones-doubt-service,
     #site-config .rules {
         display:flex;
         flex-direction: column;
@@ -421,34 +410,29 @@
         overflow-y: hidden;
         transition: all ease 1s;
     }
-    #site-config .rules::-webkit-scrollbar,
-    #site-config .phones-doubt-service::-webkit-scrollbar {
+    #site-config .rules::-webkit-scrollbar {
         -webkit-appearance: none;
         width: 4px;
         background-color: #fff;
         border-radius: 10px;
     }
-    #site-config .rules::-webkit-scrollbar-thumb,
-    #site-config .phones-doubt-service::-webkit-scrollbar-thumb {
+    #site-config .rules::-webkit-scrollbar-thumb {
         background-color: #aaa;
         color: #aaa;
         border-radius: 10px;
         cursor: pointer;
     }
-    #site-config .rules::-webkit-scrollbar-thumb:hover,
-    #site-config .phones-doubt-service::-webkit-scrollbar-thumb:hover{
+    #site-config .rules::-webkit-scrollbar-thumb:hover{
         background-color: #888;
     }
-    #site-config .rules .label,
-    #site-config .phones-doubt-service .label{
+    #site-config .rules .label{
         font-weight: 600;
         display: flex;
         align-items: center;
         cursor: pointer;
         margin-bottom: 25px;
     }
-    #site-config .rules .label img,
-    #site-config .phones-doubt-service .label img {
+    #site-config .rules .label img {
         width:15px;
         margin-left: 5px;
     }

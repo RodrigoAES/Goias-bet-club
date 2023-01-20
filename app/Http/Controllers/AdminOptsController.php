@@ -20,7 +20,7 @@ class AdminOptsController extends Controller
         $response = ['status' => null];
 
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|string|numeric|digits:11',
+            'whatsapp_group' => 'required|string',
             'rules' => 'required|array',
             'home_bg' => 'image|mimes:jpg,png',
             'home_content_bg' => 'image|mimes:jpg,png',
@@ -37,9 +37,7 @@ class AdminOptsController extends Controller
             'bonus_text_color_1' => ['required', 'regex:/^#(?:[0-9a-f]{3}){1,2}$/i'],
             'bonus_text_color_2' => ['regex:/^#(?:[0-9a-f]{3}){1,2}$/i']
         ], [
-            'phone.required' => 'É necessario um número de celular para o atendimento do cliente.',
-            'phone.numeric' => 'Número de ceuluar invalido.',
-            'phone.digits' => 'O celular deve ter 11 digitos incluido DDD.',
+            'wathsapp_group.required' => 'É necessario um grupo do wathsapp.',
             'rules' => 'É necessario as regras do bolão.',
             'home_bg.image' => 'O fundo da pagina home deve ser uma imagem.',
             'logo.image' => 'A logo do site deve ser uma imagem.',
