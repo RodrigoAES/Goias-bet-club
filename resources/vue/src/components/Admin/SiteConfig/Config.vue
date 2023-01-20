@@ -2,7 +2,7 @@
     export default {
         data() {
             return {
-                whatsappGroup: this.$root.wathsappGroup ?? null,
+                whatsappGroup: this.$root.whatsappGroup ?? null,
 
                 rules: this.$root.rules ? this.$root.rules : null,
 
