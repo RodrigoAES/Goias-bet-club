@@ -12,7 +12,7 @@ class Attendant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'name', 'phone', 'payment_permission', 'doubt_permission', 'validate_permission'
+        'user_id', 'name', 'phone', 'slug', 'payment_permission', 'doubt_permission', 'validate_permission'
     ];
 
     public function attendances() {

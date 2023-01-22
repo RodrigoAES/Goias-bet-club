@@ -33,8 +33,8 @@ class SiteConfigController extends Controller
                 $ids[] = $account->id;
             }
 
-            $response['attendants'] = Attendant::whereIn('user_id', $ids);
-            
+            $response['attendants'] = Attendant::whereIn('user_id', $ids)->get();
+    
             $response['status'] = 'success';
             return response()->json($response, 200);
         }

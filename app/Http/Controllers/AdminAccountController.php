@@ -88,6 +88,7 @@ class AdminAccountController extends Controller
         }
 
         $data = $validator->validated();
+    
         $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
