@@ -27,7 +27,7 @@ const router = createRouter({
         },
         {
             path:'/admin',
-            redirect:'/bolaodefutebol/admin/cards',
+            redirect:'/admin/cards',
             name:'AdminPanel',
             component: AdminPanel,
             children: [
