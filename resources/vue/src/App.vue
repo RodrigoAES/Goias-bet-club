@@ -106,7 +106,7 @@ import { RouterLink, RouterView } from 'vue-router';
 
 <template>
   <header>
-        <router-link to="/bolaodefutebol">
+        <router-link to="/">
             <img :src="`${asset}core/public/logo`" alt="logo" />
         </router-link> 
         <div class="title-main" v-html="siteName"></div>

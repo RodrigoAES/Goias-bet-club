@@ -102,7 +102,7 @@
     <div class="ranking public">
         <UserCardViewer v-if="UserCardViewerOpened" :userCard="UserCardViewerData"/>
         <div class="ranking-cards">
-            <router-link to="/bolaodefutebol"><span>←</span> Voltar Para a pagina inical</router-link>
+            <router-link to="/"><span>←</span> Voltar Para a pagina inical</router-link>
             <div 
                 v-if="(cards != null)" 
                 v-for="card in cards"

@@ -21,12 +21,12 @@ const router = createRouter({
     routes: [
        
         {
-            path:'/bolaodefutebol/admin/login',
+            path:'/admin/login',
             name:'login',
             component: AdminLogin
         },
         {
-            path:'/bolaodefutebol/admin',
+            path:'/admin',
             redirect:'/bolaodefutebol/admin/cards',
             name:'AdminPanel',
             component: AdminPanel,
@@ -80,17 +80,17 @@ const router = createRouter({
         },
         
         {
-            path: '/bolaodefutebol/:attendant?',
+            path: '/:attendant?',
             name: 'home',
             component: Home,
         },
         {
-            path: '/bolaodefutebol/user-card/:code?',
+            path: '/user-card/:code?',
             name: 'user-card',
             component: UserCard,
         },
         {
-            path:'/bolaodefutebol/ranking/:cardId?',
+            path:'/ranking/:cardId?',
             name:'publicRanking',
             component: PublicUserRanking,
         }

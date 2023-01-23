@@ -103,6 +103,7 @@
             :user="accountFormUser"
         />
         <div id="users">
+            <div class="title">Contas</div>
             <div class="new-user">
                 <button 
                     v-if="
@@ -174,8 +175,7 @@
 <style>
     #account {
         display:flex;
-        align-items: center;
-        justify-content: center;
+        width: 100%;
     }
     #users .new-user {
         width:100%;

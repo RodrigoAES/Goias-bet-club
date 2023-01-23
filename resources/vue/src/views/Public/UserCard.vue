@@ -66,7 +66,7 @@
 
 <template>
     <div id="consult-area">
-        <router-link to="/bolaodefutebol"><span>←</span> Voltar Para a pagina inical</router-link>
+        <router-link to="/"><span>←</span> Voltar Para a pagina inical</router-link>
         <div class="form user-card">
             <div class="description">Consulte sua cartela através do código que te passamos durante o cadastro.</div>
             

@@ -230,7 +230,7 @@
 
             <label for="url-signature">Assinatura da URL:</label>
             <input v-model="slug" id="url-siganture" type="text">
-            <div class="url">www.bolaotrevodasorte.com/bolaodefutebol/{{slugModel}}</div>
+            <div class="url">www.goiasbetclub.com/{{slugModel}}</div>
 
             
             <div v-if="method === 'create'" class="permissions">

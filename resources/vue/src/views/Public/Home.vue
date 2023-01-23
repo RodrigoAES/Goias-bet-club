@@ -233,11 +233,11 @@
         <div class="content" :style="`background-image: url(${this.$root.asset}core/public/home_bg)`">
             <div class="background" :style="`background-image:url(${this.$root.asset}core/public/home_content_bg)`">
                 <div class="consult">
-                    <router-link to="/bolaodefutebol/user-card">Consultar minhas cartelas</router-link>
+                    <router-link to="/user-card">Consultar minhas cartelas</router-link>
                 </div>
 
                 <div style="margin-top:20px" class="consult">
-                    <router-link to="/bolaodefutebol/ranking">Consultar Ranking</router-link>
+                    <router-link to="/ranking">Consultar Ranking</router-link>
                 </div>
 
                 <div class="whatsapp-group">
