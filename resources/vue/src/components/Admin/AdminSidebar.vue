@@ -31,7 +31,7 @@
         <div class="menu-title">Menu</div>
         
         <div class="links">
-            <router-link to="/bolaodefutebol/admin/cards" @click="this.$parent.menuActive = 'cards'" >
+            <router-link to="/admin/cards" @click="this.$parent.menuActive = 'cards'" >
                 <div 
                   class="link" 
                   :style="this.$route.name === 'cards' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -40,7 +40,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolaodefutebol/admin/card-create" @click="this.$parent.menuActive = 'card-create'">
+            <router-link to="/admin/card-create" @click="this.$parent.menuActive = 'card-create'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'cardCreate' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -49,7 +49,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolaodefutebol/admin/custom" @click="this.$parent.menuActive = 'cuustom'">
+            <router-link to="/admin/custom" @click="this.$parent.menuActive = 'cuustom'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'custom' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -58,7 +58,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolaodefutebol/admin/user-bets" @click="this.$parent.menuActive = 'user-bets'">
+            <router-link to="/admin/user-bets" @click="this.$parent.menuActive = 'user-bets'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'user-bets' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -67,7 +67,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolaodefutebol/admin/user-ranking" @click="this.$parent.menuActive = 'user-rankinf'">
+            <router-link to="/admin/user-ranking" @click="this.$parent.menuActive = 'user-rankinf'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'ranking' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -76,7 +76,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolaodefutebol/admin/attendances" @click="this.$parent.menuActive = 'attendances'">
+            <router-link to="/admin/attendances" @click="this.$parent.menuActive = 'attendances'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'attendances' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -85,7 +85,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolaodefutebol/admin/sales" @click="this.$parent.menuActive = 'sales'">
+            <router-link to="/admin/sales" @click="this.$parent.menuActive = 'sales'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'sales' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -94,7 +94,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolaodefutebol/admin/config" @click="this.$parent.menuActive = 'config'">
+            <router-link to="/admin/config" @click="this.$parent.menuActive = 'config'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'config' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
@@ -103,7 +103,7 @@
                 </div>
             </router-link>
 
-            <router-link to="/bolaodefutebol/admin/account" @click="this.$parent.menuActive = 'account'">
+            <router-link to="/admin/account" @click="this.$parent.menuActive = 'account'">
                 <div 
                   class="link" 
                   :style="this.$route.name === 'account' ? 'color:#1d1de6;box-shadow: 0px 0px 20px #1d1de6' : null"
