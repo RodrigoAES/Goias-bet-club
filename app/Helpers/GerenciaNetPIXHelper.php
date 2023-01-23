@@ -192,7 +192,7 @@ class GerenciaNetPIXHelper {
         
         $body = [
             'calendario' => ['expiracao' => 2147483647],
-            'valor' => ['original' => '00.01'],//strval(number_format($price, 2))],
+            'valor' => ['original' => strval(number_format($price, 2))],
             'chave' => '+5561992569861',
             'solicitacaoPagador' => "www.goiasbetclub.com - cartela: $card_code",
         ];
