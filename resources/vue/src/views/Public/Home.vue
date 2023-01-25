@@ -46,7 +46,7 @@
                 this.betSuccessOpened = false;
             },
             toUserCard: function(code) {
-                this.$router.push({path:`bolaodefutebol/user-card/${code}`});
+                this.$router.push({path:`/user-card/${code}`});
             },
             redirectWathsapp:function(attendant) {
                 this.doubtContactAttendant = attendant;

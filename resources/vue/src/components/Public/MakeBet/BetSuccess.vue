@@ -24,7 +24,8 @@
                 return this.$root.attendants.filter(attendant => attendant.payment_permission ? true : false);
             },
         },
-        methods: {openPayment:function() {
+        methods: {
+            openPayment:function() {
                 let payment = document.querySelector('#payment2');
                 if(payment.style.height === '42px') {
                     payment.style.height = 'auto';
@@ -140,7 +141,12 @@
             <div class="info phone"><span>Celular:</span>{{response.phone}}</div>
             <div class="info created_at"><span>Data:</span>{{date}}</div>
             <div class="buttons-success">
-                <button @click="this.$parent.toUserCard(response.code); this.$parent.betSuccessOpened = false">Ver Cartela</button>
+                <button 
+                    @click="this.$parent.toUserCard(response.code); 
+                    this.$parent.betSuccessOpened = false"
+                >
+                    Ver Cartela
+                </button>
                 
                 <div id="payment2" style="height:42px">
                     <div @click="openPayment" class="label">Efetuar pagamento</div>
