@@ -201,7 +201,7 @@
                     <th class="validated">Validado</th>
                     <th class="card-name">Cartela</th>
                     <th class="table-price">Preço</th>
-                    <th>Opções</th>
+                    <th style="width:256px">Opções</th>
                 </tr>
             </thead>
             <tbody>
@@ -270,7 +270,8 @@
         background-color: #ccc;
     }
     .user-bets table td.code {
-        width:50px
+        width:auto;
+        display:table-cell
     }
     .user-bets table td.name {
         width:150px
@@ -292,7 +293,7 @@
     }
 
     .user-bets table td.actions {
-        width:253px
+        width:256px;
     }
     .user-bets table td.actions button {
         margin-right: 10px;
