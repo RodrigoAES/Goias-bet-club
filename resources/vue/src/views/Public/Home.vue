@@ -17,6 +17,7 @@
 
                 doubtContactFormOpened:false,
                 doubtContactAttendant:null,
+                doubtContactFormMode:null,
 
                 cardCode:null,
                 qrcode:null,
@@ -48,8 +49,9 @@
             toUserCard: function(code) {
                 this.$router.push({path:`/user-card/${code}`});
             },
-            redirectWathsapp:function(attendant) {
+            redirectWathsapp:function(attendant, mode) {
                 this.doubtContactAttendant = attendant;
+                this.doubtContactFormMode = mode;
                 this.doubtContactFormOpened = true;
             },
             openPayment:function() {
@@ -219,7 +221,11 @@
 <template>
     <BetForm v-if="betFormOpened" :card="this.betFormCard"/>
     <BetSuccess v-if="betSuccessOpened" :response="betResponse" />
-    <DoubtContactForm v-if="doubtContactFormOpened" :attendant="doubtContactAttendant" />
+    <DoubtContactForm 
+        v-if="doubtContactFormOpened" 
+        :attendant="doubtContactAttendant" 
+        :mode="doubtContactFormMode"
+    />
 
     
 
@@ -241,7 +247,7 @@
                 </div>
 
                 <div class="whatsapp-group">
-                    <a :href="this.$root.whatsappGroup ?? null">
+                    <a :href="this.$root.whatsappGroup ?? null" target="_blank">
                         Grupo do Whatsapp
                         <img :src="`${this.$root.asset}assets/icons/whatsapp.png`">
                     </a>
@@ -255,7 +261,7 @@
 
                         <button
                             v-for="attendant in paymentAttendants"
-                            @click="redirectToPaymentContactWhatsapp(attendant)"
+                            @click="redirectWathsapp(attendant, 'payment')"
                         >
                             {{ `${attendant.name.split(' ')[0]} ${attendant.name.split(' ')[1] ? attendant.name.split(' ')[1].charAt(0)+'.' : ''}` }}
                             <img :src="`${this.$root.asset}assets/icons/whatsapp.png`" />
@@ -303,7 +309,7 @@
                     <div class="phones">
                         <button 
                             v-for="attendant in doubtAttendants"
-                            @click="redirectWathsapp(attendant)"
+                            @click="redirectWathsapp(attendant, 'doubt')"
                         >
                             <div class="icon">
                                 <img :src="`${this.$root.asset}assets/icons/whatsapp.png`" />

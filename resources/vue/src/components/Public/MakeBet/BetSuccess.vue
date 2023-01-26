@@ -78,6 +78,31 @@
                     
                 }
             },
+            goWathsappPayment:async function(attendant) {
+                let body = new FormData();
+                body.append('attendant_id', attendant.id);
+                body.append('attendant_name', attendant.name);
+                body.append('client_name', this.name && this.name.trim() != '' ? this.name : '');
+                body.append('client_phone', this.phone && this.phone.trim() != '' ? this.phone : '');
+                body.append('user_card_code', this.code && this.code.trim() != '' ? this.code : '');
+                body.append('type', 'payment');
+
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}attendance`, {
+                    method:'POST',
+                    body: body,
+                });
+                let json = await request.json();
+                
+                if(json.status === 'success') {
+                    let url = `http://api.whatsapp.com/send?1=pt_BR&phone=55${attendant.phone}`;
+                    url += `&text=Olá ${attendant.name} `;
+                    url += this.response.name ? `meu nome é ${this.response.name}, ` : ''
+                    url += this.response.code ? `o código da minha cartela é ${this.response.code} e ` : '';
+                    url += 'e estou aqui para efetuar o pagamento.';
+
+                    window.open(url, '_blank');
+                }  
+            },
             generateCharge:async function() {
                 this.qrcode = null;
                 this.qrcodeImage = null;
@@ -156,7 +181,7 @@
 
                         <button
                             v-for="attendant in paymentAttendants"
-                            @click="redirectToPaymentContactWhatsapp(attendant)"
+                            @click="goWathsappPayment(attendant)"
                         >
                             {{ `${attendant.name.split(' ')[0]} ${attendant.name.split(' ')[1] ? attendant.name.split(' ')[1].charAt(0)+'.' : ''}` }}
                             <img :src="`${this.$root.asset}assets/icons/whatsapp.png`" />

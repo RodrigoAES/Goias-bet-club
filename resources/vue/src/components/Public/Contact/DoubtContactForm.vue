@@ -1,6 +1,6 @@
 <script>
     export default {
-        props:['attendant'],
+        props:['attendant', 'mode'],
         data() {
             return {
                 name:null,
@@ -29,7 +29,32 @@
                     url += `&text=Olá ${this.attendant.name} `;
                     url += this.name ? `meu nome é ${this.name}, ` : ''
                     url += this.code ? `o código da minha cartela é ${this.code} e ` : '';
-                    url += 'tenho uma dúvida sobre o bolão trevo da sorte.';
+                    url += 'tenho uma dúvida sobre o goiasbetclub.com.';
+
+                    window.open(url, '_blank');
+                }  
+            },
+            goWathsappPayment:async function() {
+                let body = new FormData();
+                body.append('attendant_id', this.attendant.id);
+                body.append('attendant_name', this.attendant.name);
+                body.append('client_name', this.name && this.name.trim() != '' ? this.name : '');
+                body.append('client_phone', this.phone && this.phone.trim() != '' ? this.phone : '');
+                body.append('user_card_code', this.code && this.code.trim() != '' ? this.code : '');
+                body.append('type', 'payment');
+
+                let request = await fetch(`${import.meta.env.VITE_BASE_URL}attendance`, {
+                    method:'POST',
+                    body: body,
+                });
+                let json = await request.json();
+                
+                if(json.status === 'success') {
+                    let url = `http://api.whatsapp.com/send?1=pt_BR&phone=55${this.attendant.phone}`;
+                    url += `&text=Olá ${this.attendant.name} `;
+                    url += this.name ? `meu nome é ${this.name}, ` : ''
+                    url += this.code ? `o código da minha cartela é ${this.code} e ` : '';
+                    url += 'e estou aqui para efetuar o pagamento.';
 
                     window.open(url, '_blank');
                 }  
@@ -51,9 +76,10 @@
             <input v-model="phone" name="phone" id="phone" type="tel">
 
             <label for="code">Código da sua cartela (opcional):</label>
-            <input v-model="code" name="code" id="code" type="text">
+            <input v-model="code" name="code" id="code" type="text" maxlength="6" >
 
-            <button @click="goWathsapp">Prosseguir</button>
+            <button v-if="mode === 'doubt'" @click="goWathsapp">Prosseguir</button>
+            <button v-if="mode === 'payment'" @click="goWathsappPayment">Prosseguir</button>
         </div>
     </div>
 </template>
